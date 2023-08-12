@@ -1,3 +1,22 @@
+/*
+ * Copyright 2023 by Web3Bench Project
+ * This work was based on the OLxPBench Project
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ *  http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+
+ */
+
+
 /******************************************************************************
  *  Copyright 2015 by OLTPBenchmark Project                                   *
  *                                                                            *
@@ -159,7 +178,7 @@ public final class Catalog {
             // COLUMNS
             if (LOG.isDebugEnabled())
                 LOG.debug("Retrieving COLUMN information for " + table_name);
-            ResultSet col_rs = md.getColumns(null,null, internal_table_name, null);
+            ResultSet col_rs = md.getColumns("PUBLIC", "PUBLIC", internal_table_name, null);
             while (col_rs.next()) {
                 if (LOG.isTraceEnabled()) LOG.trace(SQLUtil.debug(col_rs));
                 String col_name = col_rs.getString(4);

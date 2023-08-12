@@ -1,4 +1,23 @@
 /*
+ * Copyright 2023 by Web3Bench Project
+ * This work was based on the OLxPBench Project
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ *  http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+
+ */
+
+
+/*
  * Copyright 2021 OLxPBench
 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -114,7 +133,6 @@ public abstract class BenchmarkModule {
 
         this.benchmarkName = benchmarkName;
         this.workConf = workConf;
-        //System.out.println("withCatalog value is: " + withCatalog);
         this.catalog = (withCatalog ? new Catalog(this) : null);
         File xmlFile = this.getSQLDialect();
         this.dialects = new StatementDialects(this.workConf.getDBType(), xmlFile);
@@ -149,10 +167,6 @@ public abstract class BenchmarkModule {
      */
     protected abstract List<Worker<? extends BenchmarkModule>> makeWorkersImpl(boolean verbose) throws IOException;
 
-    //everyadd
-    protected abstract List<Worker<? extends BenchmarkModule>> makeWorkersImpl(boolean verbose, String workloadType) throws IOException;
-    //everyadd
-
     /**
      * Each BenchmarkModule needs to implement this method to load a sample
      * dataset into the database. The Connection handle will already be
@@ -168,7 +182,7 @@ public abstract class BenchmarkModule {
      * @param txns
      * @return
      */
-    protected abstract Package getProcedurePackageImpl(String txnName);
+    protected abstract Package getProcedurePackageImpl();
 
     // --------------------------------------------------------------------------
     // PUBLIC INTERFACE
@@ -201,13 +215,9 @@ public abstract class BenchmarkModule {
             this.benchmarkName + "-ddl.sql",
         };
 
-        //int ppp=0;
         for (String ddlName : ddlNames) {
-            //System.out.print(ppp++);
-            //System.out.println("ddlName is : " + ddlName);
             if (ddlName == null) continue;
             URL ddlURL = this.getClass().getResource(DDLS_DIR + File.separator + ddlName);
-            //System.out.println("ddlURL: " + ddlURL);
             if (ddlURL != null) {
                 if (LOG.isDebugEnabled())
                     LOG.debug("Found DDL file for " + db_type + ": " + ddlURL );
@@ -261,11 +271,6 @@ public abstract class BenchmarkModule {
     public final List<Worker<? extends BenchmarkModule>> makeWorkers(boolean verbose) throws IOException {
         return (this.makeWorkersImpl(verbose));
     }
-    //everyadd
-    public final List<Worker<? extends BenchmarkModule>> makeWorkers(boolean verbose, String workloadType) throws IOException {
-        return (this.makeWorkersImpl(verbose, workloadType));
-    }
-    //everyadd
 
     /**
      * Create the Benchmark Database
@@ -290,9 +295,6 @@ public abstract class BenchmarkModule {
     public final void createDatabase(DatabaseType dbType, Connection conn) throws SQLException {
         try {
             URL ddl = this.getDatabaseDDL(dbType);
-            //System.out.println("ddl String " + ddl);
-            //System.out.println("ddl name " + dbType.name().toLowerCase());
-
             assert(ddl != null) : "Failed to get DDL for " + this;
             ScriptRunner runner = new ScriptRunner(conn, true, true);
             if (LOG.isDebugEnabled()) LOG.debug("Executing script '" + ddl + "'");
@@ -336,11 +338,11 @@ public abstract class BenchmarkModule {
                     try{
                         int maxConcurrent = workConf.getLoaderThreads();
                         assert (maxConcurrent > 0);
-                        if (LOG.isDebugEnabled())
-                            LOG.debug(String.format("Starting %d %s.LoaderThreads [maxConcurrent=%d]",
-                                    loaderThreads.size(),
-                                    loader.getClass().getSimpleName(),
-                                    maxConcurrent));
+                        LOG.info(String.format("Starting %d %s.LoaderThreads [maxConcurrent=%d]",
+                                loaderThreads.size(),
+                                loader.getClass().getSimpleName(),
+                                maxConcurrent));
+                                
                         ThreadUtil.runNewPool(loaderThreads, maxConcurrent);
 
                         if (loader.getTableCounts().isEmpty() == false) {
@@ -351,9 +353,9 @@ public abstract class BenchmarkModule {
                                 this.benchmarkName.toUpperCase());
                         throw new RuntimeException(msg, ex);
                     } finally {
-                        for (LoaderThread t : loaderThreads) {
-                            t.getConnection().close();
-                        }
+                        // for (LoaderThread t : loaderThreads) {
+                        //     t.getConnection().close();
+                        // }
                     }
                 }
             }
@@ -441,7 +443,7 @@ public abstract class BenchmarkModule {
             return null;
         }
 
-        Package pkg = this.getProcedurePackageImpl(procName);
+        Package pkg = this.getProcedurePackageImpl();
         assert (pkg != null) : "Null Procedure package for " + this.benchmarkName;
         String fullName = pkg.getName() + "." + procName;
         Class<? extends Procedure> procClass = (Class<? extends Procedure>) ClassUtil.getClass(fullName);

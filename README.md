@@ -1,54 +1,175 @@
-# OLxPBench
+# Web3Bench
 
-Together with the framework we provide the following HTAP benchmarks:
-  * Subenchmark
-  * Fibenchmark
-  * Tabenchmark
-  
-## Dependencies
+# Dependencies
+- Java (+1.7)
+- Apache Ant
+- Ubuntu (+16.04)
 
-+ Java (+1.7)
-+ Apache Ant
-+ Ubuntu (+16.04)
+## Build
 
-## Download
- + git clone https://github.com/BenchCouncil/olxpbench
+```
+cd [olxpbench.dir]
+ant bootstrap
+ant resolve
+ant build
+```
 
-## Quick start
-+ ant bootstrap
-+ ant resolve
-+ ant build
+## Config
 
-## Config file
-The ./config directory provides all configure files.
-
-## Example
-
-+ ./olxpbenchmark -b subenchmark -c config/suoltp.xml -wt oltp --create=true --load=true
-+ ./olxpbenchmark -b subenchmark -c config/suoltp.xml -wt oltp --execute=true -o results/suoltp
+### Configuration Directory
+- config/*
+    - Configure files for testing on the VM
 
 
-## Publications
-If you use OLxPBench for your paper, please cite the follow paper:
+### Workload Descriptor
+Web3Bench uses a configuration file to drive a given benchmark. 
+The workload descriptor (or configuration file) provides the general information to access the database (driver, URL, credential .. etc), benchmark specific options and most importantly, the workload mix.
+When running a multi-phase experiment with varying a workload, one should provide multiple <work> sections with their duration, rate, and the weight of each transaction. 
 
-[OLxPBench: Real-time, Semantically Consistent, and Domain-specific are Essential in Benchmarking, Designing, and Implementing HTAP Systems](https://arxiv.org/abs/2203.16095) (ICDE 2022).
+> Note: weights have to sum up to 100%. The transactions are listed in the benchmark specific section <transactiontypes>. The order in which the transactions are declared is the same as their respective weights.
 
-@misc{2203.16095,
-Author = {Guoxin Kang and Lei Wang and Wanling Gao and Fei Tang and Jianfeng Zhan},
-Title = {OLxPBench: Real-time, Semantically Consistent, and Domain-specific are Essential in Benchmarking, Designing, and Implementing HTAP Systems},
-Year = {2022},
-Eprint = {arXiv:2203.16095},
-}
+```xml
+<?xml version="1.0"?>
+<parameters>
+    
+    <!-- Connection details -->
+    <dbtype>mysql</dbtype>
+    <driver>com.mysql.jdbc.Driver</driver>
+    <DBUrl>jdbc:mysql://127.0.0.1:3500/ethereum3?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
+    <username>root</username>
+    <password></password>
+    <isolation>TRANSACTION_SERIALIZABLE</isolation>
+    <distribution>rand</distribution>
+    <uploadUrl></uploadUrl>
 
-## Troubles with TiDB
-isolation level error
-+ set GLOBAL tidb_skip_isolation_level_check = 1
+    <scalefactor>3</scalefactor>
+    
+    <!-- The workload -->
+    <terminals>1</terminals>
+    <works>
+        <work>
+          <warmup>0</warmup>
+          <time>60</time>
+          <rate>300</rate>
+          <weights>80,3,3,4,4,3,3</weights>
+          <arrival>REGULAR</arrival>
+        </work>
+    </works>
+    
+    <transactiontypes>
+        <transactiontype>
+            <name>R1</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W11</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W12</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W13</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W14</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W4</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W6</name>
+        </transactiontype>
+    </transactiontypes>
+</parameters>
+```
 
+- **DBUrl**: the URL to access the database
+- **username**: the username to access the database
+- **password**: the password to access the database
+- **scalefactor**: the scale factor for loading data. When saclefactor = 1, the data size is around 25GB.
+- **time**: the duration of the workload in minutes
+- **rate**: the sending rate of the workload in transactions per minute
+- **weights**: the weights of the transactions in the workload. The sum of the weights should be 100.
+- **transactiontypes**: the list of transactions in the workload. The order of the transactions should be the same as the order of the weights.
 
-java.sql.SQLException: Write conflict
-+ SET GLOBAL tidb_txn_mode = 'pessimistic';
+## Run Web3Bench
 
+### Example
+Examples for loading data and run web3benchmark with scale factor = 3
 
-MySQLSyntaxErrorException:this is incompatible with sql_mode=only_full_group_by
-+ set @@global.sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+- Load data with scale factor = 3
+  ```
+  cd [olxpbench.dir]
+  ./olxpbenchmark -b web3benchmark -c config/loadtest-scale3.xml --load=true  --create=true | tee log/loadertest-scale3.log
+  ```
+  or 
+  ```
+  cd script
+  nohup ./load-scale3.sh &
+  ```
+- Run web3benchmark with scale factor = 3
+  ```
+  cd script
+  nohup ./run-scale3.sh &
+  ```
 
+### Command Line Options
+```bash
+$ ./olxpbenchmark --help
+usage: olxpbenchmark
+ -b,--bench <arg>               [required] Benchmark class. Currently
+                                supported: [web3benchmark]
+ -c,--config <arg>              [required] Workload configuration file
+    --clear <arg>               Clear all records in the database for this
+                                benchmark
+    --create <arg>              Initialize the database for this benchmark
+ -d,--directory <arg>           Base directory for the result files,
+                                default is current directory
+    --dialects-export <arg>     Export benchmark SQL to a dialects file
+    --execute <arg>             Execute the benchmark workload
+ -h,--help                      Print this help
+    --histograms                Print txn histograms
+ -im,--interval-monitor <arg>   Throughput Monitoring Interval in
+                                milliseconds
+ -jh,--json-histograms <arg>    Export histograms to JSON file
+    --load <arg>                Load data using the benchmark's data
+                                loader
+ -o,--output <arg>              Output file (default System.out)
+    --output-raw <arg>          Output raw data
+    --output-samples <arg>      Output sample data
+    --runscript <arg>           Run an SQL script
+ -s,--sample <arg>              Sampling window
+ -ss                            Verbose Sampling per Transaction
+ -t,--timestamp                 Each result file is prepended with a
+                                timestamp for the beginning of the
+                                experiment
+ -ts,--tracescript <arg>        Script of transactions to execute
+    --upload <arg>              Upload the result
+    --uploadHash <arg>          git hash to be associated with the upload
+ -v,--verbose                   Display Messages
+```
+
+- **-b,--bench**: the benchmark class. Currently, only web3benchmark is supported.
+- **--create=true**: create the database schema by excuting the SQL script in ddl file(e.g., src/com/olxpbenchmark/benchmarks/web3benchmark/ddls/web3benchmark-mysql-ddl.sql)
+- **--load=true**: load data into the database
+- **--execute=true**: run the workload
+
+### Load Data
+```
+```
+
+### Run test
+```
+```
+
+## Source Code
+- src/com/olxpbenchmark/benchmarks/web3benchmark/Web3Loader.java
+    - The data loader/genrator for web3benchmark
+
+- src/com/olxpbenchmark/benchmarks/web3benchmark/procedures/*
+    - The workloads for web3bench
+
+## Results
+
+### Output Directory
+- results/*
+    - The result files for the benchmark

@@ -1,3 +1,22 @@
+/*
+ * Copyright 2023 by Web3Bench Project
+ * This work was based on the OLxPBench Project
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ *  http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+
+ */
+
+
 /******************************************************************************
  *  Copyright 2015 by OLTPBenchmark Project                                   *
  *                                                                            *
@@ -490,6 +509,11 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
                 }
                 start = now;
                 LOG.info(StringUtil.bold("MEASURE") + " :: Warmup complete, starting measurements.");
+                //microadd
+                for (WorkloadConfiguration workConf : workConfs) {
+                    long original = System.currentTimeMillis();
+                    workConf.setOriginalTime(original);
+                }
                 // measureEnd = measureStart + measureSeconds * 1000000000L;
 
                 // For serial executions, we want to do every query exactly
@@ -568,7 +592,8 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
         if (arrival == Phase.Arrival.POISSON)
             return (long) ((-Math.log(1 - Math.random()) / lowestRate) * 1000000000.);
         else
-            return (long) (1000000000. / (double) lowestRate + 0.5);
+            // in web3benchmark, the rate is set to every minute
+            return (long) (60000000000. / (double) lowestRate + 0.5);
     }
 
     // public Results runPoissonMultiPhase() throws QueueLimitException,

@@ -1,0 +1,119 @@
+/*
+ * Copyright 2023 by Web3Bench Project
+ * This work was based on the OLxPBench Project
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ *  http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+
+ */
+
+
+package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Random;
+
+import org.apache.log4j.Logger;
+
+import com.olxpbenchmark.api.SQLStmt;
+import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Config;
+import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Util;
+import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
+
+public class W2 extends WEB3Procedure {
+
+    private static final Logger LOG = Logger.getLogger(W2.class);
+
+    public SQLStmt query_stmtSQL = new SQLStmt(
+            "insert into "
+                    + "transactions "
+                    + "values "
+                    + "(?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?)"
+    );
+
+    private PreparedStatement query_stmt = null;
+
+    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale) throws SQLException {
+        boolean trace = LOG.isTraceEnabled();
+
+        // initializing all prepared statements
+        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
+
+        // Small batch inserts (100 rows) for the transaction table.
+        for (int i = 0; i < 100; i++) {
+            String hash = WEB3Util.convertToTxnHashString(WEB3Util.randomNumber(numScale * WEB3Config.configTransactionsCount, 3 * numScale * WEB3Config.configTransactionsCount, gen));
+            long nonce = WEB3Util.randomNumber(0, 100, gen);
+            long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
+            String block_hash = WEB3Util.convertToBlockHashString(block_number);
+            long transaction_index = WEB3Util.randomNumber(0, 10000, gen);
+            String from_address = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+            String to_address = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+            double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
+            long gas = WEB3Util.randomNumber(100, 1000000, gen);
+            long gas_price = WEB3Util.randomNumber(1000, 10000000, gen);
+            String input = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
+            long receipt_cumulative_gas_used = WEB3Util.randomNumber(100, 1000000, gen);
+            long receipt_gas_used = WEB3Util.randomNumber(100, 1000000, gen);
+            String receipt_contract_address = WEB3Util.convertToContractAddressString(WEB3Util.randomNumber(1, numScale * WEB3Config.configContractsCount, gen));
+            String receipt_root = WEB3Util.randomHashString();
+            long receipt_status = WEB3Util.randomNumber(0, 100, gen);
+            long block_timestamp = WEB3Util.getTimestamp(block_number);
+            long max_fee_per_gas = WEB3Util.randomNumber(100, 10000, gen);
+            long max_priority_fee_per_gas = WEB3Util.randomNumber(100, 10000, gen);
+            long transaction_type = WEB3Util.randomNumber(0, 100000, gen);
+
+
+            int idx = 1;
+            query_stmt.setString(idx++, hash);
+            query_stmt.setLong(idx++, nonce);
+            query_stmt.setString(idx++, block_hash);
+            query_stmt.setLong(idx++, block_number);
+            query_stmt.setLong(idx++, transaction_index);
+            query_stmt.setString(idx++, from_address);
+            query_stmt.setString(idx++, to_address);
+            query_stmt.setDouble(idx++, value);
+            query_stmt.setLong(idx++, gas);
+            query_stmt.setLong(idx++, gas_price);
+            query_stmt.setString(idx++, input);
+            query_stmt.setLong(idx++, receipt_cumulative_gas_used);
+            query_stmt.setLong(idx++, receipt_gas_used);
+            query_stmt.setString(idx++, receipt_contract_address);
+            query_stmt.setString(idx++, receipt_root);
+            query_stmt.setLong(idx++, receipt_status);
+            query_stmt.setLong(idx++, block_timestamp);
+            query_stmt.setLong(idx++, max_fee_per_gas);
+            query_stmt.setLong(idx++, max_priority_fee_per_gas);
+            query_stmt.setLong(idx++, transaction_type);
+
+            query_stmt.addBatch();
+        }
+
+        if (trace) LOG.trace("query_stmt W2 RangeInsertTransactions START");
+        query_stmt.executeBatch();
+        if (trace) LOG.trace("query_stmt W2 RangeInsertTransactions END");
+        
+        // commit the transaction
+        conn.commit();
+
+        // LOG.info(query_stmt.toString());
+
+        return null;
+    }
+}
+
+

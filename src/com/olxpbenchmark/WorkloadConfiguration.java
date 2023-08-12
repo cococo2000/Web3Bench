@@ -1,4 +1,22 @@
 /*
+ * Copyright 2023 by Web3Bench Project
+ * This work was based on the OLxPBench Project
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ *  http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+
+ */
+
+/*
  * Copyright 2021 OLxPBench
  * This work was based on the OLTPBenchmark Project
 
@@ -69,16 +87,9 @@ public class WorkloadConfiguration {
 	private String db_driver;	
 	private double scaleFactor = 1.0;
 	private double selectivity = -1.0;
-	private int oltpTerminals;
-	//everyadd
-	private int olapTerminals;
-	private int olxpTerminals;
-	//everyadd
+	private int terminals;
 	private int loaderThreads = ThreadUtil.availableProcessors();
 	private int numTxnTypes;
-	//everyadd
-	private int numOlapTxnTypes;
-	//everyadd
     private TraceReader traceReader = null;
     public TraceReader getTraceReader() {
         return traceReader;
@@ -88,6 +99,16 @@ public class WorkloadConfiguration {
     }
     
 	private XMLConfiguration xmlConfig = null;
+
+	//microadd
+	private String distri;
+	private int startNum;
+	public long originalTime;
+	public long gapTime;
+	public int summaryNumber = 0;
+	public int rate;
+	private int insertRatio;
+
 
 	private List<Phase> works = new ArrayList<Phase>();
 	private WorkloadState workloadState;
@@ -101,15 +122,12 @@ public class WorkloadConfiguration {
 	 */
     public WorkloadState initializeState(BenchmarkState benchmarkState) {
         assert (workloadState == null);
-        workloadState = new WorkloadState(benchmarkState, works, oltpTerminals, traceReader);
+        workloadState = new WorkloadState(benchmarkState, works, terminals, traceReader);
         return workloadState;
     }
 
     private int numberOfPhases = 0;
 	private TransactionTypes transTypes = null;
-	//everyadd
-	private TransactionTypes transOlapTypes = null;
-	//everyadd
 	private int isolationMode = Connection.TRANSACTION_SERIALIZABLE;
 	private boolean recordAbortMessages = false;
     private String dataDir = null;
@@ -119,7 +137,6 @@ public class WorkloadConfiguration {
     public void addWork(int time, int warmup, int rate, List<String> weights, boolean rateLimited, boolean disabled, boolean serial, boolean timed, int active_terminals, Phase.Arrival arrival) {
         works.add(new Phase(benchmarkName, numberOfPhases, time, warmup, rate, weights, rateLimited, disabled, serial, timed, active_terminals, arrival));
 		numberOfPhases++;
-		//System.out.println("numberOfPhases is : " + numberOfPhases);
 	}
 	
 	public void setDBType(DatabaseType dbType) {
@@ -129,7 +146,52 @@ public class WorkloadConfiguration {
 	public DatabaseType getDBType() {
         return db_type;
     }
-	
+
+	//microadd
+	public void setDistri(String distri) {
+		this.distri = distri;
+	}
+	public String getDistri() {
+		return distri;
+	}
+
+
+	public void setOriginalTime(long original) {
+    	this.originalTime = original;
+	}
+	public long getOriginalTime() {
+    	return originalTime;
+	}
+
+	public void setGapTime (long gapTime) {
+    	this.gapTime = gapTime;
+	}
+	public long getGapTime () {
+    	return gapTime;
+	}
+
+	public void setSummaryNumber (int summaryNumber) {
+    	this.summaryNumber = summaryNumber;
+	}
+	public int getSummaryNumber() {
+    	return summaryNumber;
+	}
+
+	public void setRate(int rate) {
+    	this.rate = rate;
+	}
+	public int getRate() {
+    	return rate;
+	}
+
+	public void setInsertRatio(int insertRatio) {
+    	this.insertRatio = insertRatio;
+	}
+	public int getInsertRatio() {
+    	return insertRatio;
+	}
+	//microadd
+
 	public void setDBConnection(String database) {
 		this.db_connection = database;
 	}
@@ -161,14 +223,6 @@ public class WorkloadConfiguration {
 	public void setNumTxnTypes(int numTxnTypes) {
 		this.numTxnTypes = numTxnTypes;
 	}
-
-	//everyadd
-	public int getOlapTxnTypes() { return numOlapTxnTypes; }
-
-	public void  setOlapTxnTypes(int numOlapTxnTypes) {
-		this.numOlapTxnTypes = numOlapTxnTypes;
-	}
-	//everyadd
 	
 	public String getDBName() {
 		return db_name;
@@ -236,6 +290,12 @@ public class WorkloadConfiguration {
         return this.scaleFactor;
     }
 
+    public void setStartNum(int startNum) { this.startNum = startNum; }
+
+    public int getStartNum() {
+		return this.startNum;
+	}
+
 	/**
 	 * Return the number of phases specified in the config file
 	 * @return
@@ -271,31 +331,13 @@ public class WorkloadConfiguration {
 	    }
 	}
 
-	public void setOltpTerminals(int oltpTerminals) {
-		this.oltpTerminals = oltpTerminals;
+	public void setTerminals(int terminals) {
+		this.terminals = terminals;
 	}
 
-	public int getOltpTerminals() {
-		return oltpTerminals;
+	public int getTerminals() {
+		return terminals;
 	}
-
-	//everyadd
-	public void setOlapTerminals(int olapTerminals) {
-		this.olapTerminals = olapTerminals;
-	}
-
-	public int getOlapTerminals() {
-		return olapTerminals;
-	}
-
-	public void setOlxpTerminals(int olxpTerminals) {
-		this.olxpTerminals = olxpTerminals;
-	}
-
-	public int getOlxpTerminals() {
-		return olxpTerminals;
-	}
-	//everyadd
 	
 	public TransactionTypes getTransTypes() {
 		return transTypes;
@@ -304,14 +346,6 @@ public class WorkloadConfiguration {
 	public void setTransTypes(TransactionTypes transTypes) {
 		this.transTypes = transTypes;
 	}
-
-	//everyadd
-	public TransactionTypes getOlapTransTypes() { return transOlapTypes; }
-
-	public void setOlapTransTypes(TransactionTypes transOlapTypes) {
-		this.transOlapTypes = transOlapTypes;
-	}
-	//everyadd
 
 	public List<Phase> getAllPhases() {
 		return works;

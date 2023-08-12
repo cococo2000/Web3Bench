@@ -1,3 +1,41 @@
+/*
+ * Copyright 2023 by Web3Bench Project
+ * This work was based on the OLxPBench Project
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ *  http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+
+ */
+
+
+ /*
+ * Copyright 2021 OLxPBench
+ * This work was based on the OLTPBenchmark Project
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ *  http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+
+ */
+
+
 /******************************************************************************
  *  Copyright 2015 by OLTPBenchmark Project                                   *
  *                                                                            *
@@ -127,7 +165,7 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
      * Get the the total number of workers in this benchmark invocation
      */
     public final int getNumWorkers() {
-        return (this.benchmarkModule.getWorkloadConfiguration().getOltpTerminals());
+        return (this.benchmarkModule.getWorkloadConfiguration().getTerminals());
     }
 
     public final WorkloadConfiguration getWorkloadConfiguration() {
@@ -227,7 +265,7 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
         // wait for start
         wrkldState.blockForStart();
         State preState, postState;
-        Phase phase;
+        Phase phase, postPhase;
 
         TransactionType invalidTT = TransactionType.INVALID;
         assert (invalidTT != null);
@@ -322,6 +360,7 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
 
             long end = System.nanoTime();
             postState = wrkldState.getGlobalState();
+            postPhase = wrkldState.getCurrentPhase();
 
             switch (postState) {
                 case MEASURE:
@@ -330,7 +369,8 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
                     // changed, otherwise we're recording results for a query
                     // that either started during the warmup phase or ended
                     // after the timer went off.
-                    if (preState == State.MEASURE && type != null && this.wrkldState.getCurrentPhase().id == phase.id) {
+                    if (preState == State.MEASURE && type != null &&
+                        postPhase != null && postPhase.id == phase.id) {
                         latencies.addLatency(type.getId(), start, end, this.id, phase.id);
                         intervalRequests.incrementAndGet();
                     }
