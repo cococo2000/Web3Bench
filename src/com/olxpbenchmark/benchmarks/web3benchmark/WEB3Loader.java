@@ -504,20 +504,20 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
                 }
 
                 transactions.value = (double) WEB3Util.randomNumber(0, 1000000, benchmark.rng());
-                transactions.gas = WEB3Util.randomNumber(100, 1000000, benchmark.rng());
                 transactions.gas_price = WEB3Util.randomNumber(1000, 10000000, benchmark.rng());
                 transactions.input = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, benchmark.rng()));
                 // receipt_gas_used & receipt_cumulative_gas_used
                 if (transactions.transaction_index == transaction_count - 1) {
                     transactions.receipt_gas_used = WEB3Util.getGasUsed(transactions.block_number)
-                            / transaction_count
-                            + WEB3Util.getGasUsed(transactions.block_number) % transaction_count;
+                    / transaction_count
+                    + WEB3Util.getGasUsed(transactions.block_number) % transaction_count;
                     transactions.receipt_cumulative_gas_used = WEB3Util.getGasUsed(transactions.block_number);
                 } else {
                     transactions.receipt_gas_used = WEB3Util.getGasUsed(transactions.block_number)
-                            / transaction_count;
+                    / transaction_count;
                     transactions.receipt_cumulative_gas_used = transactions.receipt_gas_used * (transactions.transaction_index + 1);
                 }
+                transactions.gas = WEB3Util.randomNumber(transactions.receipt_gas_used + 100, Long.MAX_VALUE, benchmark.rng());
                 transactions.receipt_root = WEB3Util.randomHashString();
                 transactions.receipt_status = WEB3Util.randomNumber(0, 100, benchmark.rng());
                 transactions.max_fee_per_gas = WEB3Util.randomNumber(100, 10000, benchmark.rng());

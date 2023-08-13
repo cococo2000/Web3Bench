@@ -93,6 +93,24 @@ When running a multi-phase experiment with varying a workload, one should provid
 
 ## Run Web3Bench
 
+### Before Running Web3Bench
+
+#### Create Database
+```bash
+# Connect to mysql or tidb server
+mysql -h <hostname> -u <username> -p<password> -P <port>
+
+# After connecting, create a new database by executing the following SQL command
+CREATE DATABASE <your_database_name>;
+```
+Replace <your_database_name> with the desired name for your database. Make sure to replace it with a valid database name that you want to use. This command will create a new database with the specified name.
+
+#### Check Configuration File
+
+- Check **DBUrl** to make sure that the database name is the same as the one you created in the previous step.
+- Check **username** and **password** to make sure that they are the same as the ones you used to connect to the database.
+- Check **scalefactor** to make sure that it is the same as the one you used to load data.
+
 ### Example
 Examples for loading data and run web3benchmark with scale factor = 3
 
