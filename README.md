@@ -7,8 +7,8 @@
 
 ## Build
 
-```
-cd [olxpbench.dir]
+```bash
+cd [Web3Bench.dir]
 ant bootstrap
 ant resolve
 ant build
@@ -105,29 +105,38 @@ CREATE DATABASE <your_database_name>;
 ```
 Replace <your_database_name> with the desired name for your database. Make sure to replace it with a valid database name that you want to use. This command will create a new database with the specified name.
 
+
 #### Check Configuration File
 
 - Check **DBUrl** to make sure that the database name is the same as the one you created in the previous step.
 - Check **username** and **password** to make sure that they are the same as the ones you used to connect to the database.
 - Check **scalefactor** to make sure that it is the same as the one you used to load data.
+    - Note: The value of the 'scalefactor' in both the data generation and running configuration files should be the same.
+    - To quick modify the value of 'scalefactor' in the configuration files, you can use the following command:
+        ```bash
+        sed -i 's/<scalefactor>.*<\/scalefactor>/<scalefactor>4<\/scalefactor>/g' config/*.xml
+        ```
+        Replace 4 with the desired value of 'scalefactor'.
+
 
 ### Example
 Examples for loading data and run web3benchmark with scale factor = 3
 
 - Load data with scale factor = 3
-  ```
-  cd [olxpbench.dir]
-  ./olxpbenchmark -b web3benchmark -c config/loadtest-scale3.xml --load=true  --create=true | tee log/loadertest-scale3.log
-  ```
-  or 
-  ```
-  cd script
-  nohup ./load-scale3.sh &
+  ```bash
+  cd [Web3Bench.dir]
+  # modify the value of 'scalefactor' in the configuration files
+  sed -i 's/<scalefactor>.*<\/scalefactor>/<scalefactor>3<\/scalefactor>/g' config/*.xml
+  
+  # load data
+  # method 1
+  ./olxpbenchmark -b web3benchmark -c config/loaddata.xml --load=true  --create=true | tee log/loaddata.log
+  # method 2
+  cd script; nohup ./loaddata.sh &
   ```
 - Run web3benchmark with scale factor = 3
-  ```
-  cd script
-  nohup ./run-scale3.sh &
+  ```bash
+  cd script; nohup ./runbench.sh &
   ```
 
 ### Command Line Options
@@ -171,18 +180,9 @@ usage: olxpbenchmark
 - **--load=true**: load data into the database
 - **--execute=true**: run the workload
 
-### Load Data
-```
-```
-
-### Run test
-```
-```
-
 ## Source Code
 - src/com/olxpbenchmark/benchmarks/web3benchmark/Web3Loader.java
-    - The data loader/genrator for web3benchmark
-
+    - The data loader for web3benchmark
 - src/com/olxpbenchmark/benchmarks/web3benchmark/procedures/*
     - The workloads for web3bench
 
@@ -191,3 +191,15 @@ usage: olxpbenchmark
 ### Output Directory
 - results/*
     - The result files for the benchmark
+
+### Parsing results
+- script/parse-res.py
+    - The script for parsing the result files and generating the summary file in csv format
+    - Edit the head of the script to change the path of the results you want to parse
+        - data = "": the path will be "results/"
+        - data = "???" (not empty): the path will be "results/???"
+    - Usage:
+        ```bash
+        cd script
+        python3 parse-res.py
+        ```

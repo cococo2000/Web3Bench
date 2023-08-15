@@ -713,7 +713,7 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
                 long gas_price = WEB3Util.randomNumber(1000, 10000000, benchmark.rng());
                 String input = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, benchmark.rng()));
                 long receipt_cumulative_gas_used = WEB3Util.randomNumber(100, 1000000, benchmark.rng());
-                long receipt_gas_used = WEB3Util.randomNumber(100, 1000000, benchmark.rng());
+                long receipt_gas_used = WEB3Util.randomNumber(10, gas, benchmark.rng());
                 String receipt_contract_address = WEB3Util.convertToContractAddressString(WEB3Util.randomNumber(1, numScale * WEB3Config.configContractsCount, benchmark.rng()));
                 String receipt_root = WEB3Util.randomHashString();
                 long receipt_status = WEB3Util.randomNumber(0, 100, benchmark.rng());

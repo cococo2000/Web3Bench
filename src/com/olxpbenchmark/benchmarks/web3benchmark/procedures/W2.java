@@ -56,7 +56,7 @@ public class W2 extends WEB3Procedure {
 
         // Small batch inserts (100 rows) for the transaction table.
         for (int i = 0; i < 100; i++) {
-            String hash = WEB3Util.convertToTxnHashString(WEB3Util.randomNumber(numScale * WEB3Config.configTransactionsCount, 3 * numScale * WEB3Config.configTransactionsCount, gen));
+            String hash = WEB3Util.convertToTxnHashString(10 * numScale * WEB3Config.configTransactionsCount + 100 * startNumber + i);
             long nonce = WEB3Util.randomNumber(0, 100, gen);
             long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
             String block_hash = WEB3Util.convertToBlockHashString(block_number);
@@ -68,7 +68,7 @@ public class W2 extends WEB3Procedure {
             long gas_price = WEB3Util.randomNumber(1000, 10000000, gen);
             String input = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
             long receipt_cumulative_gas_used = WEB3Util.randomNumber(100, 1000000, gen);
-            long receipt_gas_used = WEB3Util.randomNumber(100, 1000000, gen);
+            long receipt_gas_used = WEB3Util.randomNumber(10, gas, gen);
             String receipt_contract_address = WEB3Util.convertToContractAddressString(WEB3Util.randomNumber(1, numScale * WEB3Config.configContractsCount, gen));
             String receipt_root = WEB3Util.randomHashString();
             long receipt_status = WEB3Util.randomNumber(0, 100, gen);

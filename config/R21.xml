@@ -1,34 +1,34 @@
 <?xml version="1.0"?>
 <parameters>
-	
+    
     <!-- Connection details -->
     <dbtype>mysql</dbtype>
     <driver>com.mysql.jdbc.Driver</driver>
-    <DBUrl>jdbc:mysql://127.0.0.1:3500/ethereum1?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
+    <DBUrl>jdbc:mysql://127.0.0.1:3500/ethereum3?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
     <username>root</username>
     <password></password>
     <isolation>TRANSACTION_SERIALIZABLE</isolation>
     <distribution>rand</distribution>
     <uploadUrl></uploadUrl>
 
-    <scalefactor>1</scalefactor>
+    <scalefactor>3</scalefactor>
     
     <!-- The workload -->
     <terminals>1</terminals>
     <works>
         <work>
           <warmup>0</warmup>
-          <time>50</time>
-          <rate>20</rate>
+          <time>5</time>
+          <rate>1</rate>
           <weights>100</weights>
-	  <arrival>REGULAR</arrival>
+      <arrival>REGULAR</arrival>
         </work>
-	</works>
-	
-	<!-- TPCC specific -->  	
-   	<transactiontypes>
-	<transactiontype>
-		<name>R1</name>
+    </works>
+    
+    <!-- TPCC specific -->
+    <transactiontypes>
+        <transactiontype>
+            <name>R21</name>
         </transactiontype>
-   	</transactiontypes>	
+    </transactiontypes>
 </parameters>

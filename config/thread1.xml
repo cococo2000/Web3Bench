@@ -18,17 +18,34 @@
     <works>
         <work>
           <warmup>0</warmup>
-          <time>60</time>
-          <rate>1</rate>
-          <weights>100</weights>
+          <time>5</time>
+          <rate>300</rate>
+          <weights>80,3,3,4,4,3,3</weights>
       <arrival>REGULAR</arrival>
         </work>
     </works>
     
-    <!-- TPCC specific -->
     <transactiontypes>
         <transactiontype>
-            <name>R21</name>
+            <name>R1</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W11</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W12</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W13</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W14</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W4</name>
+        </transactiontype>
+        <transactiontype>
+            <name>W6</name>
         </transactiontype>
     </transactiontypes>
 </parameters>
