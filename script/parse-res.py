@@ -24,12 +24,13 @@ if data != "":
 print("Results directory: results/" + data)
 print("Parsing results...")
 # Read results from the CSV file
-csv_files = [ "../results/" + data + "thread1.csv"
-             ,"../results/" + data + "R21.csv"
-             ,"../results/" + data + "R22.csv"
-             ,"../results/" + data + "R23.csv"
-             ,"../results/" + data + "R24.csv"
-             ,"../results/" + data + "thread2.csv"]
+csv_files = [ "../results/" + data + "thread1.csv",
+              "../results/" + data + "R21.csv",
+              "../results/" + data + "R22.csv",
+              "../results/" + data + "R23.csv",
+              "../results/" + data + "R24.csv",
+              "../results/" + data + "thread2.csv"
+            ]
 
 for file in csv_files:
     df = pd.read_csv(file, names=["Transaction Type Index","Transaction Name","Start Time (microseconds)","Latency (microseconds)","Worker Id (start number)","Phase Id (index in config file)"], skiprows=1)
@@ -39,30 +40,30 @@ for file in csv_files:
         category = type_category.get(type_name)
         if category:
             if category not in load_stats:
-                load_stats[category] = {"Latency Time Total": 0, "Number of Occurrences": 0}
-            load_stats[category]["Latency Time Total"] += l_time
-            load_stats[category]["Number of Occurrences"] += 1
+                load_stats[category] = {"Total Latency": 0, "Number of Requests": 0}
+            load_stats[category]["Total Latency"] += l_time
+            load_stats[category]["Number of Requests"] += 1
 
 # Open the CSV file and write the header
 with open(export_csv_file, mode="w", newline="") as file:
-    fieldnames = ["Type Name", "Latency Time Total", "Number of Occurrences", "Avg Time(us)", "Avg Time(s)", "Requests per Hour"]
+    fieldnames = ["Type Name", "Total Latency", "Number of Requests", "Avg Latency(us)", "Avg Latency(s)", "Requests per Hour"]
     writer = csv.DictWriter(file, fieldnames=fieldnames)
     writer.writeheader()
 
     for type_name, category in type_category.items():
         stats = load_stats.get(category)
         if stats:
-            total_time = stats["Latency Time Total"]
-            num = stats["Number of Occurrences"]
+            total_time = stats["Total Latency"]
+            num = stats["Number of Requests"]
             avg_time_us = total_time / num if num != 0 else 0
             avg_time_s = avg_time_us / 1000000  # Convert microseconds to seconds
             requests_per_hour = 3600.0 / avg_time_s   # Calculate this value
             writer.writerow({
                 "Type Name": type_name,
-                "Latency Time Total": total_time,
-                "Number of Occurrences": num,
-                "Avg Time(us)": avg_time_us,
-                "Avg Time(s)": avg_time_s,
+                "Total Latency": total_time,
+                "Number of Requests": num,
+                "Avg Latency(us)": avg_time_us,
+                "Avg Latency(s)": avg_time_s,
                 "Requests per Hour": requests_per_hour
             })
 

@@ -11,19 +11,17 @@
     <uploadUrl></uploadUrl>
 
     <scalefactor>3</scalefactor>
-    
+
     <!-- The workload -->
     <terminals>1</terminals>
     <works>
         <work>
-          <warmup>0</warmup>
-          <serial>true</serial>
-          <rate>unlimited</rate>
-          <weights>all</weights>
+            <serial>true</serial>
+            <rate>unlimited</rate>
+            <weights>all</weights>
         </work>
     </works>
-    
-    <!-- TPCC specific -->
+
     <transactiontypes>
         <transactiontype>
             <name>R31</name>
@@ -54,3 +52,4 @@
         </transactiontype>
     </transactiontypes>
 </parameters>
+

@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <parameters>
-    
     <!-- Connection details -->
     <dbtype>mysql</dbtype>
     <driver>com.mysql.jdbc.Driver</driver>
@@ -17,14 +16,14 @@
     <terminals>1</terminals>
     <works>
         <work>
-          <warmup>0</warmup>
-          <time>5</time>
-          <rate>300</rate>
-          <weights>80,3,3,4,4,3,3</weights>
-      <arrival>REGULAR</arrival>
+            <warmup>0</warmup>
+            <time>5</time>
+            <rate>300</rate>
+            <weights>80,3,3,4,4,3,3</weights>
+            <arrival>REGULAR</arrival>
         </work>
     </works>
-    
+
     <transactiontypes>
         <transactiontype>
             <name>R1</name>

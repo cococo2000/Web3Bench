@@ -50,7 +50,7 @@ public class W12 extends WEB3Procedure {
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String address = WEB3Util.convertToContractAddressString(WEB3Util.randomNumber(numScale * WEB3Config.configContractsCount + 1, 3 * numScale * WEB3Config.configContractsCount, gen));
+        String address = WEB3Util.convertToContractAddressString(numScale * WEB3Config.configContractsCount + startNumber);
         String bytecode = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
         String function_sighashes = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
         boolean is_erc20 = false; // gen.nextBoolean();

@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <parameters>
-	
     <!-- Connection details -->
     <dbtype>mysql</dbtype>
     <driver>com.mysql.jdbc.Driver</driver>
@@ -12,23 +11,4 @@
     <uploadUrl></uploadUrl>
 
     <scalefactor>3</scalefactor>
-    
-    <!-- The workload -->
-    <terminals>1</terminals>
-    <works>
-        <work>
-          <warmup>0</warmup>
-          <time>50</time>
-          <rate>20</rate>
-          <weights>100</weights>
-	  <arrival>REGULAR</arrival>
-        </work>
-	</works>
-	
-	<!-- TPCC specific -->  	
-   	<transactiontypes>
-	<transactiontype>
-		<name>R1</name>
-        </transactiontype>
-   	</transactiontypes>	
 </parameters>

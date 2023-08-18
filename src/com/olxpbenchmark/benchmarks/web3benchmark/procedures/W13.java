@@ -54,7 +54,7 @@ public class W13 extends WEB3Procedure {
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String hash = WEB3Util.convertToTxnHashString(WEB3Util.randomNumber(numScale * WEB3Config.configTransactionsCount + 1, 3 * numScale * WEB3Config.configTransactionsCount, gen));
+        String hash = WEB3Util.convertToTxnHashString(numScale * WEB3Config.configTransactionsCount + startNumber);
         long nonce = WEB3Util.randomNumber(0, 100, gen);
         long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
         String block_hash = WEB3Util.convertToBlockHashString(block_number);

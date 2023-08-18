@@ -331,8 +331,7 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
 
             TransactionType type = invalidTT;
             try {
-                //System.out.println("type is : " + type.getName() + "   pieceOfWork : " + pieceOfWork);
-                type = doWork(preState == State.MEASURE, pieceOfWork);
+                type = doWork(preState == State.MEASURE, phase.isSerial(), pieceOfWork);
             } catch (IndexOutOfBoundsException e) {
                 if (phase.isThroughputRun()) {
                     LOG.error("Thread tried executing disabled phase!");
@@ -400,7 +399,7 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
      * 
      * @param llr
      */
-    protected final TransactionType doWork(boolean measure, SubmittedProcedure pieceOfWork) {
+    protected final TransactionType doWork(boolean measure, boolean serial, SubmittedProcedure pieceOfWork) {
         TransactionType next = null;
         TransactionStatus status = TransactionStatus.RETRY;
         Savepoint savepoint = null;
@@ -423,8 +422,12 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
                     // LOG.info("Created SavePoint: " + savepoint);
                     // }
 
-                    status = TransactionStatus.UNKNOWN;
-                    status = this.executeWork(next);
+                    // if (serial && !measure) {
+                    //     status = TransactionStatus.SUCCESS;
+                    // } else {
+                        status = TransactionStatus.UNKNOWN;
+                        status = this.executeWork(next);
+                    // }
 
                 // User Abort Handling
                 // These are not errors

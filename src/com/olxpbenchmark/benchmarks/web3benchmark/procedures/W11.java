@@ -54,7 +54,7 @@ public class W11 extends WEB3Procedure {
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        long number         = WEB3Util.randomNumber(numScale * WEB3Config.configBlocksCount + 1, 3 * numScale * WEB3Config.configBlocksCount, gen);
+        long number         = numScale * WEB3Config.configBlocksCount + startNumber;
         String hash         = WEB3Util.convertToBlockHashString(number);
         String parent_hash  = WEB3Util.convertToBlockHashString(number - 1);
         String nonce        = WEB3Util.randomHexString(42);

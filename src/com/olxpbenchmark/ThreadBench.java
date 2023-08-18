@@ -364,6 +364,9 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
         }
 
         long intervalNs = getInterval(lowestRate, phase.arrival);
+        if (phase.isSerial()) {
+            intervalNs = 1000000000; // 1 second
+        }
 
         long nextInterval = start + intervalNs;
         int nextToAdd = 1;
