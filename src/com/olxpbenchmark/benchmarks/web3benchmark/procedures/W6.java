@@ -50,7 +50,7 @@ public class W6 extends WEB3Procedure {
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String hash = WEB3Util.convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
+        String hash = WEB3Util.convertToTxnHashString(startNumber % (WEB3Config.configTransactionsCount * numScale));
 
         query_stmt.setString(1, hash);
         if (trace) LOG.trace("query_stmt W6 single record deletes for the transaction table START");

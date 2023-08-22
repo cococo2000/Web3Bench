@@ -341,7 +341,6 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
         }
 
         this.createWorkerThreads();
-        testState.blockForStart();
 
         // long measureStart = start;
 
@@ -363,10 +362,16 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
             }
         }
 
-        long intervalNs = getInterval(lowestRate, phase.arrival);
-        if (phase.isSerial()) {
-            intervalNs = 1000000000; // 1 second
+        // Change testState to cold query if execution is serial, since we don't
+        // have a warm-up phase for serial execution but execute a cold and a
+        // measured query in sequence.
+        if (phase != null && phase.isLatencyRun()) {
+            synchronized (testState) {
+                testState.startColdQuery();
+            }
         }
+
+        long intervalNs = getInterval(lowestRate, phase.arrival);
 
         long nextInterval = start + intervalNs;
         int nextToAdd = 1;
@@ -381,9 +386,11 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
         if(this.intervalMonitor > 0 ) {
             new MonitorThread(this.intervalMonitor).start();
         }
+        // Allow workers to start work.
+        testState.blockForStart();
 
         // Main Loop
-        while (true) {           
+        while (true) {
             // posting new work... and reseting the queue in case we have new
             // portion of the workload...
 
@@ -470,11 +477,11 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
                             } else if (phase != null) {
                                 phase.resetSerial();
                                 LOG.info(phase.currentPhaseString());
-                            if (phase.rate < lowestRate) {
-                                lowestRate = phase.rate;
+                                if (phase.rate < lowestRate) {
+                                    lowestRate = phase.rate;
+                                }
                             }
                         }
-                    }
                     }
                     if (phase != null) {
                         // update frequency in which we check according to
@@ -512,11 +519,6 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
                 }
                 start = now;
                 LOG.info(StringUtil.bold("MEASURE") + " :: Warmup complete, starting measurements.");
-                //microadd
-                for (WorkloadConfiguration workConf : workConfs) {
-                    long original = System.currentTimeMillis();
-                    workConf.setOriginalTime(original);
-                }
                 // measureEnd = measureStart + measureSeconds * 1000000000L;
 
                 // For serial executions, we want to do every query exactly

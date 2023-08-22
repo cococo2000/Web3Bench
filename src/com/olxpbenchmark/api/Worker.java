@@ -368,6 +368,13 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
                     // changed, otherwise we're recording results for a query
                     // that either started during the warmup phase or ended
                     // after the timer went off.
+                    if (postPhase == null) {
+                        // Need a null check on postPhase since current phase being null is used in WorkloadState
+                        // and ThreadBench as the indication that the benchmark is over. However, there's a race
+                        // condition with postState not being changed from MEASURE to DONE yet, so we entered the
+                        // switch. In this scenario, just break from the switch.
+                        break;
+                    }
                     if (preState == State.MEASURE && type != null &&
                         postPhase != null && postPhase.id == phase.id) {
                         latencies.addLatency(type.getId(), start, end, this.id, phase.id);
@@ -422,12 +429,12 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
                     // LOG.info("Created SavePoint: " + savepoint);
                     // }
 
-                    // if (serial && !measure) {
-                    //     status = TransactionStatus.SUCCESS;
-                    // } else {
+                    if (serial && !measure) {
+                        status = TransactionStatus.SUCCESS;
+                    } else {
                         status = TransactionStatus.UNKNOWN;
                         status = this.executeWork(next);
-                    // }
+                    }
 
                 // User Abort Handling
                 // These are not errors
