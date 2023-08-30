@@ -10,6 +10,22 @@ The benchmark encompasses a spectrum of tasks, including transactional, analytic
 - Install Java (v1.7 or newer) and Apache Ant.
 - Deploy TiDB cluster following the [TiDB documentation](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb).
 
+## Quick Start Guide
+Below are the steps to promptly initiate Web3Bench with a scale factor of 3 on TiDB. The provided instructions cover a scenario with a database containing 3000 blocks, 240000 transactions, 2100 contracts, and 54000 token transfers, resulting in a database size of approximately 240MB. The total testing process is configured to last around 5 minutes.
+
+```bash
+cd [Web3Bench.dir]/script
+# Adjust the values in config.sh to match your environment, and then run the following commands to modify the configuration files and create the database
+./config.sh
+# Load the data (including building the project, generating data and loading data)
+./loaddata.sh
+# Execute Web3Bench
+./runbench.sh
+# Parse the results
+python3 parse-res.py
+# The outcomes will be saved in script/res.csv
+```
+
 ## Build Process
 1. Navigate to the project directory:
     ```bash
@@ -30,7 +46,30 @@ The benchmark encompasses a spectrum of tasks, including transactional, analytic
 
 ## Config
 
-### Configuration Directory
+### Quick Configuration
+
+- script/config.sh
+    - The script for modifying the configuration files and creating the database
+    - To adjust database settings such as name, access credentials, scaling factor, test duration, etc., edit the top section of the script:
+        ```shell
+        ###########################################################
+        is_tidb_server=true
+        new_ip='127.0.0.1'
+        new_port=4000
+        new_dbname=web3bench
+        new_username=root
+        new_password='@tX3CJ*6TG8P0+7S9^'
+        new_scalefactor=3
+        # Test time in minutes
+        new_time=3 
+        ###########################################################
+        ```
+    - Usage:
+        ```bash
+        cd script
+        ./config.sh
+        ```
+### Configuration files
 - config/*
     - This directory contains various configuration files used for testing on the VM. Each configuration file is designed to facilitate specific testing scenarios and workloads.
         - `loaddata.xml`: the configuration file for loading data into the database
@@ -43,11 +82,21 @@ The benchmark encompasses a spectrum of tasks, including transactional, analytic
 
 
 ### Workload Descriptor
-Web3Bench uses a configuration file to drive a given benchmark. 
-The workload descriptor (or configuration file) provides the general information to access the database (driver, URL, credential .. etc), benchmark specific options and most importantly, the workload mix.
-When running a multi-phase experiment with varying a workload, one should provide multiple <work> sections with their duration, rate, and the weight of each transaction. 
+Web3Bench utilizes a configuration file to facilitate the execution of a designated benchmark. 
+The workload descriptor (or configuration file) serves to furnish essential details for database access, such as the driver, URL, credentials, and other pertinent information. Additionally, it accommodates benchmark-specific preferences and, notably, the composition of the workload mixture.
 
-> Note: weights have to sum up to 100%. The transactions are listed in the benchmark specific section <transactiontypes>. The order in which the transactions are declared is the same as their respective weights.
+When running a multi-phase experiment with varying a workload, it is imperative to include multiple sections within the configuration file. Each section should encompass details about the duration, rate, and weight of each transactions.
+
+> Note: weights have to sum up to 100%. The transactions are listed in the benchmark specific section labeled "transactiontypes". The order in which the transactions are declared is the same as their respective weights.
+
+- **DBUrl**: the URL to access the database
+- **username**: the username to access the database
+- **password**: the password to access the database
+- **scalefactor**: the scale factor for loading data. When saclefactor = 1, the data size is around 80MB.
+- **time**: the duration of the workload in minutes
+- **rate**: the sending rate of the workload in transactions per minute
+- **weights**: the weights of the transactions in the workload. The sum of the weights should be 100.
+- **transactiontypes**: the list of transactions in the workload. The order of the transactions should be the same as the order of the weights.
 
 ```xml
 <?xml version="1.0"?>
@@ -55,7 +104,7 @@ When running a multi-phase experiment with varying a workload, one should provid
     <!-- Connection details -->
     <dbtype>mysql</dbtype>
     <driver>com.mysql.jdbc.Driver</driver>
-    <DBUrl>jdbc:mysql://127.0.0.1:3500/ethereum3?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
+    <DBUrl>jdbc:mysql://127.0.0.1:4000/web3bench?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
     <username>root</username>
     <password></password>
     <isolation>TRANSACTION_SERIALIZABLE</isolation>
@@ -69,104 +118,31 @@ When running a multi-phase experiment with varying a workload, one should provid
     <works>
         <work>
             <warmup>0</warmup>
-            <time>60</time>
-            <rate>300</rate>
-            <weights>80,3,3,4,4,3,3</weights>
+            <time>5</time>
+            <rate>1</rate>
+            <weights>100</weights>
             <arrival>REGULAR</arrival>
         </work>
     </works>
 
     <transactiontypes>
         <transactiontype>
-            <name>R1</name>
-        </transactiontype>
-        <transactiontype>
-            <name>W11</name>
-        </transactiontype>
-        <transactiontype>
-            <name>W12</name>
-        </transactiontype>
-        <transactiontype>
-            <name>W13</name>
-        </transactiontype>
-        <transactiontype>
-            <name>W14</name>
-        </transactiontype>
-        <transactiontype>
-            <name>W4</name>
-        </transactiontype>
-        <transactiontype>
-            <name>W6</name>
+            <name>R21</name>
         </transactiontype>
     </transactiontypes>
 </parameters>
 ```
-
-- **DBUrl**: the URL to access the database
-- **username**: the username to access the database
-- **password**: the password to access the database
-- **scalefactor**: the scale factor for loading data. When saclefactor = 1, the data size is around 25GB.
-- **time**: the duration of the workload in minutes
-- **rate**: the sending rate of the workload in transactions per minute
-- **weights**: the weights of the transactions in the workload. The sum of the weights should be 100.
-- **transactiontypes**: the list of transactions in the workload. The order of the transactions should be the same as the order of the weights.
-
 ## Run Web3Bench
 
-### Before Running Web3Bench
-
-#### Create Database
+### Load data
 ```bash
-# Connect to mysql or tidb server
-mysql -h <hostname> -u <username> -p <password> -P <port>
-
-# After connecting, create a new database by executing the following SQL command
-CREATE DATABASE <your_database_name>;
-```
-Replace <your_database_name> with the desired name for your database. Make sure to replace it with a valid database name that you want to use. This command will create a new database with the specified name.
-
-If you are running Web3Bench on TiDB, you need to execute the following SQL command to disable the isolation level check. Otherwise, you will get the error `The isolation level 'SERIALIZABLE' is not supported`.
-```sql
-set global tidb_skip_isolation_level_check=1;
+cd script; nohup ./loaddata.sh &
 ```
 
-#### Check Configuration Files
-
-- Check **DBUrl** to make sure that the database name is the same as the one you created in the previous step.
-- Check **username** and **password** to make sure that they are the same as the ones you used to connect to the database.
-- Check **scalefactor** to make sure that it is the same as the one you used to load data.
-    - Note: The value of the 'scalefactor' in both the data generation and running configuration files should be the same.
-    - To quick modify the value of 'scalefactor' in the configuration files, you can use the following command:
-        ```bash
-        sed -i 's/<scalefactor>.*<\/scalefactor>/<scalefactor>4<\/scalefactor>/g' config/*.xml
-        ```
-        Replace 4 with the desired value of 'scalefactor'.
-
-
-### Example
-Examples for loading data and run web3benchmark with scale factor = 3
-
-- Load data with scale factor = 3
-  ```bash
-  cd [Web3Bench.dir]
-  # modify the value of 'scalefactor' in the configuration files
-  sed -i 's/<scalefactor>.*<\/scalefactor>/<scalefactor>3<\/scalefactor>/g' config/*.xml
-  
-  # load data
-  # method 1
-  ./olxpbenchmark -b web3benchmark -c config/loaddata.xml --load=true  --create=true | tee log/loaddata.log
-  # method 2
-  cd script; nohup ./loaddata.sh &
-  ```
-- Run web3benchmark with scale factor = 3
-  ```bash
-  cd [Web3Bench.dir]
-  # modify the value of 'scalefactor' in the configuration files
-  sed -i 's/<scalefactor>.*<\/scalefactor>/<scalefactor>3<\/scalefactor>/g' config/*.xml
-
-  # run web3benchmark
-  cd script; nohup ./runbench.sh &
-  ```
+### Execute Web3Bench
+```bash
+cd script; nohup ./runbench.sh &
+```
 
 ### Command Line Options
 ```bash

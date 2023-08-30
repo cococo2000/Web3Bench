@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Navigate to the project directory
 cd ..
 
 ./olxpbenchmark -b web3benchmark -c config/runthread1.xml  --execute=true -o thread1  | tee log/thread1.log &
