@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# modify the config
+./config.sh
+
 # Navigate to the project directory
 cd ..
 

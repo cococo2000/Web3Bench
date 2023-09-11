@@ -15,9 +15,8 @@ Below are the steps to promptly initiate Web3Bench with a scale factor of 3 on T
 
 ```bash
 cd [Web3Bench.dir]/script
-# Adjust the values in config.sh to match your environment, and then run the following commands to modify the configuration files and create the database
-./config.sh
-# Load the data (including building the project, generating data and loading data)
+# Load the data (including executing config.sh, building the project, generating data and loading data)
+# config.sh: modify the configuration files according to the values in config.sh to match your environment and then create the database
 ./loaddata.sh
 # Execute Web3Bench
 ./runbench.sh
