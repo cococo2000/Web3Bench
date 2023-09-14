@@ -13,23 +13,24 @@ new_scalefactor=3
 new_time=5
 ###########################################################
 
-# Create .my.cnf file
-echo "[client]" > my.cnf
-echo "user=$new_username" >> my.cnf
-echo "password=$new_password" >> my.cnf
+# Create ~/mysql.cnf file
+mysql_config_file=~/mysql.cnf
+echo "[client]" > $mysql_config_file
+echo "user=$new_username" >> $mysql_config_file
+echo "password=$new_password" >> $mysql_config_file
 
 # Create database
 echo "Creating database $new_dbname if not exists"
-mysql --defaults-extra-file=my.cnf -h $new_ip -P $new_port -e "CREATE DATABASE IF NOT EXISTS $new_dbname;"
+mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "CREATE DATABASE IF NOT EXISTS $new_dbname;"
 
 # When using TiDB, we need to set tidb_skip_isolation_level_check=1 to disable the isolation level check.
 if [ $is_tidb_server = true ] ; then
     echo "TiDB server detected, setting tidb_skip_isolation_level_check=1"
-    mysql --defaults-extra-file=my.cnf -h $new_ip -P $new_port -e "set global tidb_skip_isolation_level_check=1;"
+    mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "set global tidb_skip_isolation_level_check=1;"
 fi
 
-# Delete .my.cnf file
-rm my.cnf
+# Delete $mysql_config_file file
+rm $mysql_config_file
 
 # List of files to process
 files=("loaddata.xml" 
@@ -55,13 +56,11 @@ echo "###########################################################"
 
 for file in "${files[@]}"; do
     if [ -f "../config/$file" ]; then
-        sed -i "s#<DBUrl>.*</DBUrl>#<DBUrl>$new_dburl</DBUrl>#g" "../config/$file"
-        sed -i "s#<username>.*</username>#<username>$new_username</username>#g" "../config/$file"
-        sed -i "s#<password>.*</password>#<password>$new_password</password>#g" "../config/$file"
-        sed -i "s#<scalefactor>.*</scalefactor>#<scalefactor>$new_scalefactor</scalefactor>#g" "../config/$file"
-        if [ $file != "runthread2.xml" ]; then
-            sed -i "s#<time>.*</time>#<time>$new_time</time>#g" "../config/$file"
-        fi
+        sed -i"" "s#<DBUrl>.*</DBUrl>#<DBUrl>$new_dburl</DBUrl>#g" "../config/$file"
+        sed -i"" "s#<username>.*</username>#<username>$new_username</username>#g" "../config/$file"
+        sed -i"" "s#<password>.*</password>#<password>$new_password</password>#g" "../config/$file"
+        sed -i"" "s#<scalefactor>.*</scalefactor>#<scalefactor>$new_scalefactor</scalefactor>#g" "../config/$file"
+        sed -i"" "s#<time>.*</time>#<time>$new_time</time>#g" "../config/$file"
         echo -e "\tFile $file modified"
     else
         echo -e "\tFile $file doesn't exist"
