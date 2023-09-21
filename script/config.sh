@@ -43,6 +43,17 @@ files=("loaddata.xml"
 )
 
 # Modify config files
+#!/bin/bash
+
+# Check the operating system
+if [ "$(uname)" == "Darwin" ]; then
+    # macOS
+    SED_INPLACE_OPTION="-i ''"
+else
+    # Linux or other Unix-like OS
+    SED_INPLACE_OPTION="-i"
+fi
+
 echo "Modifying config files with new values"
 # New DBUrl
 new_dburl="jdbc:mysql://$new_ip:$new_port/$new_dbname?useSSL=false\&amp;characterEncoding=utf-8"
@@ -56,11 +67,11 @@ echo "###########################################################"
 
 for file in "${files[@]}"; do
     if [ -f "../config/$file" ]; then
-        sed -i"" "s#<DBUrl>.*</DBUrl>#<DBUrl>$new_dburl</DBUrl>#g" "../config/$file"
-        sed -i"" "s#<username>.*</username>#<username>$new_username</username>#g" "../config/$file"
-        sed -i"" "s#<password>.*</password>#<password>$new_password</password>#g" "../config/$file"
-        sed -i"" "s#<scalefactor>.*</scalefactor>#<scalefactor>$new_scalefactor</scalefactor>#g" "../config/$file"
-        sed -i"" "s#<time>.*</time>#<time>$new_time</time>#g" "../config/$file"
+        sed $SED_INPLACE_OPTION "s#<DBUrl>.*</DBUrl>#<DBUrl>$new_dburl</DBUrl>#g" "../config/$file"
+        sed $SED_INPLACE_OPTION "s#<username>.*</username>#<username>$new_username</username>#g" "../config/$file"
+        sed $SED_INPLACE_OPTION "s#<password>.*</password>#<password>$new_password</password>#g" "../config/$file"
+        sed $SED_INPLACE_OPTION "s#<scalefactor>.*</scalefactor>#<scalefactor>$new_scalefactor</scalefactor>#g" "../config/$file"
+        sed $SED_INPLACE_OPTION "s#<time>.*</time>#<time>$new_time</time>#g" "../config/$file"
         echo -e "\tFile $file modified"
     else
         echo -e "\tFile $file doesn't exist"
