@@ -2,7 +2,7 @@
 <parameters>
     <!-- Connection details -->
     <dbtype>mysql</dbtype>
-    <driver>com.mysql.jdbc.Driver</driver>
+    <driver>com.mysql.cj.jdbc.Driver</driver>
     <DBUrl>jdbc:mysql://127.0.0.1:3500/ethereum3?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
     <username>root</username>
     <password></password>
