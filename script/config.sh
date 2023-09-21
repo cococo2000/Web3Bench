@@ -65,9 +65,6 @@ echo "New scalefactor: $new_scalefactor"
 echo "New time: $new_time"
 echo "###########################################################"
 
-# List of files to modify
-files=("file1.txt" "file2.txt" "file3.txt")
-
 for file in "${files[@]}"; do
     if [ -f "../config/$file" ]; then
         sed $SED_INPLACE_OPTION "s#<DBUrl>.*</DBUrl>#<DBUrl>$new_dburl</DBUrl>#g" "../config/$file"
