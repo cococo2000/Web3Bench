@@ -48,7 +48,7 @@ public class W2 extends WEB3Procedure {
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale) throws SQLException {
+    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
@@ -56,7 +56,7 @@ public class W2 extends WEB3Procedure {
 
         // Small batch inserts (100 rows) for the transaction table.
         for (int i = 0; i < 100; i++) {
-            String hash = WEB3Util.convertToTxnHashString(10 * numScale * WEB3Config.configTransactionsCount + 100 * startNumber + i);
+            String hash = WEB3Util.convertToTxnHashString(10 * numScale * WEB3Config.configTransactionsCount + 100 * startNumber + i, nodeid);
             long nonce = WEB3Util.randomNumber(0, 100, gen);
             long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
             String block_hash = WEB3Util.convertToBlockHashString(block_number);

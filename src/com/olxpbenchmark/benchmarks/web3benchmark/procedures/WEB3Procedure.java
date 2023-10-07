@@ -48,5 +48,5 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 
 public abstract class WEB3Procedure extends Procedure {
     // rand and iRand
-    public abstract ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale) throws SQLException;
+    public abstract ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException;
 }

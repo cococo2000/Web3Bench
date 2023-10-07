@@ -44,13 +44,13 @@ public class W12 extends WEB3Procedure {
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale) throws SQLException {
+    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String address = WEB3Util.convertToContractAddressString(numScale * WEB3Config.configContractsCount + startNumber);
+        String address = WEB3Util.convertToContractAddressString(numScale * WEB3Config.configContractsCount + startNumber, nodeid);
         String bytecode = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
         String function_sighashes = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
         boolean is_erc20 = false; // gen.nextBoolean();

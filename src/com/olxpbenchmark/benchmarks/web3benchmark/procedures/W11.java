@@ -48,14 +48,14 @@ public class W11 extends WEB3Procedure {
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale) throws SQLException {
+    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
         long number         = numScale * WEB3Config.configBlocksCount + startNumber;
-        String hash         = WEB3Util.convertToBlockHashString(number);
+        String hash         = WEB3Util.convertToBlockHashString(number, nodeid);
         String parent_hash  = WEB3Util.convertToBlockHashString(number - 1);
         String nonce        = WEB3Util.randomHexString(42);
         String sha3_uncles       = WEB3Util.randomHashString();

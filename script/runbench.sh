@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Delete old results in ../results directory after 10s
+if [ -d "../results" ]; then
+    echo "Deleting old results in ../results directory after 10s"
+    sleep 10
+    rm -rf ../results/*.*
+fi
+
 # modify the config
 ./config.sh
 

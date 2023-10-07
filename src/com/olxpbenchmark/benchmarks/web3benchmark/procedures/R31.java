@@ -34,8 +34,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class R31 extends WEB3Procedure {
 
@@ -54,7 +52,7 @@ public class R31 extends WEB3Procedure {
     );
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale) throws SQLException {
+    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
         
         // initializing prepared statements

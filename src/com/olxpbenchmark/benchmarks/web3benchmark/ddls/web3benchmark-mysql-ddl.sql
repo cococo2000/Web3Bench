@@ -5,8 +5,8 @@ DROP TABLE IF EXISTS blocks;
 
 CREATE TABLE blocks (
   timestamp bigint,
-  number bigint PRIMARY KEY,
-  hash varchar(66),
+  number bigint,
+  hash varchar(66) PRIMARY KEY,
   parent_hash varchar(66) DEFAULT NULL,
   nonce varchar(42) DEFAULT NULL,
   sha3_uncles varchar(66) DEFAULT NULL,
@@ -65,12 +65,21 @@ CREATE TABLE token_transfers (
   block_number bigint
 );
 
+-- Add indexes
+CREATE INDEX idx_blocks_number ON blocks (number);
+CREATE INDEX idx_transactions_to_address ON transactions (to_address);
+-- CREATE INDEX idx_tt_from_address ON token_transfers (from_address);
+-- CREATE INDEX idx_tt_to_address ON token_transfers (to_address);
+-- CREATE INDEX idx_tt_from_to_address ON token_transfers (from_address, to_address);
+
+-- Add foreign keys
 ALTER TABLE contracts ADD FOREIGN KEY fk_bn (block_number) REFERENCES blocks (number);
 ALTER TABLE transactions ADD FOREIGN KEY fk_bn (block_number) REFERENCES blocks (number);
 ALTER TABLE transactions ADD FOREIGN KEY fk_ca (receipt_contract_address) REFERENCES contracts (address);
 ALTER TABLE token_transfers ADD FOREIGN KEY fk_bn (block_number) REFERENCES blocks (number);
 ALTER TABLE token_transfers ADD FOREIGN KEY fk_th (transaction_hash) REFERENCES transactions (hash) ON DELETE CASCADE;
 
+-- Add constraints
 ALTER TABLE blocks ADD CONSTRAINT check_block_gas_used CHECK (gas_limit >= gas_used);
 ALTER TABLE transactions ADD CONSTRAINT check_txn_gas_used CHECK (receipt_gas_used <= gas);
 
@@ -98,8 +107,3 @@ CREATE TABLE temp_table (
   max_priority_fee_per_gas bigint,
   transaction_type bigint
 );
-
-CREATE INDEX idx_transactions_to_address ON transactions (to_address);
--- CREATE INDEX idx_tt_from_address ON token_transfers (from_address);
--- CREATE INDEX idx_tt_to_address ON token_transfers (to_address);
--- CREATE INDEX idx_tt_from_to_address ON token_transfers (from_address, to_address);

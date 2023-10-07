@@ -62,6 +62,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.net.InetAddress;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -204,14 +205,21 @@ public class DBWorkload {
             return;
         }
         
-        
-        
         // Seconds
         int intervalMonitor = 0;
         if (argsLine.hasOption("im")) {
             intervalMonitor = Integer.parseInt(argsLine.getOptionValue("im"));
         }
-        
+
+        // Get Host Name to generate the node id
+        String hostName = "default";
+        try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            hostName = localHost.getHostName();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // -------------------------------------------------------------------
         // GET PLUGIN LIST
         // -------------------------------------------------------------------
@@ -267,6 +275,8 @@ public class DBWorkload {
 
             String isolationMode = xmlConfig.getString("isolation[not(@bench)]", "TRANSACTION_SERIALIZABLE");
             wrkld.setIsolationMode(xmlConfig.getString("isolation" + pluginTest, isolationMode));
+            wrkld.setNodeId(xmlConfig.getString("nodeid", "node")
+                + "-" + hostName.substring(0, Math.min(hostName.length(), 5)));
             wrkld.setScaleFactor(xmlConfig.getDouble("scalefactor", 1.0));
             wrkld.setRecordAbortMessages(xmlConfig.getBoolean("recordabortmessages", false));
             wrkld.setDataDir(xmlConfig.getString("datadir", "."));
@@ -315,6 +325,7 @@ public class DBWorkload {
             initDebug.put("Driver", wrkld.getDBDriver());
             initDebug.put("URL", wrkld.getDBConnection());
             initDebug.put("Isolation", wrkld.getIsolationString());
+            initDebug.put("NodeId", wrkld.getNodeId());
             initDebug.put("Scale Factor", wrkld.getScaleFactor());
             //microadd
             initDebug.put("Distribution", wrkld.getDistri());

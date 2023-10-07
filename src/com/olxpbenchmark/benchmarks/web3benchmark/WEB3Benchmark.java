@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WEB3Benchmark extends BenchmarkModule {
@@ -100,9 +101,7 @@ public class WEB3Benchmark extends BenchmarkModule {
 
         String generator = workConf.getDistri();
 
-       // int totalItem = workConf.getScaleFactor() * workConf.get
-
-        int numScale = (int) workConf.getScaleFactor();//tpccConf.getNumWarehouses();
+        int numScale = (int) workConf.getScaleFactor();
         if (numScale <= 0) {
             numScale = 1;
         }
@@ -124,9 +123,7 @@ public class WEB3Benchmark extends BenchmarkModule {
             }
         assert terminals[terminals.length - 1] != null;
 
-        ArrayList<WEB3Worker> ret = new ArrayList<WEB3Worker>();
-        for (WEB3Worker w : terminals)
-            ret.add(w);
+        ArrayList<WEB3Worker> ret = new ArrayList<>(Arrays.asList(terminals));
         return ret;
     }
 

@@ -84,7 +84,8 @@ public class WorkloadConfiguration {
 	private String db_name;
 	private String db_username;
 	private String db_password;
-	private String db_driver;	
+	private String db_driver;
+	private String node_id;
 	private double scaleFactor = 1.0;
 	private double selectivity = -1.0;
 	private int terminals;
@@ -154,7 +155,6 @@ public class WorkloadConfiguration {
 	public String getDistri() {
 		return distri;
 	}
-
 
 	public void setOriginalTime(long original) {
     	this.originalTime = original;
@@ -272,6 +272,22 @@ public class WorkloadConfiguration {
         return (this.recordAbortMessages);
     }
 	
+	/*
+	 * Set the node id of the current node
+	 * @param node_id the node id
+	 */
+
+	public void setNodeId(String node_id) {
+		this.node_id = node_id;
+	}
+	/*
+	 * Return the node id of the current node
+	 * @return the node id
+	 */
+	public String getNodeId() {
+		return node_id;
+	}
+
 	/**
 	 * Set the scale factor for the database
 	 * A value of 1 means the default size.

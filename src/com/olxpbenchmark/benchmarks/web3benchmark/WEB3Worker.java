@@ -108,10 +108,11 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
             int upperLimit = workConf.getStartNum() + deltaNumber - 1;
 
             int startNumber = startRecord.nextInt();
-            //sLOG.info("Print ccrand1");
+            String nodeid = workConf.getNodeId();
+
             WEB3Procedure proc = (WEB3Procedure) this.getProcedure(nextTransaction.getProcedureClass());
             if (distribution.equals("rand")) {
-                proc.run(conn, gen, this, startNumber, 0, numScale);
+                proc.run(conn, gen, this, startNumber, 0, numScale, nodeid);
             } 
             // else if (distribution.equals("zipf")) {
             //     proc.run(conn, numScale, this, startNumber, 0);
@@ -120,7 +121,7 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
             //     proc.run(conn, this, startNumber, 0, numScale, "poisson");
             // }
             else if (distribution.equals("iRand")) {
-                proc.run(conn, gen, this, startNumber, upperLimit, numScale);
+                proc.run(conn, gen, this, startNumber, upperLimit, numScale, nodeid);
             }
             // else if (distribution.equals("iZipf")) {
             //     proc.run(conn, numScale, this, startNumber, upperLimit);

@@ -142,9 +142,15 @@ public class WEB3Util {
     public static String convertToBlockHashString(long index) {
         return convertToHexString(index, WEB3Config.configHashLength, "block");
     }
+    public static String convertToBlockHashString(long index, String nodeid) {
+        return convertToHexString(index, WEB3Config.configHashLength, "blk" + nodeid);
+    }
 
     public static String convertToTxnHashString(long index) {
         return convertToHexString(index, WEB3Config.configHashLength, "txn");
+    }
+    public static String convertToTxnHashString(long index, String nodeid) {
+        return convertToHexString(index, WEB3Config.configHashLength, "txn" + nodeid);
     }
 
     public static String convertToAddressString(long index) {
@@ -161,6 +167,9 @@ public class WEB3Util {
 
     public static String convertToContractAddressString(long index) {
         return convertToHexString(index, WEB3Config.configAddressLength, "contract");
+    }
+    public static String convertToContractAddressString(long index, String nodeid) {
+        return convertToHexString(index, WEB3Config.configAddressLength, "ct" + nodeid);
     }
 
     // public static String getCurrentTime() {

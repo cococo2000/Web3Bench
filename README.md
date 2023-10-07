@@ -18,11 +18,25 @@ cd [Web3Bench.dir]/script
 # Load the data (including executing config.sh, building the project, generating data and loading data)
 # config.sh: modify the configuration files according to the values in config.sh to match your environment and then create the database
 ./loaddata.sh
+
 # Execute Web3Bench
 ./runbench.sh
+
 # Parse the results
 python3 parse-res.py
 # The outcomes will be saved in script/res.csv
+```
+If you execute Web3Bench on multiple machines, you can merge the results by running the following command
+```bash
+python3 import-res2db.py
+```
+The results will be imported into the table res_table in the database you specified in the script (e.g., web3bench). The table res_table will be created if it does not exist. 
+Then you can get the results from the database by running the following command
+```sql
+select txn_name, count(*) as count, avg(latency_ms) as avg_latency_ms
+from res_table 
+group by txn_name 
+order by txn_name;
 ```
 
 ## Build Process
@@ -102,7 +116,7 @@ When running a multi-phase experiment with varying a workload, it is imperative 
 <parameters>
     <!-- Connection details -->
     <dbtype>mysql</dbtype>
-    <driver>com.mysql.jdbc.Driver</driver>
+    <driver>com.mysql.cj.jdbc.Driver</driver>
     <DBUrl>jdbc:mysql://127.0.0.1:4000/web3bench?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
     <username>root</username>
     <password></password>
@@ -201,6 +215,30 @@ usage: olxpbenchmark
         cd script
         python3 parse-res.py
         ```
+- script/import-res2db.py
+    - The script for importing the result files into the database
+        - All the result files in csv format will be imported into the table **res_table** in the database you specified in the script
+        - The table **res_table** will be created if it does not exist
+            ```sql
+            CREATE TABLE IF NOT EXISTS res_table (
+                id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+                hostname        VARCHAR(30),
+                txn_type_index  BIGINT,
+                txn_name        VARCHAR(10),
+                start_time_ms   DECIMAL(20, 6),
+                latency_ms      BIGINT,
+                worker_id       INT,
+                phase_id        INT
+            );
+            ```
+    - Get the results from the database
+        ```sql
+        select * from res_table;
+        ```
+    - Get the average latency of each transaction
+        ```sql
+        select txn_name, count(*), avg(latency_ms) from res_table group by txn_name order by txn_name;
+        ```
 
 ## Implementation
 
@@ -208,8 +246,8 @@ usage: olxpbenchmark
 ```sql
 CREATE TABLE blocks (
   timestamp bigint,
-  number bigint PRIMARY KEY,
-  hash varchar(66),
+  number bigint,
+  hash varchar(66) PRIMARY KEY,
   parent_hash varchar(66) DEFAULT NULL,
   nonce varchar(42) DEFAULT NULL,
   sha3_uncles varchar(66) DEFAULT NULL,
@@ -268,7 +306,11 @@ CREATE TABLE token_transfers (
   block_number bigint
 );
 
---  Add foreign keys
+-- Add indexes
+CREATE INDEX idx_blocks_number ON blocks (number);
+CREATE INDEX idx_transactions_to_address ON transactions (to_address);
+
+-- Add foreign keys
 ALTER TABLE contracts ADD FOREIGN KEY fk_bn (block_number) REFERENCES blocks (number);
 ALTER TABLE transactions ADD FOREIGN KEY fk_bn (block_number) REFERENCES blocks (number);
 ALTER TABLE transactions ADD FOREIGN KEY fk_ca (receipt_contract_address) REFERENCES contracts (address);

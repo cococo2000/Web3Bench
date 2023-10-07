@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+set -x
 # modify the config
 ./config.sh
 
@@ -13,3 +15,6 @@ ant clean
 ant build
 # Start loading data
 ./olxpbenchmark -b web3benchmark -c config/loaddata.xml --load=true  --create=true | tee log/loaddata.log
+
+set +x
+set +e
