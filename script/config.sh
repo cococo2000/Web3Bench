@@ -7,7 +7,7 @@ new_ip='127.0.0.1'
 new_port=4000
 new_dbname=web3bench
 new_username=root
-new_password=''
+new_password=
 new_nodeid="main"
 new_scalefactor=30
 new_terminals=5
@@ -34,8 +34,8 @@ mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "DROP 
 
 # When using TiDB, we need to set tidb_skip_isolation_level_check=1 to disable the isolation level check.
 if [ $is_tidb_server = true ] ; then
-    echo "TiDB server detected, setting tidb_skip_isolation_level_check=1"
-    mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "set global tidb_skip_isolation_level_check=1;"
+   echo "TiDB server detected, setting tidb_skip_isolation_level_check=1"
+   mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "set global tidb_skip_isolation_level_check=1;"
 fi
 
 set +x
@@ -89,6 +89,7 @@ for file in "${files[@]}"; do
             sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals</terminals>#g" "../config/$file"
         fi
         sed $SED_INPLACE_OPTION "s#<time>.*</time>#<time>$new_time</time>#g" "../config/$file"
+        rm ../config/$file\'\'
         echo -e "\tFile $file modified"
     else
         echo -e "\tFile $file doesn't exist"
