@@ -52,7 +52,7 @@ public final class WEB3Config {
     public final static int configBlockDifficulty       = 3;
     public final static int configGasLimitLowerBound    = 100000;
     
-    public final static int configBlocksCount           = 100;
+    public final static int configBlocksCount           = 1000;
     public final static int configContractsCount        = (int) (0.7 * configBlocksCount);
     public final static int configToken_transfersCount  = 18 * configBlocksCount;
     public final static int configTxnPerBlock           = 80;

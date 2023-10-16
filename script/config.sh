@@ -6,13 +6,20 @@ is_tidb_server=true
 new_ip='127.0.0.1'
 new_port=4000
 new_dbname=web3bench
+# Notice: add \ before & in the jdbc url
+new_dburl="jdbc:mysql://$new_ip:$new_port/$new_dbname?useSSL=false\&amp;characterEncoding=utf-8"
 new_username=root
 new_password=
 new_nodeid="main"
 new_scalefactor=30
-new_terminals=5
 # Test time in minutes
 new_time=5
+# terminals and rate for runthread1.xml
+new_terminals_thread1=5
+new_rate_thread1=300
+# terminals and rate for runR2*.xml
+new_terminals_R2x=1
+new_rate_R2x=1
 ###########################################################
 
 set -e
@@ -66,8 +73,6 @@ else
 fi
 
 echo "Modifying config files with new values"
-# New DBUrl
-new_dburl="jdbc:mysql://$new_ip:$new_port/$new_dbname?useSSL=false\&amp;characterEncoding=utf-8"
 echo "###########################################################"
 echo "New DBUrl: $new_dburl"
 echo "New username: $new_username"
@@ -85,11 +90,16 @@ for file in "${files[@]}"; do
         sed $SED_INPLACE_OPTION "s#<password>.*</password>#<password>$new_password</password>#g" "../config/$file"
         sed $SED_INPLACE_OPTION "s#<nodeid>.*</nodeid>#<nodeid>$new_nodeid</nodeid>#g" "../config/$file"
         sed $SED_INPLACE_OPTION "s#<scalefactor>.*</scalefactor>#<scalefactor>$new_scalefactor</scalefactor>#g" "../config/$file"
-        if [ $file != "runthread2.xml" ]; then
-            sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals</terminals>#g" "../config/$file"
-        fi
         sed $SED_INPLACE_OPTION "s#<time>.*</time>#<time>$new_time</time>#g" "../config/$file"
-        rm ../config/$file\'\'
+        if [ $file == "runthread1.xml" ]; then
+            sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals_thread1</terminals>#g" "../config/$file"
+            sed $SED_INPLACE_OPTION "s#<rate>.*</rate>#<rate>$new_rate_thread1</rate>#g" "../config/$file"
+        fi
+        if [[ $file == runR2* ]]; then
+            sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals_R2x</terminals>#g" "../config/$file"
+            sed $SED_INPLACE_OPTION "s#<rate>.*</rate>#<rate>$new_rate_R2x</rate>#g" "../config/$file"
+        fi
+        rm -f ../config/$file\'\'
         echo -e "\tFile $file modified"
     else
         echo -e "\tFile $file doesn't exist"
