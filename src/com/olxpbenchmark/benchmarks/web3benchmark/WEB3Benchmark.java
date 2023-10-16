@@ -60,7 +60,7 @@ public class WEB3Benchmark extends BenchmarkModule {
     private static final Logger LOG = Logger.getLogger(WEB3Benchmark.class);
 
     public WEB3Benchmark(WorkloadConfiguration workConf) {
-        super("web3benchmark", workConf, true);
+        super("web3bench", workConf, true);
     }
 
     @Override

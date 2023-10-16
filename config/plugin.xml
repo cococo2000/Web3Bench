@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <plugins>
-    <plugin name="web3benchmark">com.olxpbenchmark.benchmarks.web3benchmark.WEB3Benchmark</plugin>
+    <plugin name="web3bench">com.olxpbenchmark.benchmarks.web3benchmark.WEB3Benchmark</plugin>
 </plugins>

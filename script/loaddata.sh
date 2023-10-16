@@ -14,7 +14,7 @@ ant clean
 # Build the project
 ant build
 # Start loading data
-./olxpbenchmark -b web3benchmark -c config/loaddata.xml --load=true  --create=true | tee log/loaddata.log
+./olxpbenchmark -b web3bench -c config/loaddata.xml --load=true --create=true | tee log/loaddata.log
 
 set +x
 set +e

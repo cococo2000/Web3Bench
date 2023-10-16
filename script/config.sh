@@ -2,7 +2,10 @@
 
 # Values to modify
 ###########################################################
-is_tidb_server=true
+# Database type: mysql, tidb, or sdb (singlestoredb)
+dbtype=tidb
+###########################################################
+# IP address of the database server
 new_ip='127.0.0.1'
 new_port=4000
 new_dbname=web3bench
@@ -22,14 +25,13 @@ new_terminals_R2x=1
 new_rate_R2x=1
 ###########################################################
 
-set -e
-set -x
-
 # Create ~/mysql.cnf file
 mysql_config_file=~/mysql.cnf
 echo "[client]" > $mysql_config_file
 echo "user=$new_username" >> $mysql_config_file
 echo "password=$new_password" >> $mysql_config_file
+
+set -e
 
 # Create database
 echo "Creating database $new_dbname if not exists"
@@ -37,15 +39,24 @@ mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "CREAT
 
 # Delete old results from res_table in the database
 # Drop res_table if exists
+echo "Dropping table $new_dbname.res_table if exists"
 mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "DROP TABLE IF EXISTS $new_dbname.res_table;"
 
-# When using TiDB, we need to set tidb_skip_isolation_level_check=1 to disable the isolation level check.
-if [ $is_tidb_server = true ] ; then
-   echo "TiDB server detected, setting tidb_skip_isolation_level_check=1"
-   mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "set global tidb_skip_isolation_level_check=1;"
+# When using TiDB
+if [ $dbtype == "tidb" ] ; then
+    # Set tidb_skip_isolation_level_check=1 to disable the isolation level check.
+    echo -e "\nTest on TiDB."
+    echo -e "\tSetting tidb_skip_isolation_level_check=1"
+    mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_skip_isolation_level_check=1;"
+    # Increase the tidb_mem_quota_query limit to 16GB
+    echo -e "\tSetting tidb_mem_quota_query=16GB"
+    mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_mem_quota_query=16<<30;" 
+    # # When using TiFlash
+    # if [ $use_tiflash == true ] ; then
+    #     echo -e "\tUse TiFlash is true, setting TIFLASH REPLICA $replicas_num"
+    #     mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "ALTER DATABASE $new_dbname SET TIFLASH REPLICA $replicas_num;"
+    # fi
 fi
-
-set +x
 
 # Delete $mysql_config_file file
 rm $mysql_config_file
@@ -72,19 +83,28 @@ else
     SED_INPLACE_OPTION="-i"
 fi
 
-echo "Modifying config files with new values"
+echo -e "\nModifying config files with new values"
 echo "###########################################################"
+echo "DB type: $dbtype"
 echo "New DBUrl: $new_dburl"
 echo "New username: $new_username"
-echo "New password: $new_password"
+if [ "$new_password" == "" ]; then
+    echo "New password: empty"
+else
+    echo "New password: $new_password"
+fi
 echo "New nodeid: $new_nodeid"
 echo "New scalefactor: $new_scalefactor"
-echo "New terminals: $new_terminals"
-echo "New time: $new_time"
+echo "New test time: $new_time"
+echo "New terminals for runthread1.xml: $new_terminals_thread1"
+echo "New rate for runthread1.xml: $new_rate_thread1"
+echo "New terminals for runR2*.xml: $new_terminals_R2x"
+echo "New rate for runR2*.xml: $new_rate_R2x"
 echo "###########################################################"
 
 for file in "${files[@]}"; do
     if [ -f "../config/$file" ]; then
+        sed $SED_INPLACE_OPTION "s#<dbtype>.*</dbtype>#<dbtype>$dbtype</dbtype>#g" "../config/$file"
         sed $SED_INPLACE_OPTION "s#<DBUrl>.*</DBUrl>#<DBUrl>$new_dburl</DBUrl>#g" "../config/$file"
         sed $SED_INPLACE_OPTION "s#<username>.*</username>#<username>$new_username</username>#g" "../config/$file"
         sed $SED_INPLACE_OPTION "s#<password>.*</password>#<password>$new_password</password>#g" "../config/$file"
