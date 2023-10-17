@@ -1,35 +1,34 @@
 # -*- coding: utf-8 -*-
-
 import pandas as pd
 import csv
 import math
+import json
+import xml.etree.ElementTree as ET
 
 #________________________________________modify section_______________________________________________
 # data = "test"
 data = ""
 #________________________________________modify section_______________________________________________
 
-# The test time in minutes, used to calculate the QPS and TPS
-# Get the test time from the shell
-print("Please enter the test time in minutes:")
-test_time = int(input())
-print(f"Test time: {test_time} minutes")
-
-# Output the results to a CSV file
+# The output CSV file name
 export_csv_file = data + "res.csv"
 
-# The category of each transaction type
+# The test time in minutes, used to calculate the QPS and TPS
+# # Get the test time from the shell
+# print("Please enter the test time in minutes:")
+# test_time = int(input())
+# print(f"Test time: {test_time} minutes")
+# Get the test time from the xml config file
+xml_config_file = "../config/runthread1.xml"
+tree = ET.parse(xml_config_file)
+test_time = int(tree.find(".//time").text)
+print(f"Get the test time from the xml config file {xml_config_file}")
+print(f"Test time: {test_time} minutes")
+
+# The latency limit of each transaction type
 # The key is the transaction type name, and the value is the latency limit in seconds
-type_category = {
-    "R1" : 0.1 , 
-    "R21": 1, "R22": 1, 
-    "R23": 10, "R24": 10,
-    "R31": 0, "R32": 0, "R33": 0, "R34": 0, "R35": 0,
-    "W11": 0.2, "W12": 0.2, "W13": 0.2, "W14": 0.2, 
-    "W2": 0, "W3": 0, "W4" : 0,
-    "W51": 0, "W52": 0, 
-    "W6" : 0
-}
+latency_limit_file = open("latency-limit.json", "r")
+latency_limit = json.load(latency_limit_file)
 
 load_stats = {}
 
@@ -73,17 +72,16 @@ with open(export_csv_file, mode="w", newline="") as file:
         "Number of Requests", 
         "QPS", 
         "TPS", 
-        "Avg Latency(us)", 
         "P99 Latency(s)", 
         "Geometric Mean Latency(s)", 
         "Avg Latency(s)", 
-        "Latency Limit", 
+        "Avg Latency Limit", 
         "Pass/Fail"
     ]
     writer = csv.DictWriter(file, fieldnames=fieldnames)
     writer.writeheader()
 
-    for type_name, latency_limit in type_category.items():
+    for type_name, latency_limit in latency_limit.items():
         stats = load_stats.get(type_name)
         if stats:
             total_time = stats["Total Latency"]
@@ -101,11 +99,10 @@ with open(export_csv_file, mode="w", newline="") as file:
                 "Number of Requests": num,
                 "QPS": qps,
                 "TPS": tps,
-                "Avg Latency(us)": avg_time_us,
                 "P99 Latency(s)": p99_latency,
                 "Geometric Mean Latency(s)": geometric_mean,
                 "Avg Latency(s)": avg_time_s,
-                "Latency Limit": "N/A" if latency_limit == 0 else f"<={latency_limit}s",
+                "Avg Latency Limit": "N/A" if latency_limit == 0 else f"<={latency_limit}s",
                 "Pass/Fail": "N/A" if latency_limit == 0 else "Pass" if avg_time_s <= latency_limit else "Fail"
             })
 
@@ -129,11 +126,10 @@ with open(export_csv_file, mode="a", newline="") as file:
         "Number of Requests": total_num_requests,
         "QPS": total_qps,
         "TPS": total_tps,
-        "Avg Latency(us)": total_avg_time_us,
         "P99 Latency(s)": total_p99_latency,
         "Geometric Mean Latency(s)": total_geometric_mean,
         "Avg Latency(s)": total_avg_time_s,
-        "Latency Limit": "N/A",
+        "Avg Latency Limit": "N/A",
         "Pass/Fail": "N/A"
     })
 

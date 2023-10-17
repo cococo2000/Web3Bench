@@ -84,7 +84,7 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
         // blocks
         for (int w = 1; w <= numWarehouses; w++) {
             final int w_id = w;
-            LOG.info("Starting to load " + w_id + " blocks");
+            // LOG.info("Starting to load " + w_id + " blocks");
             int numBlocksPerLoader = WEB3Config.configBlocksCount / numLoaders;
             for (int i = 1; i <= numLoaders; i++) {
                 final int loader_id = i;
@@ -94,17 +94,19 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
                 LoaderThread t = new LoaderThread() {
                     @Override
                     public void load(Connection conn) throws SQLException {
+                        if (loader_id == 1) LOG.info("Starting to load " + w_id + " blocks");
                         LOG.debug("Starting to load " + w_id + " blocks" + " from " + blocksStartInclusive + " to "
                                 + blocksEndInclusive + " with the " + loader_id + " loader");
                         loadBlocks(conn, w_id, blocksStartInclusive, blocksEndInclusive);
                         LOG.debug("Ending to load " + w_id + " blocks" + " from " + blocksStartInclusive + " to "
                                 + blocksEndInclusive + " with the " + loader_id + " loader");
+                        if (loader_id == numLoaders) LOG.info("Ending to load " + w_id + " blocks");
                         blocksLatch.countDown();
                     }
                 };
                 threads.add(t);
             }
-            LOG.info("Ending to load " + w_id + " blocks");
+            // LOG.info("Ending to load " + w_id + " blocks");
         } // FOR
 
         // contracts

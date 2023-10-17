@@ -50,7 +50,7 @@ if [ $dbtype == "tidb" ] ; then
     mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_skip_isolation_level_check=1;"
     # Increase the tidb_mem_quota_query limit to 16GB
     echo -e "\tSetting tidb_mem_quota_query=16GB"
-    mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_mem_quota_query=16<<30;" 
+    mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_mem_quota_query=96<<30;" 
     # # When using TiFlash
     # if [ $use_tiflash == true ] ; then
     #     echo -e "\tUse TiFlash is true, setting TIFLASH REPLICA $replicas_num"
