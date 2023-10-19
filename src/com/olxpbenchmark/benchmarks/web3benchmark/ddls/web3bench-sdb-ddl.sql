@@ -62,7 +62,8 @@ CREATE TABLE token_transfers (
   to_address varchar(42),
   value decimal(38,0),
   transaction_hash varchar(66),
-  block_number bigint
+  block_number bigint,
+  next_block_number bigint
 );
 
 -- Add indexes

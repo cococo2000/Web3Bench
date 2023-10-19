@@ -645,6 +645,7 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
                 token_transfers.transaction_hash = WEB3Util.convertToTxnHashString(
                         WEB3Util.randomNumber(transaction_start, transaction_end, benchmark.rng()));
                 token_transfers.block_number = WEB3Util.randomNumber((w_id - 1) * WEB3Config.configBlocksCount + 1, w_id * WEB3Config.configBlocksCount, benchmark.rng());
+                token_transfers.next_block_number = token_transfers.block_number + 1;
 
                 k++;
 
@@ -655,6 +656,7 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
                 PrepStmt.setDouble(idx++, token_transfers.value);
                 PrepStmt.setString(idx++, token_transfers.transaction_hash);
                 PrepStmt.setLong(idx++, token_transfers.block_number);
+                PrepStmt.setLong(idx++, token_transfers.next_block_number);
 
                 PrepStmt.addBatch();
                 batchSize++;

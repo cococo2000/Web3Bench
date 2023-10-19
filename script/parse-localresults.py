@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
+import os
 import csv
 import math
 import json
@@ -35,34 +36,21 @@ load_stats = {}
 if data != "":
     data = data + "/"
 
-print("Results directory: results/" + data)
+csv_directory = "../results/" + data
+print("Results directory: " + csv_directory)
 print("Parsing results...")
-# Read results from the CSV file
-csv_files = [ "../results/" + data + "thread1.csv",
-              "../results/" + data + "R21.csv",
-              "../results/" + data + "R22.csv",
-              "../results/" + data + "R23.csv",
-              "../results/" + data + "R24.csv",
-              "../results/" + data + "thread2.csv"
-            ]
-
-for file in csv_files:
-    df = pd.read_csv(file, names=[
-        "Transaction Type Index",
-        "Transaction Name",
-        "Start Time (microseconds)",
-        "Latency (microseconds)",
-        "Worker Id (start number)",
-        "Phase Id (index in config file)"
-        ], skiprows=1)
-    for index, row in df.iterrows():
-        type_name = row["Transaction Name"]
-        l_time = row["Latency (microseconds)"]
-        if type_name not in load_stats:
-            load_stats[type_name] = {"Total Latency": 0, "Number of Requests": 0, "Latencies": []}
-        load_stats[type_name]["Total Latency"] += l_time
-        load_stats[type_name]["Number of Requests"] += 1
-        load_stats[type_name]["Latencies"].append(l_time)
+for file in os.listdir("../results/" + data):
+    if file.endswith(".csv"):
+        file = os.path.join(csv_directory, file)
+        df = pd.read_csv(file)
+        for index, row in df.iterrows():
+            type_name = row["Transaction Name"]
+            l_time = row["Latency (microseconds)"]
+            if type_name not in load_stats:
+                load_stats[type_name] = {"Total Latency": 0, "Number of Requests": 0, "Latencies": []}
+            load_stats[type_name]["Total Latency"] += l_time
+            load_stats[type_name]["Number of Requests"] += 1
+            load_stats[type_name]["Latencies"].append(l_time)
 
 # Open the CSV file and write the header
 with open(export_csv_file, mode="w", newline="") as file:

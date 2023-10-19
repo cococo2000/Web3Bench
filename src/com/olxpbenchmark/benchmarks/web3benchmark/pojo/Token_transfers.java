@@ -26,6 +26,7 @@ public class Token_transfers {
     public double value;
     public String transaction_hash;
     public long block_number;
+    public long next_block_number;
 
     @Override
     public String toString() {
@@ -36,6 +37,7 @@ public class Token_transfers {
                 + "\n*           value = " + value
                 + "\n* transaction_hash = " + transaction_hash
                 + "\n*    block_number = " + block_number
+                + "\n* next_block_number = " + next_block_number
                 + "\n**********************************************");
     }
 }

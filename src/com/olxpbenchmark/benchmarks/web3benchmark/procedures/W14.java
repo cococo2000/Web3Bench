@@ -40,7 +40,7 @@ public class W14 extends WEB3Procedure {
             "insert into "
                     + "token_transfers "
                     + "values "
-                    + "(?, ?, ?, ?, ?, ?)"
+                    + "(?, ?, ?, ?, ?, ?, ?)"
     );
 
     private PreparedStatement query_stmt = null;
@@ -58,6 +58,7 @@ public class W14 extends WEB3Procedure {
         String transaction_hash = WEB3Util.convertToTxnHashString(
             WEB3Util.randomNumber(1, numScale * WEB3Config.configTransactionsCount, gen));
         long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
+        long next_block_number = block_number + 1;
 
         int idx = 1;
         query_stmt.setString(idx++, token_address);
@@ -66,6 +67,7 @@ public class W14 extends WEB3Procedure {
         query_stmt.setDouble(idx++, value);
         query_stmt.setString(idx++, transaction_hash);
         query_stmt.setLong(idx++, block_number);
+        query_stmt.setLong(idx++, next_block_number);
 
         if (trace) LOG.trace("query_stmt InsertTokenTransfers START");
         query_stmt.executeUpdate();

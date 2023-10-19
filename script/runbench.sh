@@ -18,6 +18,7 @@ cd ..
 ./olxpbenchmark -b web3bench -c config/runR21.xml --execute=true -o R21  | tee log/R21.log &
 ./olxpbenchmark -b web3bench -c config/runR22.xml --execute=true -o R22  | tee log/R22.log &
 ./olxpbenchmark -b web3bench -c config/runR23.xml --execute=true -o R23  | tee log/R23.log &
-./olxpbenchmark -b web3bench -c config/runR24.xml --execute=true -o R24  | tee log/R24.log
+./olxpbenchmark -b web3bench -c config/runR24.xml --execute=true -o R24  | tee log/R24.log &
+./olxpbenchmark -b web3bench -c config/runR25.xml --execute=true -o R25  | tee log/R25.log
 
 wait

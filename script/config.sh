@@ -48,9 +48,12 @@ if [ $dbtype == "tidb" ] ; then
     echo -e "\nTest on TiDB."
     echo -e "\tSetting tidb_skip_isolation_level_check=1"
     mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_skip_isolation_level_check=1;"
-    # Increase the tidb_mem_quota_query limit to 16GB
-    echo -e "\tSetting tidb_mem_quota_query=16GB"
+    # Increase the tidb_mem_quota_query limit to 96GB
+    echo -e "\tSetting tidb_mem_quota_query=96GB"
     mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_mem_quota_query=96<<30;" 
+    echo -e "\tSetting tidb_server_memory_limit=96GB"
+    mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_server_memory_limit="96GB";" 
+
     # # When using TiFlash
     # if [ $use_tiflash == true ] ; then
     #     echo -e "\tUse TiFlash is true, setting TIFLASH REPLICA $replicas_num"
@@ -67,6 +70,7 @@ files=("loaddata.xml"
         "runR22.xml" 
         "runR23.xml" 
         "runR24.xml" 
+        "runR25.xml" 
         "runthread1.xml" 
         "runthread2.xml"
 )

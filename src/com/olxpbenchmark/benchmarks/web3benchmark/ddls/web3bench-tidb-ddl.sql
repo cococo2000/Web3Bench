@@ -62,7 +62,8 @@ CREATE TABLE token_transfers (
   to_address varchar(42),
   value decimal(38,0),
   transaction_hash varchar(66),
-  block_number bigint
+  block_number bigint,
+  next_block_number bigint
 );
 
 -- Add indexes
@@ -109,7 +110,7 @@ CREATE TABLE temp_table (
 );
 
 -- Add TiFlash replica
-ALTER TABLE blocks          SET TIFLASH REPLICA 1;
-ALTER TABLE contracts       SET TIFLASH REPLICA 1;
-ALTER TABLE transactions    SET TIFLASH REPLICA 1;
-ALTER TABLE token_transfers SET TIFLASH REPLICA 1;
+-- ALTER TABLE blocks          SET TIFLASH REPLICA 1;
+-- ALTER TABLE contracts       SET TIFLASH REPLICA 1;
+-- ALTER TABLE transactions    SET TIFLASH REPLICA 1;
+-- ALTER TABLE token_transfers SET TIFLASH REPLICA 1;
