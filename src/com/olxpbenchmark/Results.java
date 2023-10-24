@@ -197,7 +197,7 @@ public final class Results {
                 // The TxnType offsets start at 1!
                 activeTXTypes.get(s.tranType-1).getName(),
                 String.format("%10.6f", startUs - offset),
-                Integer.toString(s.latencyUs),
+                Long.toString(s.latencyUs),
                 Integer.toString(s.workerId),
                 Integer.toString(s.phaseId),
             };

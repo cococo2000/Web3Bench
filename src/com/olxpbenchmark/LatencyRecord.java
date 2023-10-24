@@ -58,11 +58,10 @@ public class LatencyRecord implements Iterable<LatencyRecord.Sample> {
 
 		long startOffsetNs = (startNs - lastNs + 500);
 		assert startOffsetNs >= 0;
-		int latencyUs = (int) ((endNs - startNs + 500) / 1000);
+		long latencyUs = (long) ((endNs - startNs + 500) / 1000);
 		assert latencyUs >= 0;
 
-		chunk[nextIndex] = new Sample(transType, startOffsetNs, latencyUs
-				, workerId, phaseId);
+		chunk[nextIndex] = new Sample(transType, startOffsetNs, latencyUs, workerId, phaseId);
 		++nextIndex;
 
 		lastNs += startOffsetNs;
@@ -89,11 +88,11 @@ public class LatencyRecord implements Iterable<LatencyRecord.Sample> {
 	public static final class Sample implements Comparable<Sample> {
 		public final int tranType;
 		public long startNs;
-		public final int latencyUs;
+		public final long latencyUs;
 		public final int workerId;
 		public final int phaseId;
 
-        public Sample(int tranType, long startNs, int latencyUs, int workerId, int phaseId) {
+        public Sample(int tranType, long startNs, long latencyUs, int workerId, int phaseId) {
 			this.tranType = tranType;
 			this.startNs = startNs;
 			this.latencyUs = latencyUs;

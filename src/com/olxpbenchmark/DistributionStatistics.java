@@ -83,7 +83,7 @@ public class DistributionStatistics {
 	 * Computes distribution statistics over values. WARNING: This will sort
 	 * values.
 	 */
-	public static DistributionStatistics computeStatistics(int[] values) {
+	public static DistributionStatistics computeStatistics(long[] values) {
 		if (values.length == 0) {
 			LOG.warn("cannot compute statistics for an empty list");
 			long[] percentiles = new long[PERCENTILES.length];
