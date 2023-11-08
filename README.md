@@ -9,6 +9,10 @@ The benchmark encompasses a spectrum of tasks, including transactional, analytic
 ## Environment Setup
 - Install Java (v1.7 or newer) and Apache Ant.
 - Deploy TiDB cluster following the [TiDB documentation](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb).
+- Install required Python packages
+    ```bash
+    pip3 install -r requirements.txt
+    ```
 
 ## Quick Start Guide
 Below are the steps to promptly initiate Web3Bench with a scale factor of 3 on TiDB. The provided instructions cover a scenario with a database containing 3000 blocks, 240000 transactions, 2100 contracts, and 54000 token transfers, resulting in a database size of approximately 240MB. The total testing process is configured to last around 5 minutes.
@@ -23,20 +27,13 @@ cd [Web3Bench.dir]/script
 ./runbench.sh
 
 # Parse the results
-python3 parse-res.py
-# The outcomes will be saved in script/res.csv
-```
-If you execute Web3Bench on multiple machines, you can merge the results by running the following command
-```bash
-python3 import-res2db.py
-```
-The results will be imported into the table res_table in the database you specified in the script (e.g., web3bench). The table res_table will be created if it does not exist. 
-Then you can get the results from the database by running the following command
-```sql
-select txn_name, count(*) as count, avg(latency_ms) as avg_latency_ms
-from res_table 
-group by txn_name 
-order by txn_name;
+python3 parse-localresults.py
+# The outcomes will be saved in script/res.csv by default
+
+# Or if you execute Web3Bench on multiple machines, you can merge the results by running the following command on all the machines.
+python3 import-res2db-parse.py
+# All results will be stored in res.csv and the sum_table table in the database.
+
 ```
 
 ## Build Process
@@ -66,15 +63,27 @@ order by txn_name;
     - To adjust database settings such as name, access credentials, scaling factor, test duration, etc., edit the top section of the script:
         ```shell
         ###########################################################
-        is_tidb_server=true
+        # Database type: mysql, tidb, or sdb (singlestoredb)
+        dbtype=tidb
+        ###########################################################
+        # IP address of the database server
         new_ip='127.0.0.1'
         new_port=4000
         new_dbname=web3bench
+        # Notice: add \ before & in the jdbc url
+        new_dburl="jdbc:mysql://$new_ip:$new_port/$new_dbname?useSSL=false\&amp;characterEncoding=utf-8"
         new_username=root
-        new_password='@tX3CJ*6TG8P0+7S9^'
-        new_scalefactor=3
+        new_password=
+        new_nodeid="main"
+        new_scalefactor=6000
         # Test time in minutes
-        new_time=3 
+        new_time=60
+        # terminals and rate for runthread1.xml
+        new_terminals_thread1=5
+        new_rate_thread1=300
+        # terminals and rate for runR2*.xml
+        new_terminals_R2x=1
+        new_rate_R2x=1
         ###########################################################
         ```
     - Usage:
@@ -205,18 +214,18 @@ usage: olxpbenchmark
     - The result files for the benchmark
 
 ### Parsing results
-- script/parse-res.py
-    - The script for parsing the result files and generating the summary file in csv format
+- script/parse-localresults.py
+    - The script for parsing the local result files and generating the summary file in csv format
     - Edit the head of the script to change the path of the results you want to parse
         - data = "": the path will be "results/"
         - data = "???" (not empty): the path will be "results/???"
     - Usage:
         ```bash
         cd script
-        python3 parse-res.py
+        python3 parse-localresults.py
         ```
-- script/import-res2db.py
-    - The script for importing the result files into the database
+- script/import-res2db-parse.py
+    - The script for importing the result files into the database and parsing the results
         - All the result files in csv format will be imported into the table **res_table** in the database you specified in the script
         - The table **res_table** will be created if it does not exist
             ```sql
@@ -231,14 +240,25 @@ usage: olxpbenchmark
                 phase_id        INT
             );
             ```
-    - Get the results from the database
-        ```sql
-        select * from res_table;
-        ```
-    - Get the average latency of each transaction
-        ```sql
-        select txn_name, count(*), avg(latency_ms) from res_table group by txn_name order by txn_name;
-        ```
+        - Import all results in `results/` dictionary into the `res_table` table.
+        - Parse the results in the `res_table` table
+            - Save the summary results in `res.csv` file
+            - Save the sum results in the `sum_table` table
+                ```sql
+                CREATE TABLE IF NOT EXISTS sum_table (
+                    txn_name                    VARCHAR(10) PRIMARY KEY,
+                    total_latency_s             DECIMAL(20, 6),
+                    txn_count                   BIGINT,
+                    average_latency_s           DECIMAL(20, 6),
+                    p99_latency_s               DECIMAL(20, 6),
+                    qps                         DECIMAL(20, 6),
+                    tps                         DECIMAL(20, 6),
+                    geometric_mean_latency_s    DECIMAL(20, 6),
+                    avg_latency_limit_s         VARCHAR(10),
+                    pass_fail                   VARCHAR(10)
+                );
+                ```
+            - Print the summary results in the console
 
 ## Implementation
 
@@ -303,7 +323,8 @@ CREATE TABLE token_transfers (
   to_address varchar(42),
   value decimal(38,0),
   transaction_hash varchar(66),
-  block_number bigint
+  block_number bigint,
+  next_block_number bigint
 );
 
 -- Add indexes
@@ -431,7 +452,7 @@ ALTER TABLE transactions ADD CONSTRAINT check_txn_gas_used CHECK (receipt_gas_us
         - W14: Insert token_transfers
         ```sql
         insert into token_transfers
-            values (?, ?, ?, ?, ?, ?)
+            values (?, ?, ?, ?, ?, ?, ?)
         ```
     - W2: Range inserts
         - Small batch inserts (100 rows) for the transaction table.
