@@ -20,7 +20,7 @@
             <warmup>0</warmup>
             <time>5</time>
             <rate>300</rate>
-            <weights>80,3,3,4,4,3,3</weights>
+            <weights>80,4,4,4,4,4</weights>
             <arrival>REGULAR</arrival>
         </work>
     </works>
@@ -44,8 +44,8 @@
         <transactiontype>
             <name>W4</name>
         </transactiontype>
-        <transactiontype>
+        <!-- <transactiontype>
             <name>W6</name>
-        </transactiontype>
+        </transactiontype> -->
     </transactiontypes>
 </parameters>

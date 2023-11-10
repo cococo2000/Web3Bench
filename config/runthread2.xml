@@ -51,6 +51,9 @@
         <transactiontype>
             <name>W52</name>
         </transactiontype>
+        <transactiontype>
+            <name>W6</name>
+        </transactiontype>
     </transactiontypes>
 </parameters>
 
