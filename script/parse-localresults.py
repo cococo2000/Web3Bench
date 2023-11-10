@@ -72,11 +72,10 @@ with open(export_csv_file, mode="w", newline="") as file:
     for type_name, latency_limit in latency_limit.items():
         stats = load_stats.get(type_name)
         if stats:
-            total_time = stats["Total Latency"]
+            total_time = stats["Total Latency"] / 1000000 # Convert microseconds to seconds
             num = stats["Number of Requests"]
             latencies = stats["Latencies"]
-            avg_time_us = total_time / num if num != 0 else 0
-            avg_time_s = avg_time_us / 1000000  # Convert microseconds to seconds
+            avg_time_s = total_time / num if num != 0 else 0
             qps = num / (test_time * 60)        # Queries per second
             tps = qps
             p99_latency = sorted(latencies)[int(0.99 * len(latencies))] / 1000000 # 99th percentile latency
@@ -95,11 +94,10 @@ with open(export_csv_file, mode="w", newline="") as file:
             })
 
 # Calculate the total statistics
-total_total_latency = sum(stats["Total Latency"] for stats in load_stats.values())
+total_total_latency = sum(stats["Total Latency"] for stats in load_stats.values()) / 1000000 # Convert microseconds to seconds
 total_num_requests = sum(stats["Number of Requests"] for stats in load_stats.values())
 total_latencies = [lat for stats in load_stats.values() for lat in stats["Latencies"]]
-total_avg_time_us = total_total_latency / total_num_requests if total_num_requests != 0 else 0
-total_avg_time_s = total_avg_time_us / 1000000
+total_avg_time_s = total_total_latency / total_num_requests if total_num_requests != 0 else 0
 total_qps = total_num_requests / (test_time * 60)        # Queries per second
 total_tps = total_qps
 total_p99_latency = sorted(total_latencies)[int(0.99 * len(total_latencies))] / 1000000
