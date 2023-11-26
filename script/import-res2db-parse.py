@@ -19,8 +19,6 @@ db_config = {
     "password": "",         # Replace with your database password
     "database": "web3bench" # Replace with your database name
 }
-# The output CSV file name
-export_csv_file = "res.csv"
 
 # Connect to the MySQL database
 conn = mysql.connector.connect(**db_config)
@@ -30,6 +28,7 @@ cursor = conn.cursor()
 # Create the table SQL statement, including the new 'hostname' column
 create_table_sql = '''
 CREATE TABLE IF NOT EXISTS res_table (
+    batch_id        BIGINT,
     id              BIGINT AUTO_INCREMENT PRIMARY KEY,
     hostname        VARCHAR(30),
     txn_type_index  BIGINT,
@@ -44,6 +43,14 @@ CREATE TABLE IF NOT EXISTS res_table (
 cursor.execute(create_table_sql)
 # Commit the changes
 conn.commit()
+
+# Get current batch id from the database
+cursor.execute('SELECT MAX(batch_id) FROM res_table;')
+batch_id = cursor.fetchone()[0]
+if batch_id is None:
+    batch_id = 1
+else:
+    batch_id += 1
 
 # Specify the directory containing CSV files
 csv_directory = '../results/'
@@ -61,10 +68,11 @@ for csv_file in os.listdir(csv_directory):
         for _, row in df.iterrows():
             insert_sql = '''
             INSERT INTO res_table 
-            (hostname, txn_type_index, txn_name, start_time_us, latency_us, worker_id, phase_id) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s);
+            (batch_id, hostname, txn_type_index, txn_name, start_time_us, latency_us, worker_id, phase_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
             '''
             cursor.execute(insert_sql, (
+                batch_id,
                 row['hostname'],
                 row['Transaction Type Index'],
                 row['Transaction Name'],
@@ -116,10 +124,11 @@ SELECT txn_name,
     COUNT(*) / %s AS tps,
     EXP(AVG(LN(latency_us / 1000000))) AS geometric_mean_latency_s
 FROM res_table
+WHERE batch_id = %s
 GROUP BY txn_name
 ORDER BY txn_name;
 '''
-cursor.execute(select_sql, (test_time * 60, test_time * 60))
+cursor.execute(select_sql, (test_time * 60, test_time * 60, batch_id))
 sum_stats = {}
 for row in cursor.fetchall():
     type_name = row[0]
@@ -145,9 +154,10 @@ SELECT
     COUNT(*) / %s AS qps,
     COUNT(*) / %s AS tps,
     EXP(AVG(LN(latency_us / 1000000))) AS geometric_mean_latency_s
-FROM res_table;
+FROM res_table
+WHERE batch_id = %s;
 '''
-cursor.execute(select_total_sql, (test_time * 60, test_time * 60))
+cursor.execute(select_total_sql, (test_time * 60, test_time * 60, batch_id))
 total_row = cursor.fetchone()
 sum_stats["Total"] = {
     "Total Latency(s)": total_row[0], 
@@ -165,7 +175,8 @@ sum_stats["Total"] = {
 # Create the table SQL statement
 create_table_sql = '''
 CREATE TABLE IF NOT EXISTS sum_table (
-    txn_name                    VARCHAR(10) PRIMARY KEY,
+    batch_id                    BIGINT,
+    txn_name                    VARCHAR(10),
     total_latency_s             DECIMAL(20, 6),
     txn_count                   BIGINT,
     average_latency_s           DECIMAL(20, 6),
@@ -174,13 +185,17 @@ CREATE TABLE IF NOT EXISTS sum_table (
     tps                         DECIMAL(20, 6),
     geometric_mean_latency_s    DECIMAL(20, 6),
     avg_latency_limit_s         VARCHAR(10),
-    pass_fail                   VARCHAR(10)
+    pass_fail                   VARCHAR(10),
+    PRIMARY KEY (batch_id, txn_name)
 );
 '''
 # Execute the create table SQL statement
 cursor.execute(create_table_sql)
 # Commit the changes
 conn.commit()
+
+# The output CSV file name
+export_csv_file = f"./summary-{batch_id}.csv"
 
 # Export the summary of the results to a CSV file
 with open(export_csv_file, mode="w", newline="") as file:
@@ -217,45 +232,26 @@ with open(export_csv_file, mode="w", newline="") as file:
         })
         # Print the summary of the results to the console
         print(f"{type_name:<20} {stats['Total Latency(s)']:<20} {stats['Number of Requests']:<20} {stats['QPS']:<20} {stats['TPS']:<20} {stats['P99 Latency(s)']:<20} {stats['Geometric Mean Latency(s)']:<30} {stats['Avg Latency(s)']:<20} {stats['Avg Latency Limit(s)']:<20} {stats['Pass/Fail']:<20}")
-        # Insert or update the data into the database
-        try:
-            insert_sql = '''
-            INSERT INTO sum_table
-            (txn_name, total_latency_s, txn_count, average_latency_s, p99_latency_s, qps, tps, geometric_mean_latency_s, avg_latency_limit_s, pass_fail)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-            '''
-            # try to insert the data
-            cursor.execute(insert_sql, (
-                type_name,
-                stats["Total Latency(s)"],
-                stats["Number of Requests"],
-                stats["Avg Latency(s)"],
-                stats["P99 Latency(s)"],
-                stats["QPS"],
-                stats["TPS"],
-                stats["Geometric Mean Latency(s)"],
-                stats["Avg Latency Limit(s)"],
-                stats["Pass/Fail"]
-            ))
-        except Exception as e:
-            # If the data already exists, update the data
-            update_sql = '''
-            UPDATE sum_table
-            SET total_latency_s = %s, txn_count = %s, average_latency_s = %s, p99_latency_s = %s, qps = %s, tps = %s, geometric_mean_latency_s = %s, avg_latency_limit_s = %s, pass_fail = %s
-            WHERE txn_name = %s;
-            '''
-            cursor.execute(update_sql, (
-                stats["Total Latency(s)"],
-                stats["Number of Requests"],
-                stats["Avg Latency(s)"],
-                stats["P99 Latency(s)"],
-                stats["QPS"],
-                stats["TPS"],
-                stats["Geometric Mean Latency(s)"],
-                stats["Avg Latency Limit(s)"],
-                stats["Pass/Fail"],
-                type_name
-            ))
+        # Insert the data into the database (batch_id and txn_name are primary keys)
+        insert_sql = '''
+        INSERT INTO sum_table
+        (batch_id, txn_name, total_latency_s, txn_count, average_latency_s, p99_latency_s, qps, tps, geometric_mean_latency_s, avg_latency_limit_s, pass_fail)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        '''
+        # try to insert the data
+        cursor.execute(insert_sql, (
+            batch_id,
+            type_name,
+            stats["Total Latency(s)"],
+            stats["Number of Requests"],
+            stats["Avg Latency(s)"],
+            stats["P99 Latency(s)"],
+            stats["QPS"],
+            stats["TPS"],
+            stats["Geometric Mean Latency(s)"],
+            stats["Avg Latency Limit(s)"],
+            stats["Pass/Fail"]
+        ))
         # Commit the inserted or updated data
         conn.commit()
 print(f"Export the summary of the results to {export_csv_file}\n")

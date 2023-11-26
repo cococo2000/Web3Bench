@@ -9,7 +9,7 @@ The benchmark encompasses a spectrum of tasks, including transactional, analytic
 ## Environment Setup
 - Install Java (v1.7 or newer) and Apache Ant.
 - Deploy TiDB cluster following the [TiDB documentation](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb).
-- Install required Python packages
+- Install required Python packages (tested on Python 3.8.10 & 3.8.18)
     ```bash
     pip3 install -r requirements.txt
     ```

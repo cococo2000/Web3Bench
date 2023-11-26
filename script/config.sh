@@ -37,11 +37,6 @@ set -e
 echo "Creating database $new_dbname if not exists"
 mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "CREATE DATABASE IF NOT EXISTS $new_dbname;"
 
-# Delete old results from res_table in the database
-# Drop res_table if exists
-echo "Dropping table $new_dbname.res_table if exists"
-mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "DROP TABLE IF EXISTS $new_dbname.res_table;"
-
 # When using TiDB
 if [ $dbtype == "tidb" ] ; then
     # Set tidb_skip_isolation_level_check=1 to disable the isolation level check.
@@ -53,12 +48,6 @@ if [ $dbtype == "tidb" ] ; then
     mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_mem_quota_query=0;" 
     echo -e "\tSetting tidb_server_memory_limit=0"
     mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_server_memory_limit=0;" 
-
-    # # When using TiFlash
-    # if [ $use_tiflash == true ] ; then
-    #     echo -e "\tUse TiFlash is true, setting TIFLASH REPLICA $replicas_num"
-    #     mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "ALTER DATABASE $new_dbname SET TIFLASH REPLICA $replicas_num;"
-    # fi
 fi
 
 # Delete $mysql_config_file file

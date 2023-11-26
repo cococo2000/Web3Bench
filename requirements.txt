@@ -1,2 +1,2 @@
-mysql-connector-python
-pandas
+mysql-connector-python==8.2.0
+pandas==2.0.3
