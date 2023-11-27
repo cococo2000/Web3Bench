@@ -43,11 +43,6 @@ if [ $dbtype == "tidb" ] ; then
     echo -e "\nTest on TiDB."
     echo -e "\tSetting tidb_skip_isolation_level_check=1"
     mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_skip_isolation_level_check=1;"
-    # Unlimit the memory quota for queries and server.
-    echo -e "\tSetting tidb_mem_quota_query=0"
-    mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_mem_quota_query=0;" 
-    echo -e "\tSetting tidb_server_memory_limit=0"
-    mysql --defaults-extra-file=$mysql_config_file -h $new_ip -P $new_port -e "SET GLOBAL tidb_server_memory_limit=0;" 
 fi
 
 # Delete $mysql_config_file file
@@ -65,8 +60,6 @@ files=("loaddata.xml"
 )
 
 # Modify config files
-#!/bin/bash
-
 # Check the operating system
 if [ "$(uname)" == "Darwin" ]; then
     # macOS

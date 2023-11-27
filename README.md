@@ -9,6 +9,11 @@ The benchmark encompasses a spectrum of tasks, including transactional, analytic
 ## Environment Setup
 - Install Java (v1.7 or newer) and Apache Ant.
 - Deploy TiDB cluster following the [TiDB documentation](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb).
+    - If you want to test Web3Bench on TiDB, you can use the following commands to set or unlimit the memory quota for queries and server according to your environment.
+    ```sql
+    SET GLOBAL tidb_mem_quota_query=0;
+    SET GLOBAL tidb_server_memory_limit=0;
+    ```
 - Install required Python packages (tested on Python 3.8.10 & 3.8.18)
     ```bash
     pip3 install -r requirements.txt
