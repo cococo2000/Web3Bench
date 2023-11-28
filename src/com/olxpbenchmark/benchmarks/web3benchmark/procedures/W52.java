@@ -50,12 +50,18 @@ public class W52 extends WEB3Procedure {
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
+        // set autocommit to true
+        conn.setAutoCommit(true);
+
         if (trace) LOG.trace("query_stmt UpdateQuery3 START");
         query_stmt.executeUpdate();
         if (trace) LOG.trace("query_stmt UpdateQuery3 END");
         
         // commit the transaction
-        conn.commit();
+        // conn.commit();
+
+        // reset autocommit to false
+        conn.setAutoCommit(false);
 
         // LOG.info(query_stmt.toString());
 
