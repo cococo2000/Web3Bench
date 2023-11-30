@@ -11,14 +11,14 @@
     <uploadUrl></uploadUrl>
 
     <nodeid>main</nodeid>
-    <scalefactor>30</scalefactor>
+    <scalefactor>6000</scalefactor>
 
     <!-- The workload -->
     <terminals>1</terminals>
     <works>
         <work>
             <warmup>0</warmup>
-            <time>5</time>
+            <time>60</time>
             <rate>2</rate>
             <weights>100</weights>
             <arrival>REGULAR</arrival>

@@ -14,12 +14,13 @@ new_dburl="jdbc:mysql://$new_ip:$new_port/$new_dbname?useSSL=false\&amp;characte
 new_username=root
 new_password=
 new_nodeid="main"
-new_scalefactor=30
+new_scalefactor=6000
 # Test time in minutes
-new_time=5
+new_time=60
 # terminals and rate for runthread1: R1, W1* and W4
 new_terminals_thread1=5
-new_rate_thread1=600
+# QPS of R1 = SF, then total QPS = SF / 80%, rate = 60 * QPS = 60 * SF / 80% = 75 * SF
+new_rate_thread1=$((75*$new_scalefactor))
 # terminals and rate for R2*
 new_terminals_R2x=1
 new_rate_R2x=2
@@ -82,10 +83,10 @@ fi
 echo "New nodeid: $new_nodeid"
 echo "New scalefactor: $new_scalefactor"
 echo "New test time: $new_time"
-echo "New terminals for runthread1.xml: $new_terminals_thread1"
-echo "New rate for runthread1.xml: $new_rate_thread1"
-echo "New terminals for runR2*.xml: $new_terminals_R2x"
-echo "New rate for runR2*.xml: $new_rate_R2x"
+echo "New terminals for runthread1: $new_terminals_thread1"
+echo "New rate for runthread1: $new_rate_thread1"
+echo "New terminals for runR2*: $new_terminals_R2x"
+echo "New rate for runR2*: $new_rate_R2x"
 echo "###########################################################"
 
 for file in "${files[@]}"; do
