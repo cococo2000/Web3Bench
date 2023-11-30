@@ -52,14 +52,15 @@ public class W51 extends WEB3Procedure {
         double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
         query_stmt.setDouble(1, value);
         
-        if (trace) LOG.trace("query_stmt UpdateQuery2 START");
-        query_stmt.executeUpdate();
-        if (trace) LOG.trace("query_stmt UpdateQuery2 END");
-        
-        // commit the transaction
+        if (trace) LOG.trace("query_stmt W51 UpdateQuery2 START");
+        int affectedRows = query_stmt.executeUpdate();
         conn.commit();
+        if (trace) LOG.trace("query_stmt W51 UpdateQuery2 END");
 
-        // LOG.info(query_stmt.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            LOG.debug("W51 UpdateQuery2: " + affectedRows + " rows affected");
+        }
 
         return null;
     }

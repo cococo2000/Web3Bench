@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import java.sql.Connection;
@@ -41,34 +40,36 @@ public class W4 extends WEB3Procedure {
 
     public SQLStmt query_stmtSQL = new SQLStmt(
             "update transactions "
-                + "set gas_price = ? "
-                + "where hash = ? "
-    );
+                    + "set gas_price = ? "
+                    + "where hash = ? ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
         long gas_price = WEB3Util.randomNumber(1000, 10000000, gen);
-        String hash = WEB3Util.convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
+        String hash = WEB3Util
+                .convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
 
         query_stmt.setLong(1, gas_price);
         query_stmt.setString(2, hash);
-        if (trace) LOG.trace("query_stmt W4 UpdateQuery1 START");
-        query_stmt.executeUpdate();
-        if (trace) LOG.trace("query_stmt W4 UpdateQuery1 END");
-        
-        // commit the transaction
+        if (trace)
+            LOG.trace("query_stmt W4 UpdateQuery1 START");
+        int affectedRows = query_stmt.executeUpdate();
         conn.commit();
+        if (trace)
+            LOG.trace("query_stmt W4 UpdateQuery1 END");
 
-        // LOG.info(query_stmt.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            LOG.debug("W4 UpdateQuery1: " + affectedRows + " rows affected");
+        }
 
         return null;
     }
 }
-
-

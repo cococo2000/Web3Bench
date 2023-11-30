@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import com.olxpbenchmark.api.SQLStmt;
@@ -38,56 +37,51 @@ public class R21 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R21.class);
 
-    // Small range or list of values on: hash or to_address or from_address in transaction table
+    // Small range or list of values on: hash or to_address or from_address in
+    // transaction table
     public SQLStmt query_to_address_SQL = new SQLStmt(
             "select "
-                    +     "* "
+                    + "* "
                     + "from "
-                    +     "transactions "
+                    + "transactions "
                     + "where "
-                    +     "to_address in (?, ?, ?) "
-    );
-    private PreparedStatement query_to_address_stmt = null;
+                    + "to_address in (?, ?, ?) ");
+    private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
-        query_to_address_stmt = this.getPreparedStatement(conn, query_to_address_SQL);
-        
-        String to_address1 = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        String to_address2 = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        String to_address3 = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        
-        query_to_address_stmt.setString(1, to_address1);
-        query_to_address_stmt.setString(2, to_address2);
-        query_to_address_stmt.setString(3, to_address3);
-        if (trace) LOG.trace("query_stmt R21 START");
-        ResultSet rs = query_to_address_stmt.executeQuery();
-        if (trace) LOG.trace("query_stmt R21 END");
-        
-        if (trace) {
-            String rs_to_address = null;
-            if (!rs.next()) {
-                String msg = String.format("Failed to get transactions [to_address in %s, %s, %s]", to_address1,
-                        to_address2, to_address3);
-                if (trace)
-                    LOG.warn(msg);
-                // throw new RuntimeException(msg);
-            } else {
-                rs_to_address = rs.getString("to_address");
-                // commit the transaction
-                conn.commit();
-            }
-            
-            LOG.info(query_to_address_stmt.toString());
-            LOG.info(String.format("R21: to_address = %s", rs_to_address));
-        }
+        query_stmt = this.getPreparedStatement(conn, query_to_address_SQL);
+
+        String to_address1 = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+        String to_address2 = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+        String to_address3 = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+
+        // Set parameter
+        query_stmt.setString(1, to_address1);
+        query_stmt.setString(2, to_address2);
+        query_stmt.setString(3, to_address3);
+        if (trace)
+            LOG.trace("query_stmt R21 START");
+        // Execute query and commit
+        ResultSet rs = query_stmt.executeQuery();
+        conn.commit();
+        if (trace)
+            LOG.trace("query_stmt R21 END");
+
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
+        // Log result
+        if (trace)
+            LOG.trace(resultSetToString(rs));
 
         rs.close();
-
         return null;
     }
 }
-
-

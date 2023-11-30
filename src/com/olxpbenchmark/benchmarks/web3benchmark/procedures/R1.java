@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import com.olxpbenchmark.api.SQLStmt;
@@ -41,50 +40,42 @@ public class R1 extends WEB3Procedure {
     // Equality on hash in transaction table
     public SQLStmt query_stmtSQL = new SQLStmt(
             "select "
-                    +     "to_address, from_address "
+                    + "to_address, from_address "
                     + "from "
-                    +     "transactions "
+                    + "transactions "
                     + "where "
-                    +     "hash = ? "
-    );
+                    + "hash = ? ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String hash = WEB3Util.convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
-        
+        String hash = WEB3Util
+                .convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
+
+        // Set parameter
         query_stmt.setString(1, hash);
-        if (trace) LOG.trace("query_stmt R1 START");
+        if (trace)
+            LOG.trace("query_stmt R1 START");
+        // Execute query and commit
         ResultSet rs = query_stmt.executeQuery();
-        if (trace) LOG.trace("query_stmt R1 END");
-        
-        if (trace) {
-            String rs_to_address = null;
-            String rs_from_address = null;
-            if (!rs.next()) {
-                String msg = String.format("Failed to get transactions [hash=%s]", hash);
-                if (trace) LOG.warn(msg);
-            }
-            else {
-                rs_to_address = rs.getString("to_address");
-                rs_from_address = rs.getString("from_address");
-                // commit the transaction
-                conn.commit();
-            }
-            
-            LOG.info(query_stmt.toString());
-            LOG.info(String.format("R1: to_address=%s, from_address=%s", rs_to_address, rs_from_address));
-        }
+        conn.commit();
+        if (trace)
+            LOG.trace("query_stmt R1 END");
+
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
+        // Log result
+        if (trace)
+            LOG.trace(resultSetToString(rs));
 
         rs.close();
-
         return null;
     }
 }
-
-

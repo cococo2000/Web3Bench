@@ -59,5 +59,5 @@ public final class WEB3Config {
     public final static int configTransactionsCount     = configTxnPerBlock * configBlocksCount;
     
     public final static int configTokenCount    = 1000; // the number of tokens
-    public final static int configAccountsCount = 10 * configBlocksCount; // the number of accounts / addresses
+    public static int configAccountsCount = 10 * configBlocksCount; // the number of accounts / addresses
 }

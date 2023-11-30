@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import com.olxpbenchmark.api.SQLStmt;
@@ -41,48 +40,40 @@ public class R23 extends WEB3Procedure {
     // top N with small N on full table scan
     public SQLStmt query_stmtSQL1 = new SQLStmt(
             "select "
-                + "* "
-                + "from token_transfers "
-                + "where from_address = ? "
-                + "order by block_number desc limit 5 "
-    );
-    private PreparedStatement query_stmt1 = null;
+                    + "* "
+                    + "from token_transfers "
+                    + "where from_address = ? "
+                    + "order by block_number desc limit 5 ");
+    private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
-        query_stmt1 = this.getPreparedStatement(conn, query_stmtSQL1);
-        
-        String from_address = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        
-        query_stmt1.setString(1, from_address);
-        if (trace) LOG.trace("query_stmt R23 START");
-        ResultSet rs = query_stmt1.executeQuery();
-        if (trace) LOG.trace("query_stmt R23 END");
-        
-        if (trace) {
-            String rs_from_address = null;
-            if (!rs.next()) {
-                String msg = String.format(
-                        "Failed to get token_transfers [from_address = %s] order by block_number desc limit 5",
-                        from_address);
-                if (trace)
-                    LOG.warn(msg);
-                // throw new RuntimeException(msg);
-            } else {
-                rs_from_address = rs.getString("from_address");
-                // commit the transaction
-                conn.commit();
-            }
+        query_stmt = this.getPreparedStatement(conn, query_stmtSQL1);
 
-            LOG.info(query_stmt1.toString());
-            LOG.info("R23: from_address = " + rs_from_address);
-            rs.close();
-        }
+        String from_address = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
 
+        // Set parameter
+        query_stmt.setString(1, from_address);
+        if (trace)
+            LOG.trace("query_stmt R23 START");
+        // Execute query and commit
+        ResultSet rs = query_stmt.executeQuery();
+        conn.commit();
+        if (trace)
+            LOG.trace("query_stmt R23 END");
+
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
+        // Log result
+        if (trace)
+            LOG.trace(resultSetToString(rs));
+
+        rs.close();
         return null;
     }
 }
-
-

@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import java.sql.Connection;
@@ -35,30 +34,31 @@ public class W3 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(W3.class);
 
-    // Insert 1000 rows into transactions from a temp table 
+    // Insert 1000 rows into transactions from a temp table
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "insert transactions select * from temp_table limit 1000 "
-    );
+            "insert transactions select * from temp_table limit 1000 ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        if (trace) LOG.trace("query_stmt W3 InsertSelect START");
-        query_stmt.executeUpdate();
-        if (trace) LOG.trace("query_stmt W3 InsertSelect END");
-        
-        // commit the transaction
+        if (trace)
+            LOG.trace("query_stmt W3 InsertSelect START");
+        int affectedRows = query_stmt.executeUpdate();
         conn.commit();
+        if (trace)
+            LOG.trace("query_stmt W3 InsertSelect END");
 
-        // LOG.info(query_stmt.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            LOG.debug("W3 InsertSelect: " + affectedRows + " rows affected");
+        }
 
         return null;
     }
 }
-
-

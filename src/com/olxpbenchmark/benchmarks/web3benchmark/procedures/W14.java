@@ -69,14 +69,15 @@ public class W14 extends WEB3Procedure {
         query_stmt.setLong(idx++, block_number);
         query_stmt.setLong(idx++, next_block_number);
 
-        if (trace) LOG.trace("query_stmt InsertTokenTransfers START");
-        query_stmt.executeUpdate();
-        if (trace) LOG.trace("query_stmt InsertTokenTransfers END");
-        
-        // commit the transaction
+        if (trace) LOG.trace("query_stmt W14 InsertTokenTransfers START");
+        int affectedRows = query_stmt.executeUpdate();
         conn.commit();
+        if (trace) LOG.trace("query_stmt W14 InsertTokenTransfers END");
 
-        // LOG.info(query_stmt.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            LOG.debug("W14 InsertTokenTransfers: " + affectedRows + " rows affected");
+        }
 
         return null;
     }

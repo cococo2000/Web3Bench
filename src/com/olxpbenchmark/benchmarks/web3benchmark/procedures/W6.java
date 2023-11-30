@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import java.sql.Connection;
@@ -39,12 +38,12 @@ public class W6 extends WEB3Procedure {
     // Single record deletes for the transaction table.
     public SQLStmt query_stmtSQL = new SQLStmt(
             "delete from transactions "
-                + "where hash = ? "
-    );
+                    + "where hash = ? ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
@@ -53,17 +52,18 @@ public class W6 extends WEB3Procedure {
         String hash = WEB3Util.convertToTxnHashString(startNumber % (WEB3Config.configTransactionsCount * numScale));
 
         query_stmt.setString(1, hash);
-        if (trace) LOG.trace("query_stmt W6 single record deletes for the transaction table START");
-        query_stmt.executeUpdate();
-        if (trace) LOG.trace("query_stmt W6 single record deletes for the transaction table END");
-        
-        // commit the transaction
+        if (trace)
+            LOG.trace("query_stmt W6 single record deletes for the transaction table START");
+        int affectedRows = query_stmt.executeUpdate();
         conn.commit();
+        if (trace)
+            LOG.trace("query_stmt W6 single record deletes for the transaction table END");
 
-        // LOG.info(query_stmt.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            LOG.debug("W6 Single Delete: " + affectedRows + " rows affected");
+        }
 
         return null;
     }
 }
-
-

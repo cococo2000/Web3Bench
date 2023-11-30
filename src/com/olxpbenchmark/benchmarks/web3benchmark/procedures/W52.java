@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import java.sql.Connection;
@@ -37,14 +36,14 @@ public class W52 extends WEB3Procedure {
 
     public SQLStmt query_stmtSQL = new SQLStmt(
             "update token_transfers "
-                + "set value = value + 1 "
-                + "where from_address in "
-                + "(select to_address from token_transfers) "
-    );
+                    + "set value = value + 1 "
+                    + "where from_address in "
+                    + "(select to_address from token_transfers) ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
@@ -53,20 +52,21 @@ public class W52 extends WEB3Procedure {
         // set autocommit to true
         conn.setAutoCommit(true);
 
-        if (trace) LOG.trace("query_stmt UpdateQuery3 START");
-        query_stmt.executeUpdate();
-        if (trace) LOG.trace("query_stmt UpdateQuery3 END");
-        
-        // commit the transaction
+        if (trace)
+            LOG.trace("query_stmt UpdateQuery3 START");
+        int affectedRows = query_stmt.executeUpdate();
         // conn.commit();
+        if (trace)
+            LOG.trace("query_stmt UpdateQuery3 END");
 
         // reset autocommit to false
         conn.setAutoCommit(false);
 
-        // LOG.info(query_stmt.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            LOG.debug("W52 UpdateQuery3: " + affectedRows + " rows affected");
+        }
 
         return null;
     }
 }
-
-

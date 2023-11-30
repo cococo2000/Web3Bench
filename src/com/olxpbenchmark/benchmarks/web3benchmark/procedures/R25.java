@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import com.olxpbenchmark.api.SQLStmt;
@@ -34,61 +33,54 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 
-
 public class R25 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R25.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-        "select * "
-            + "from "
-            + "token_transfers "
-            + "where "
-            + "token_address = ? "
-            + "and block_number <= ? "
-            + "and (next_block_number > ? or next_block_number = ?) "
-            + "order by block_number desc limit ?"
-    );
+            "select * "
+                    + "from "
+                    + "token_transfers "
+                    + "where "
+                    + "token_address = ? "
+                    + "and block_number <= ? "
+                    + "and (next_block_number > ? or next_block_number = ?) "
+                    + "order by block_number desc limit ?");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
-        
-        String token_address = WEB3Util.convertToTokenAddressString(WEB3Util.randomNumber(1, WEB3Config.configTokenCount, gen));
+
+        String token_address = WEB3Util
+                .convertToTokenAddressString(WEB3Util.randomNumber(1, WEB3Config.configTokenCount, gen));
         long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
         long next_block_number = WEB3Util.randomNumber(1, block_number, gen);
         int limit = WEB3Util.randomNumber(1, 100, gen);
-        
+
         query_stmt.setString(1, token_address);
         query_stmt.setLong(2, block_number);
         query_stmt.setLong(3, next_block_number);
         query_stmt.setLong(4, next_block_number);
         query_stmt.setInt(5, limit);
-        if (trace) LOG.trace("query_stmt R25 START");
+        if (trace)
+            LOG.trace("query_stmt R25 START");
         ResultSet rs = query_stmt.executeQuery();
-        if (trace) LOG.trace("query_stmt R25 END");
-        
-        if (trace) {
-            int rs_count = 0;
-            if (!rs.next()) {
-                String msg = String.format("Failed to execute query_stmt R25", token_address);
-                if (trace)
-                    LOG.warn(msg);
-                // throw new RuntimeException(msg);
-            } else {
-                rs_count = rs.getInt(1);
-                // commit the transaction
-                conn.commit();
-            }
+        conn.commit();
+        if (trace)
+            LOG.trace("query_stmt R25 END");
 
-            LOG.info(query_stmt.toString());
-        }
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
+        // Log result
+        if (trace)
+            LOG.trace(resultSetToString(rs));
 
         rs.close();
-
         return null;
     }
 }

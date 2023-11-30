@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import com.olxpbenchmark.api.SQLStmt;
@@ -34,49 +33,42 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 
-
 public class R32 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R32.class);
 
-    // Top N transactions based on block timestamp. 
+    // Top N transactions based on block timestamp.
     public SQLStmt query_stmtSQL = new SQLStmt(
             "select "
-                    +     "* "
+                    + "* "
                     + "from "
-                    +     "transactions "
+                    + "transactions "
                     + "order by "
-                    +   "block_timestamp desc limit 100"
-    );
+                    + "block_timestamp desc limit 100");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        if (trace) LOG.trace("query_stmt R32 START");
+        if (trace)
+            LOG.trace("query_stmt R32 START");
         ResultSet rs = query_stmt.executeQuery();
-        if (trace) LOG.trace("query_stmt R32 END");
-        
-        if (trace) {
-            if (!rs.next()) {
-                String msg = String.format("Failed to get recent transactions.");
-                if (trace)
-                    LOG.warn(msg);
-                // throw new RuntimeException(msg);
-            } else {
-                // commit the transaction
-                conn.commit();
-            }
+        conn.commit();
+        if (trace)
+            LOG.trace("query_stmt R32 END");
 
-            LOG.info(query_stmt.toString());
-            rs.close();
-        }
-        
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
+        // Log result
+        if (trace)
+            LOG.trace(resultSetToString(rs));
+
+        rs.close();
         return null;
     }
 }
-
-

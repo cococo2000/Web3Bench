@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import com.olxpbenchmark.api.SQLStmt;
@@ -34,63 +33,51 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 
-
 public class R31 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R31.class);
 
-    // For a specific person, find transactions where this person is either a sender or receiver. Limit the result by the most recent timestamp.
+    // For a specific person, find transactions where this person is either a sender
+    // or receiver. Limit the result by the most recent timestamp.
     public SQLStmt query_stmtSQL = new SQLStmt(
             "select "
-                    +     "* "
+                    + "* "
                     + "from "
-                    +     "transactions "
+                    + "transactions "
                     + "where "
-                    +   "from_address = ? or to_address = ? "
+                    + "from_address = ? or to_address = ? "
                     + "order by "
-                    +   "block_timestamp desc limit 10"
-    );
+                    + "block_timestamp desc limit 10");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
-        
+
         // initializing prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
         String from_address = WEB3Util
                 .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        String to_address = from_address;   // one person
+        String to_address = from_address; // one person
 
         query_stmt.setString(1, from_address);
         query_stmt.setString(2, to_address);
-        if (trace) LOG.trace("query_stmt R31 START");
+        if (trace)
+            LOG.trace("query_stmt R31 START");
         ResultSet rs = query_stmt.executeQuery();
-        if (trace) LOG.trace("query_stmt R31 END");
-        
-        if (trace) {
-            String rs_from_address = null;
-            String rs_to_address = null;
-            if (!rs.next()) {
-                String msg = String.format("Failed to get transactions [from_address=%s or to_address=%s]",
-                        from_address, to_address);
-                if (trace)
-                    LOG.warn(msg);
-                // throw new RuntimeException(msg);
-            } else {
-                rs_from_address = rs.getString("from_address");
-                rs_to_address = rs.getString("to_address");
-                // commit the transaction
-                conn.commit();
-            }
+        conn.commit();
+        if (trace)
+            LOG.trace("query_stmt R31 END");
 
-            LOG.info(query_stmt.toString());
-            LOG.info("R31: from_address = " + rs_from_address + ", to_address = " + rs_to_address);
-            rs.close();
-        }
-        
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
+        // Log result
+        if (trace)
+            LOG.trace(resultSetToString(rs));
+
+        rs.close();
         return null;
     }
 }
-
-

@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import java.sql.Connection;
@@ -38,32 +37,32 @@ public class W11 extends WEB3Procedure {
 
     public SQLStmt query_stmtSQL = new SQLStmt(
             "insert into "
-                    +  "blocks "
+                    + "blocks "
                     + "values "
                     + "(?, ?, ?, ?, ?,"
                     + " ?, ?, ?, ?, ?,"
                     + " ?, ?, ?, ?, ?,"
-                    + " ?, ?, ?)"
-    );
+                    + " ?, ?, ?)");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        long number         = numScale * WEB3Config.configBlocksCount + startNumber;
-        String hash         = WEB3Util.convertToBlockHashString(number, nodeid);
-        String parent_hash  = WEB3Util.convertToBlockHashString(number - 1);
-        String nonce        = WEB3Util.randomHexString(42);
-        String sha3_uncles       = WEB3Util.randomHashString();
+        long number = numScale * WEB3Config.configBlocksCount + startNumber;
+        String hash = WEB3Util.convertToBlockHashString(number, nodeid);
+        String parent_hash = WEB3Util.convertToBlockHashString(number - 1);
+        String nonce = WEB3Util.randomHexString(42);
+        String sha3_uncles = WEB3Util.randomHashString();
         String transactions_root = WEB3Util.randomHashString();
-        String state_root        = WEB3Util.randomHashString();
-        String receipts_root     = WEB3Util.randomHashString();
+        String state_root = WEB3Util.randomHashString();
+        String receipts_root = WEB3Util.randomHashString();
         String miner = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        double difficulty       = WEB3Config.configBlockDifficulty;
+        double difficulty = WEB3Config.configBlockDifficulty;
         double total_difficulty = number * WEB3Config.configBlockDifficulty;
         long size = WEB3Util.randomNumber(100, 100000, gen);
         String extra_data = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
@@ -93,17 +92,18 @@ public class W11 extends WEB3Procedure {
         query_stmt.setLong(idx++, transaction_count);
         query_stmt.setLong(idx++, base_fee_per_gas);
 
-        if (trace) LOG.trace("query_stmt W11 InsertBlocks START");
-        query_stmt.executeUpdate();
-        if (trace) LOG.trace("query_stmt W11 InsertBlocks END");
-        
-        // commit the transaction
+        if (trace)
+            LOG.trace("query_stmt W11 InsertBlocks START");
+        int affectedRows = query_stmt.executeUpdate();
         conn.commit();
+        if (trace)
+            LOG.trace("query_stmt W11 InsertBlocks END");
 
-        // LOG.info(query_stmt.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            LOG.debug("W11 InsertBlocks: " + affectedRows + " rows affected");
+        }
 
         return null;
     }
 }
-
-

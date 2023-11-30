@@ -98,14 +98,15 @@ public class W13 extends WEB3Procedure {
         query_stmt.setLong(idx++, max_priority_fee_per_gas);
         query_stmt.setLong(idx++, transaction_type);
 
-        if (trace) LOG.trace("query_stmt InsertTransactions START");
-        query_stmt.executeUpdate();
-        if (trace) LOG.trace("query_stmt InsertTransactions END");
-        
-        // commit the transaction
+        if (trace) LOG.trace("query_stmt W13 InsertTransactions START");
+        int affectedRows = query_stmt.executeUpdate();
         conn.commit();
+        if (trace) LOG.trace("query_stmt W13 InsertTransactions END");
 
-        // LOG.info(query_stmt.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            LOG.debug("query_stmt W13 InsertTransactions: " + affectedRows + " rows affected");
+        }
 
         return null;
     }

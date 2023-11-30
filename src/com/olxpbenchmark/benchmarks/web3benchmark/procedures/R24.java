@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import com.olxpbenchmark.api.SQLStmt;
@@ -34,7 +33,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 
-
 public class R24 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R24.class);
@@ -42,48 +40,41 @@ public class R24 extends WEB3Procedure {
     // Aggregation with no group by on a small range
     public SQLStmt query_stmtSQL = new SQLStmt(
             "select "
-                    +     "count(*) "
+                    + "count(*) "
                     + "from "
-                    +     "token_transfers "
+                    + "token_transfers "
                     + "where "
-                    +   "token_address = ? "
-    );
+                    + "token_address = ? ");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
-        
-        String token_address = WEB3Util.convertToTokenAddressString(WEB3Util.randomNumber(1, WEB3Config.configTokenCount, gen));
-        
-        query_stmt.setString(1, token_address);
-        if (trace) LOG.trace("query_stmt R24 START");
-        ResultSet rs = query_stmt.executeQuery();
-        if (trace) LOG.trace("query_stmt R24 END");
-        
-        if (trace) {
-            int rs_count = 0;
-            if (!rs.next()) {
-                String msg = String.format("Failed to get token_transfers [token-address = %s]", token_address);
-                if (trace)
-                    LOG.warn(msg);
-                // throw new RuntimeException(msg);
-            } else {
-                rs_count = rs.getInt(1);
-                // commit the transaction
-                conn.commit();
-            }
 
-            LOG.info(query_stmt.toString());
-            LOG.info("R24: count = " + rs_count);
-        }
+        String token_address = WEB3Util
+                .convertToTokenAddressString(WEB3Util.randomNumber(1, WEB3Config.configTokenCount, gen));
+
+        // Set parameter
+        query_stmt.setString(1, token_address);
+        if (trace)
+            LOG.trace("query_stmt R24 START");
+        // Execute query and commit
+        ResultSet rs = query_stmt.executeQuery();
+        conn.commit();
+        if (trace)
+            LOG.trace("query_stmt R24 END");
+
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
+        // Log result
+        if (trace)
+            LOG.trace(resultSetToString(rs));
 
         rs.close();
-
         return null;
     }
 }
-
-

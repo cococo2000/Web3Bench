@@ -19,7 +19,7 @@
         <work>
             <warmup>0</warmup>
             <time>5</time>
-            <rate>300</rate>
+            <rate>600</rate>
             <weights>80,4,4,4,4,4</weights>
             <arrival>REGULAR</arrival>
         </work>

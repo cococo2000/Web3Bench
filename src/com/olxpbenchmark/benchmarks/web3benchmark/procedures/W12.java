@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import java.sql.Connection;
@@ -39,18 +38,19 @@ public class W12 extends WEB3Procedure {
     public SQLStmt query_stmtSQL = new SQLStmt(
             "insert into "
                     + "contracts "
-                    + "values (?, ?, ?, ?, ?, ?) "
-    );
+                    + "values (?, ?, ?, ?, ?, ?) ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String address = WEB3Util.convertToContractAddressString(numScale * WEB3Config.configContractsCount + startNumber, nodeid);
+        String address = WEB3Util
+                .convertToContractAddressString(numScale * WEB3Config.configContractsCount + startNumber, nodeid);
         String bytecode = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
         String function_sighashes = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
         boolean is_erc20 = false; // gen.nextBoolean();
@@ -65,17 +65,18 @@ public class W12 extends WEB3Procedure {
         query_stmt.setBoolean(idx++, is_erc721);
         query_stmt.setLong(idx++, block_number);
 
-        if (trace) LOG.trace("query_stmt W12 InsertContracts START");
-        query_stmt.executeUpdate();
-        if (trace) LOG.trace("query_stmt W12 InsertContracts END");
-        
-        // commit the transaction
+        if (trace)
+            LOG.trace("query_stmt W12 InsertContracts START");
+        int affectedRows = query_stmt.executeUpdate();
         conn.commit();
+        if (trace)
+            LOG.trace("query_stmt W12 InsertContracts END");
 
-        // LOG.info(query_stmt.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            LOG.debug("W12 InsertContracts: " + affectedRows + " rows affected");
+        }
 
         return null;
     }
 }
-
-

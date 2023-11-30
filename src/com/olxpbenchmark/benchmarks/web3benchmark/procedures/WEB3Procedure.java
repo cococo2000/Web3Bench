@@ -16,7 +16,6 @@
 
  */
 
-
 /*
  * Copyright 2021 OLxPBench
  * This work was based on the OLTPBenchmark Project
@@ -35,11 +34,12 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Random;
 
@@ -48,5 +48,50 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 
 public abstract class WEB3Procedure extends Procedure {
     // rand and iRand
-    public abstract ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException;
+    public abstract ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit,
+            int numScale, String nodeid) throws SQLException;
+
+    protected String queryToString(PreparedStatement query) {
+        return query.toString().split(":")[1].trim();
+    }
+
+    protected String resultSetToString(ResultSet resultSet) throws SQLException {
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
+
+        StringBuilder resultLog = new StringBuilder();
+
+        // Check if the result set is empty
+        if (!resultSet.isBeforeFirst()) {
+            resultLog.append("Result set is empty.");
+            return resultLog.toString();
+        }
+
+        // Print column names in the first row
+        StringBuilder headerRow = new StringBuilder("Column Names: ");
+        for (int i = 1; i <= columnCount; i++) {
+            headerRow.append(metaData.getColumnName(i)).append(", ");
+        }
+        // Remove the trailing comma and space
+        headerRow.setLength(headerRow.length() - 2);
+
+        resultLog.append(headerRow.toString()).append("\n");
+
+        // Print data rows
+        while (resultSet.next()) {
+            StringBuilder resultRow = new StringBuilder("Result: ");
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnName(i);
+                String columnValue = resultSet.getString(i);
+                resultRow.append(columnName).append(": ").append(columnValue).append(", ");
+            }
+            // Remove the trailing comma and space
+            resultRow.setLength(resultRow.length() - 2);
+
+            resultLog.append(resultRow.toString()).append("\n");
+        }
+
+        return resultLog.toString();
+    }
+
 }

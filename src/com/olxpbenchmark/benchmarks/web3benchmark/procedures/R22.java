@@ -16,7 +16,6 @@
 
  */
 
- 
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import com.olxpbenchmark.api.SQLStmt;
@@ -38,18 +37,19 @@ public class R22 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R22.class);
 
-    // Small range or list of values on: hash or to_address or from_address in transaction table
+    // Small range or list of values on: hash or to_address or from_address in
+    // transaction table
     public SQLStmt query_hash_SQL = new SQLStmt(
             "select "
-                + "* "
-                + "from transactions "
-                + "where "
-                + "hash in (?, ?, ?, ?) "
-                + "and to_address <> from_address "
-    );
+                    + "* "
+                    + "from transactions "
+                    + "where "
+                    + "hash in (?, ?, ?, ?) "
+                    + "and to_address <> from_address ");
     private PreparedStatement query_hash_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
@@ -64,36 +64,27 @@ public class R22 extends WEB3Procedure {
         String hash4 = WEB3Util
                 .convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
 
+        // Set parameter
         query_hash_stmt.setString(1, hash1);
         query_hash_stmt.setString(2, hash2);
         query_hash_stmt.setString(3, hash3);
         query_hash_stmt.setString(4, hash4);
-        if (trace) LOG.trace("query_stmt R22 START");
+        if (trace)
+            LOG.trace("query_stmt R22 START");
+        // Execute query and commit
         ResultSet rs = query_hash_stmt.executeQuery();
-        if (trace) LOG.trace("query_stmt R22 END");
-        
-        if (trace) {
-            String rs_hash = null;
-            if (!rs.next()) {
-                String msg = String.format("Failed to get transactions [hash in %s, %s, %s, %s]", hash1, hash2, hash3,
-                        hash4);
-                if (trace)
-                    LOG.warn(msg);
-                // throw new RuntimeException(msg);
-            } else {
-                rs_hash = rs.getString("hash");
-                // commit the transaction
-                conn.commit();
-            }
+        conn.commit();
+        if (trace)
+            LOG.trace("query_stmt R22 END");
 
-            LOG.info(query_hash_stmt.toString());
-            LOG.info(String.format("R22: hash = %s", rs_hash));
-        }
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_hash_stmt));
+        // Log result
+        if (trace)
+            LOG.trace(resultSetToString(rs));
 
         rs.close();
-
         return null;
     }
 }
-
-

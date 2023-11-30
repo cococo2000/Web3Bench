@@ -16,8 +16,7 @@
 
  */
 
-
- package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
+package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import com.olxpbenchmark.api.SQLStmt;
 import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Config;
@@ -37,65 +36,55 @@ import java.util.Random;
 public class R35 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R35.class);
-    
-    // Total count of token transfers for a specific sender and token transfers for recipients who are also senders in other transactions. 
+
+    // Total count of token transfers for a specific sender and token transfers for
+    // recipients who are also senders in other transactions.
     public SQLStmt query_stmtSQL = new SQLStmt(
             "select "
-                    +   "count(*) as count "
+                    + "count(*) as count "
                     + "from "
                     + "( "
-                    +   "select * "
-                    +   "from "
-                    +       "token_transfers t "
-                    +   "where "
-                    +       "from_address = ? "
-                    +   "union all "
-                    +   "select t2.* "
-                    +   "from "
-                    +       "token_transfers t2 "
+                    + "select * "
+                    + "from "
+                    + "token_transfers t "
+                    + "where "
+                    + "from_address = ? "
+                    + "union all "
+                    + "select t2.* "
+                    + "from "
+                    + "token_transfers t2 "
                     + "inner join token_transfers t on t2.from_address = t.to_address "
                     + "and t.value < t2.value "
-                    + ") as temp "
-    );
+                    + ") as temp ");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
-        // R35:
+
         // initializing prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String from_address = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+        String from_address = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
 
         query_stmt.setString(1, from_address);
 
         if (trace)
             LOG.trace("query_stmt R35 START");
         ResultSet rs = query_stmt.executeQuery();
+        conn.commit();
         if (trace)
             LOG.trace("query_stmt R35 END");
 
-        if (trace) {
-            int rs_count = 0;
-            if (!rs.next()) {
-                String msg = String.format("Failed to execute query_stmt R35");
-                if (trace)
-                    LOG.warn(msg);
-                // throw new RuntimeException(msg);
-            } else {
-                rs_count = rs.getInt(1);
-                // commit the transaction
-                conn.commit();
-            }
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
+        // Log result
+        if (trace)
+            LOG.trace(resultSetToString(rs));
 
-            LOG.info(query_stmt.toString());
-            LOG.info("R35: count = " + rs_count);
-        }
-        
         rs.close();
-
         return null;
     }
 }
-
-

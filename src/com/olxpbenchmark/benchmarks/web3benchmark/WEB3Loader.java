@@ -66,6 +66,7 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
             //where would be fun in that?
             numWarehouses = 1;
         }
+        WEB3Config.configAccountsCount = (int) Math.round(WEB3Config.configAccountsCount * this.scaleFactor);
     }
 
     private int numWarehouses = 0;
@@ -79,12 +80,10 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
         final CountDownLatch blocksLatch        = new CountDownLatch(numWarehouses * numLoaders);
         final CountDownLatch contractsLatch     = new CountDownLatch(numWarehouses);
         final CountDownLatch transactionsLatch  = new CountDownLatch(numWarehouses);
-        // final CountDownLatch tokentransfersLatch= new CountDownLatch(numWarehouses);
 
         // blocks
         for (int w = 1; w <= numWarehouses; w++) {
             final int w_id = w;
-            // LOG.info("Starting to load " + w_id + " blocks");
             int numBlocksPerLoader = WEB3Config.configBlocksCount / numLoaders;
             for (int i = 1; i <= numLoaders; i++) {
                 final int loader_id = i;
@@ -94,19 +93,21 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
                 LoaderThread t = new LoaderThread() {
                     @Override
                     public void load(Connection conn) throws SQLException {
-                        if (loader_id == 1) LOG.info("Starting to load " + w_id + " blocks");
-                        LOG.debug("Starting to load " + w_id + " blocks" + " from " + blocksStartInclusive + " to "
-                                + blocksEndInclusive + " with the " + loader_id + " loader");
+                        if (loader_id == 1)
+                            LOG.info("Starting to load " + w_id + " blocks");
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("Starting to load " + w_id + " blocks" + " from " + blocksStartInclusive + " to "
+                                    + blocksEndInclusive + " with the " + loader_id + " loader");
                         loadBlocks(conn, w_id, blocksStartInclusive, blocksEndInclusive);
-                        LOG.debug("Ending to load " + w_id + " blocks" + " from " + blocksStartInclusive + " to "
-                                + blocksEndInclusive + " with the " + loader_id + " loader");
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("Ending to load " + w_id + " blocks" + " from " + blocksStartInclusive + " to "
+                                    + blocksEndInclusive + " with the " + loader_id + " loader");
                         if (loader_id == numLoaders) LOG.info("Ending to load " + w_id + " blocks");
                         blocksLatch.countDown();
                     }
                 };
                 threads.add(t);
             }
-            // LOG.info("Ending to load " + w_id + " blocks");
         } // FOR
 
         // contracts

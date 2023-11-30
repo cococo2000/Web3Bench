@@ -17,12 +17,12 @@ new_nodeid="main"
 new_scalefactor=30
 # Test time in minutes
 new_time=5
-# terminals and rate for runthread1.xml
+# terminals and rate for runthread1: R1, W1* and W4
 new_terminals_thread1=5
-new_rate_thread1=300
-# terminals and rate for runR2*.xml
+new_rate_thread1=600
+# terminals and rate for R2*
 new_terminals_R2x=1
-new_rate_R2x=1
+new_rate_R2x=2
 ###########################################################
 
 # Create ~/mysql.cnf file
