@@ -171,6 +171,11 @@ cd script; nohup ./loaddata.sh &
 cd script; nohup ./runbench.sh &
 ```
 
+If you want to dump all the query statements executed by Web3Bench, you can add the option `--trace` to the command line. And then all the query statements, results and affected rows (of inserts, updates and deletes) will be recorded in `./log/benchmark.log`.
+```bash
+./runbench.sh --trace
+```
+
 ### Command Line Options
 ```bash
 $ ./olxpbenchmark --help

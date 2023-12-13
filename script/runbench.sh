@@ -1,32 +1,9 @@
 #!/bin/bash
 
 dump_dml="INFO"
-# Check if there is an argument
-if [ "$#" -eq 1 ]; then
-    case $1 in
-        --dump-dml=*)
-        dump_dml="${1#*=}"
-        ;;
-        *)
-        # unknown option
-        echo "Unknown option: $1"
-        echo "Usage: $0 [--dump-dml=INFO/DEBUG/TRACE]"
-        echo "Options:"
-        echo "  --dump-dml=INFO      Info level: log nothing"
-        echo "  --dump-dml=DEBUG     Debug level: log query statements and affected rows (of inserts, updates and deletes)"
-        echo "  --dump-dml=TRACE     Trace level: log query statements, affected rows and result sets"
-        exit 1
-        ;;
-    esac
-elif [ "$#" -gt 1 ]; then
-    # too many arguments
-    echo "Too many arguments"
-    echo "Usage: $0 [--dump-dml=INFO/DEBUG/TRACE]"
-    echo "Options:"
-    echo "  --dump-dml=INFO      Info level: log nothing"
-    echo "  --dump-dml=DEBUG     Debug level: log query statements and affected rows (of inserts, updates and deletes)"
-    echo "  --dump-dml=TRACE     Trace level: log query statements, affected rows and result sets"
-    exit 1
+# Check if there is an argument == --trace
+if [ $# -eq 1 ] && [ $1 == "--trace" ]; then
+    dump_dml="TRACE"
 fi
 
 # Check the operating system
@@ -42,9 +19,6 @@ fi
 case $dump_dml in
     INFO)
         sed $SED_INPLACE_OPTION 's/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=.*/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=INFO, A2/' ../log4j.properties
-        ;;
-    DEBUG)
-        sed $SED_INPLACE_OPTION 's/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=.*/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=DEBUG, A2/' ../log4j.properties
         ;;
     TRACE)
         sed $SED_INPLACE_OPTION 's/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=.*/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=TRACE, A2/' ../log4j.properties

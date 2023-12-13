@@ -19,11 +19,13 @@ new_scalefactor=6000
 new_time=60
 # terminals and rate for runthread1: R1, W1* and W4
 new_terminals_thread1=5
-# QPS of R1 = SF, then total QPS = SF / 80%, rate = 60 * QPS = 60 * SF / 80% = 75 * SF
-new_rate_thread1=$((75*$new_scalefactor))
+# Total number of requests for R1 = 1000 * SF
+# then total rate of thread1 = 1000 * SF / 80% / 60 = 1000 * SF / 48
+new_rate_thread1=$((1000*$new_scalefactor/48))
 # terminals and rate for R2*
 new_terminals_R2x=1
-new_rate_R2x=2
+# Total number of requests for R2* = 10 * SF
+new_rate_R2x=$((10*$new_scalefactor/60))
 ###########################################################
 
 # Create ~/mysql.cnf file
