@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS res_table (
     hostname        VARCHAR(30),
     txn_type_index  BIGINT,
     txn_name        VARCHAR(10),
-    start_time_us   DECIMAL(20, 6),
+    start_time_s    DECIMAL(20, 6),
     latency_us      BIGINT,
     worker_id       INT,
     phase_id        INT
@@ -68,7 +68,7 @@ for csv_file in os.listdir(csv_directory):
         for _, row in df.iterrows():
             insert_sql = '''
             INSERT INTO res_table 
-            (batch_id, hostname, txn_type_index, txn_name, start_time_us, latency_us, worker_id, phase_id)
+            (batch_id, hostname, txn_type_index, txn_name, start_time_s, latency_us, worker_id, phase_id)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
             '''
             cursor.execute(insert_sql, (
@@ -122,7 +122,9 @@ SELECT txn_name,
     APPROX_PERCENTILE(latency_us / 1000000, 99) AS p99_latency_s,
     COUNT(*) / %s AS qps,
     COUNT(*) / %s AS tps,
-    EXP(AVG(LN(latency_us / 1000000))) AS geometric_mean_latency_s
+    EXP(AVG(LN(latency_us / 1000000))) AS geometric_mean_latency_s,
+    FROM_UNIXTIME(MIN(start_time_s)) AS start_time,
+    FROM_UNIXTIME(MAX(start_time_s + latency_us / 100000)) AS end_time
 FROM res_table
 WHERE batch_id = %s
 GROUP BY txn_name
@@ -141,7 +143,9 @@ for row in cursor.fetchall():
         "Geometric Mean Latency(s)": row[7], 
         "Avg Latency(s)": row[3], 
         "Avg Latency Limit(s)": "N/A" if latency_limit[type_name] == 0 else str(latency_limit[type_name]),
-        "Pass/Fail": "N/A" if latency_limit[type_name] == 0 else "Pass" if row[4] <= latency_limit[type_name] else "Fail"
+        "Pass/Fail": "N/A" if latency_limit[type_name] == 0 else "Pass" if row[4] <= latency_limit[type_name] else "Fail",
+        "Start Time": row[8],
+        "End Time": row[9]
     }
 
 # Calculate the total statistics
@@ -153,7 +157,9 @@ SELECT
     APPROX_PERCENTILE(latency_us / 1000000, 99) AS p99_latency_s,
     COUNT(*) / %s AS qps,
     COUNT(*) / %s AS tps,
-    EXP(AVG(LN(latency_us / 1000000))) AS geometric_mean_latency_s
+    EXP(AVG(LN(latency_us / 1000000))) AS geometric_mean_latency_s,
+    FROM_UNIXTIME(MIN(start_time_s)) AS start_time,
+    FROM_UNIXTIME(MAX(start_time_s + latency_us / 100000)) AS end_time
 FROM res_table
 WHERE batch_id = %s;
 '''
@@ -168,7 +174,9 @@ sum_stats["Total"] = {
     "Geometric Mean Latency(s)": total_row[6], 
     "Avg Latency(s)": total_row[2], 
     "Avg Latency Limit(s)": "N/A", 
-    "Pass/Fail": "N/A"
+    "Pass/Fail": "N/A", 
+    "Start Time": total_row[7], 
+    "End Time": total_row[8]
 }
 
 # Output the summary of the results to database table
@@ -186,6 +194,8 @@ CREATE TABLE IF NOT EXISTS sum_table (
     geometric_mean_latency_s    DECIMAL(20, 6),
     avg_latency_limit_s         VARCHAR(10),
     pass_fail                   VARCHAR(10),
+    start_time                  timestamp(6),
+    end_time                    timestamp(6),
     PRIMARY KEY (batch_id, txn_name)
 );
 '''
@@ -209,13 +219,15 @@ with open(export_csv_file, mode="w", newline="") as file:
         "Geometric Mean Latency(s)", 
         "Avg Latency(s)", 
         "Avg Latency Limit(s)", 
-        "Pass/Fail"
+        "Pass/Fail", 
+        "Start Time", 
+        "End Time"
     ]
     writer = csv.DictWriter(file, fieldnames=fieldnames)
     writer.writeheader()
     # Print the summary of the results to the console
     print("Summary of the results:")
-    print(f"{'Type Name':<20} {'Total Latency(s)':<20} {'Number of Requests':<20} {'QPS':<20} {'TPS':<20} {'P99 Latency(s)':<20} {'Geometric Mean Latency(s)':<30} {'Avg Latency(s)':<20} {'Avg Latency Limit(s)':<20} {'Pass/Fail':<20}")
+    print(f"{'Type Name':<10} {'Total Latency(s)':<20} {'Number of Requests':<20} {'QPS':<10} {'TPS':<10} {'P99 Latency(s)':<20} {'Geometric Mean Latency(s)':<30} {'Avg Latency(s)':<20} {'Avg Latency Limit(s)':<20} {'Pass/Fail':<10} {'Start Time':<30} {'End Time':<30}")
     for type_name, stats in sum_stats.items():
         # Write the summary of the results to the CSV file
         writer.writerow({
@@ -228,15 +240,17 @@ with open(export_csv_file, mode="w", newline="") as file:
             "Geometric Mean Latency(s)": stats["Geometric Mean Latency(s)"],
             "Avg Latency(s)": stats["Avg Latency(s)"],
             "Avg Latency Limit(s)": stats["Avg Latency Limit(s)"],
-            "Pass/Fail": stats["Pass/Fail"]
+            "Pass/Fail": stats["Pass/Fail"],
+            "Start Time": stats["Start Time"],
+            "End Time": stats["End Time"]
         })
         # Print the summary of the results to the console
-        print(f"{type_name:<20} {stats['Total Latency(s)']:<20} {stats['Number of Requests']:<20} {stats['QPS']:<20} {stats['TPS']:<20} {stats['P99 Latency(s)']:<20} {stats['Geometric Mean Latency(s)']:<30} {stats['Avg Latency(s)']:<20} {stats['Avg Latency Limit(s)']:<20} {stats['Pass/Fail']:<20}")
+        print(f"{type_name:<10} {stats['Total Latency(s)']:<20} {stats['Number of Requests']:<20} {stats['QPS']:<10} {stats['TPS']:<10} {stats['P99 Latency(s)']:<20} {stats['Geometric Mean Latency(s)']:<30} {stats['Avg Latency(s)']:<20} {stats['Avg Latency Limit(s)']:<20} {stats['Pass/Fail']:<10} {str(stats['Start Time']):<30} {str(stats['End Time']):<30}")
         # Insert the data into the database (batch_id and txn_name are primary keys)
         insert_sql = '''
         INSERT INTO sum_table
-        (batch_id, txn_name, total_latency_s, txn_count, average_latency_s, p99_latency_s, qps, tps, geometric_mean_latency_s, avg_latency_limit_s, pass_fail)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        (batch_id, txn_name, total_latency_s, txn_count, average_latency_s, p99_latency_s, qps, tps, geometric_mean_latency_s, avg_latency_limit_s, pass_fail, start_time, end_time)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         '''
         # try to insert the data
         cursor.execute(insert_sql, (
@@ -250,7 +264,9 @@ with open(export_csv_file, mode="w", newline="") as file:
             stats["TPS"],
             stats["Geometric Mean Latency(s)"],
             stats["Avg Latency Limit(s)"],
-            stats["Pass/Fail"]
+            stats["Pass/Fail"],
+            stats["Start Time"],
+            stats["End Time"]
         ))
         # Commit the inserted or updated data
         conn.commit()
