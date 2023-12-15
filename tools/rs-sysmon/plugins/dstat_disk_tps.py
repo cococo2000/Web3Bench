@@ -78,4 +78,3 @@ class dstat_plugin(dstat):
 
 # S_VALUE(ioj->rd_ios, ioi->rd_ios, itv),
 # S_VALUE(ioj->wr_ios, ioi->wr_ios, itv),
-

@@ -14,7 +14,6 @@
  *  limitations under the License.                                            *
  ******************************************************************************/
 
-
 package com.olxpbenchmark.util;
 
 import java.io.BufferedWriter;
@@ -58,7 +57,8 @@ public class MeasureTargetSystem implements Runnable {
 
 		try {
 
-			out.write("phase_of_test\t requested_speed(tps)\t measured_speed(rows/sec) \t cpu \t read_per_sec \t read_merged_per_sec \t sector_reads_per_sec \t %_disk_read \t write_per_sec \t write_merged_per_sec \t sector_written_per_sec \t %_disk_write \t io_currently_in_progress \t %_time_disk_util \t %_weighted_time_disk_util \n");
+			out.write(
+					"phase_of_test\t requested_speed(tps)\t measured_speed(rows/sec) \t cpu \t read_per_sec \t read_merged_per_sec \t sector_reads_per_sec \t %_disk_read \t write_per_sec \t write_merged_per_sec \t sector_written_per_sec \t %_disk_write \t io_currently_in_progress \t %_time_disk_util \t %_weighted_time_disk_util \n");
 
 			// initial warmup phase
 			while (true) {
@@ -91,7 +91,7 @@ public class MeasureTargetSystem implements Runnable {
 	private static String buildoutString(String phase, double nextTargetTPS,
 			double[] t) {
 
-	    StringBuilder outt = new StringBuilder();
+		StringBuilder outt = new StringBuilder();
 		outt.append(phase + "\t " + nextTargetTPS);
 
 		for (int i = 0; i < t.length; i++)

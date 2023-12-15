@@ -16,7 +16,6 @@
 
 package com.olxpbenchmark.api;
 
-
 public interface TransactionGenerator<T extends Operation> {
 	/** Implementations *must* be thread-safe. */
 	public T nextTransaction();

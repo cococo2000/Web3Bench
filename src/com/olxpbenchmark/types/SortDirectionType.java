@@ -1,5 +1,4 @@
 
-
 /******************************************************************************
  *  Copyright 2015 by OLTPBenchmark Project                                   *
  *                                                                            *
@@ -41,15 +40,14 @@ import java.util.*;
  *
  */
 public enum SortDirectionType {
-    INVALID      (0),
-    ASC          (1),
-    DESC         (2);
+    INVALID(0),
+    ASC(1),
+    DESC(2);
 
     SortDirectionType(int val) {
-        assert (this.ordinal() == val) :
-            "Enum element " + this.name() +
-            " in position " + this.ordinal() +
-            " instead of position " + val;
+        assert (this.ordinal() == val) : "Enum element " + this.name() +
+                " in position " + this.ordinal() +
+                " instead of position " + val;
     }
 
     public int getValue() {
@@ -74,7 +72,7 @@ public enum SortDirectionType {
     }
 
     public static SortDirectionType get(Integer idx) {
-        assert(idx >= 0);
+        assert (idx >= 0);
         SortDirectionType ret = SortDirectionType.idx_lookup.get(idx);
         return (ret == null ? SortDirectionType.INVALID : ret);
     }

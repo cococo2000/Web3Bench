@@ -14,7 +14,6 @@
  *  limitations under the License.                                            *
  ******************************************************************************/
 
-
 package com.olxpbenchmark.util;
 
 import java.util.*;
@@ -28,20 +27,21 @@ public abstract class EventObserver<T> {
         @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public void update(Observable o, Object arg) {
-            assert(o instanceof EventObservable<?>.InnerObservable);
-            EventObserver.this.update(((EventObservable.InnerObservable)o).getEventObservable(), (T)arg);
+            assert (o instanceof EventObservable<?>.InnerObservable);
+            EventObserver.this.update(((EventObservable.InnerObservable) o).getEventObservable(), (T) arg);
         }
+
         public EventObserver<T> getEventObserver() {
             return (EventObserver.this);
         }
     }
-    
+
     private final InnerObserver observer;
-    
+
     public EventObserver() {
         this.observer = new InnerObserver();
     }
-    
+
     protected Observer getObserver() {
         return (this.observer);
     }

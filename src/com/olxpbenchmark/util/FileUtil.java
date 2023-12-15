@@ -14,7 +14,6 @@
  *  limitations under the License.                                            *
  ******************************************************************************/
 
-
 package com.olxpbenchmark.util;
 
 import java.io.*;
@@ -33,10 +32,10 @@ public abstract class FileUtil {
     private static final Logger LOG = Logger.getLogger(FileUtil.class);
 
     private static final Pattern EXT_SPLIT = Pattern.compile("\\.");
-    
-    
+
     /**
      * Join path components
+     * 
      * @param args
      * @return
      */
@@ -64,24 +63,23 @@ public abstract class FileUtil {
      * @return
      */
     public static String getNextFilename(String basename) {
-        
+
         if (!exists(basename))
             return basename;
-        
+
         File f = new File(basename);
         if (f != null && f.isFile()) {
             String parts[] = EXT_SPLIT.split(basename);
-            
+
             // Check how many files already exist
             int counter = 1;
             String nextName = parts[0] + "." + counter + "." + parts[1];
-            while(exists(nextName)) {
+            while (exists(nextName)) {
                 ++counter;
                 nextName = parts[0] + "." + counter + "." + parts[1];
             }
             return nextName;
         }
-        
 
         // Should we throw instead??
         return null;
@@ -137,9 +135,9 @@ public abstract class FileUtil {
      * Return a File handle to a temporary file location
      * 
      * @param ext
-     *            the suffix of the filename
+     *                     the suffix of the filename
      * @param deleteOnExit
-     *            whether to delete this file after the JVM exits
+     *                     whether to delete this file after the JVM exits
      * @return
      */
     public static File getTempFile(String ext, boolean deleteOnExit) {
@@ -239,7 +237,7 @@ public abstract class FileUtil {
     }
 
     public static String readFile(File path) {
-	System.out.println(path);
+        System.out.println(path);
         return (readFile(path.getAbsolutePath()));
     }
 
@@ -355,7 +353,8 @@ public abstract class FileUtil {
         } // FOR
           // If we didn't see an .svn directory, then we went too far down
         if (!has_svn)
-            throw new RuntimeException("Unable to find directory '" + name + "' [last_dir=" + current.getAbsolutePath() + "]");
+            throw new RuntimeException(
+                    "Unable to find directory '" + name + "' [last_dir=" + current.getAbsolutePath() + "]");
         File next = new File(current.getCanonicalPath() + File.separator + "..");
         return (FileUtil.find(name, next, isdir));
     }

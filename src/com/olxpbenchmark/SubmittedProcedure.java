@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 /**
  * This class is used for keeping track of the procedures that have been
  * submitted to the system when running a rate-limited benchmark.
+ * 
  * @author breilly
  */
 public class SubmittedProcedure {
@@ -44,6 +45,11 @@ public class SubmittedProcedure {
         this.startTime = startTime;
     }
 
-    public int getType() { return type; }
-    public long getStartTime() { return startTime; }
+    public int getType() {
+        return type;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
 }

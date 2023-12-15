@@ -14,7 +14,6 @@
  *  limitations under the License.                                            *
  ******************************************************************************/
 
-
 package com.olxpbenchmark.api;
 
 import java.util.Random;
@@ -22,22 +21,23 @@ import java.util.Random;
 public class LoaderUtil {
 
 	private final static String[] nameTokens = {
-		"BAR", "OUGHT", "ABLE", "PRI",
-		"PRES", "ESE", "ANTI", "CALLY",
-		"ATION", "EING"
+			"BAR", "OUGHT", "ABLE", "PRI",
+			"PRES", "ESE", "ANTI", "CALLY",
+			"ATION", "EING"
 	};
-	
+
 	/**
 	 * This is slow! Use TextGenerator.randomStr()
+	 * 
 	 * @param strLen
 	 * @return
 	 */
 	@Deprecated
 	public static String randomStr(long strLen) {
 
-		char freshChar;		
+		char freshChar;
 		StringBuilder sb = new StringBuilder();
-		
+
 		while (sb.length() < (strLen - 1)) {
 			freshChar = (char) (Math.random() * 128);
 			if (Character.isLetter(freshChar)) {
@@ -49,13 +49,14 @@ public class LoaderUtil {
 
 	} // end randomStr
 
-	public static String blockBuilder(String piece, int repeat){
-	    StringBuilder sb = new StringBuilder("<HTML>");
-	    for (int i=0;i<repeat;i++) sb.append(piece);
-	    sb.append("</HTML>");
-	    return sb.toString();
+	public static String blockBuilder(String piece, int repeat) {
+		StringBuilder sb = new StringBuilder("<HTML>");
+		for (int i = 0; i < repeat; i++)
+			sb.append(piece);
+		sb.append("</HTML>");
+		return sb.toString();
 	}
-	
+
 	public static String randomNStr(Random r, int stringLength) {
 		StringBuilder output = new StringBuilder();
 		char base = '0';
@@ -70,7 +71,7 @@ public class LoaderUtil {
 		String dS = "" + d;
 		return dS.length() > 6 ? dS.substring(0, 6) : dS;
 	}
-	
+
 	public static String getLastName(int num) {
 		return nameTokens[num / 100] + nameTokens[(num / 10) % 10]
 				+ nameTokens[num % 10];
@@ -85,6 +86,7 @@ public class LoaderUtil {
 				- min + 1))
 				+ min;
 	}
+
 	public static int randomNumber(int min, int max, Random r) {
 		return (int) (r.nextDouble() * (max - min + 1) + min);
 	}

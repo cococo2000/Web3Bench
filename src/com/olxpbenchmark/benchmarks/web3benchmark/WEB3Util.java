@@ -16,7 +16,6 @@
 
  */
 
-
 /*
  * Copyright 2021 OLxPBench
  * This work was based on the OLTPBenchmark Project
@@ -34,7 +33,6 @@
  * limitations under the License.
 
  */
-
 
 package com.olxpbenchmark.benchmarks.web3benchmark;
 
@@ -56,10 +54,10 @@ public class WEB3Util {
     private static final RandomGenerator ran = new RandomGenerator(0);
 
     // public static String randomStr(int strLen) {
-    //     if (strLen > 1)
-    //         return ran.astring(strLen - 1, strLen - 1);
-    //     else
-    //         return "";
+    // if (strLen > 1)
+    // return ran.astring(strLen - 1, strLen - 1);
+    // else
+    // return "";
     // }
 
     public static String randomStr(int strLen) {
@@ -136,12 +134,13 @@ public class WEB3Util {
     }
 
     // public static String convertToHashString(long index) {
-    //     return convertToHexString(index, WEB3Config.configHashLength);
+    // return convertToHexString(index, WEB3Config.configHashLength);
     // }
 
     public static String convertToBlockHashString(long index) {
         return convertToHexString(index, WEB3Config.configHashLength, "block");
     }
+
     public static String convertToBlockHashString(long index, String nodeid) {
         return convertToHexString(index, WEB3Config.configHashLength, "blk" + nodeid);
     }
@@ -149,6 +148,7 @@ public class WEB3Util {
     public static String convertToTxnHashString(long index) {
         return convertToHexString(index, WEB3Config.configHashLength, "txn");
     }
+
     public static String convertToTxnHashString(long index, String nodeid) {
         return convertToHexString(index, WEB3Config.configHashLength, "txn" + nodeid);
     }
@@ -162,23 +162,24 @@ public class WEB3Util {
     }
 
     // public static String convertToTxnFromAddressString(long index) {
-    //     return convertToHexString(index, WEB3Config.configAddressLength, "txnFrom");
+    // return convertToHexString(index, WEB3Config.configAddressLength, "txnFrom");
     // }
 
     public static String convertToContractAddressString(long index) {
         return convertToHexString(index, WEB3Config.configAddressLength, "contract");
     }
+
     public static String convertToContractAddressString(long index, String nodeid) {
         return convertToHexString(index, WEB3Config.configAddressLength, "ct" + nodeid);
     }
 
     // public static String getCurrentTime() {
-    //     return dateFormat.format(new java.util.Date());
+    // return dateFormat.format(new java.util.Date());
     // }
 
     // public static String formattedDouble(double d) {
-    //     String dS = "" + d;
-    //     return dS.length() > 6 ? dS.substring(0, 6) : dS;
+    // String dS = "" + d;
+    // return dS.length() > 6 ? dS.substring(0, 6) : dS;
     // }
 
     public static long randomNumber(long min, long max, Random r) {
@@ -189,10 +190,11 @@ public class WEB3Util {
         return (int) (r.nextDouble() * (max - min + 1) + min);
     }
 
-    // public static int nonUniformRandom(int A, int C, int min, int max, Random r) {
-    //     return (((randomNumber(0, A, r) | randomNumber(min, max, r)) + C) % (max
-    //             - min + 1))
-    //             + min;
+    // public static int nonUniformRandom(int A, int C, int min, int max, Random r)
+    // {
+    // return (((randomNumber(0, A, r) | randomNumber(min, max, r)) + C) % (max
+    // - min + 1))
+    // + min;
     // }
 
     public static long getTimestamp(long block_number) {

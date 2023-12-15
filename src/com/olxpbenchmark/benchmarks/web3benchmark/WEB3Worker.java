@@ -16,7 +16,6 @@
 
  */
 
-
 /*
  * Copyright 2021 OLxPBench
  * This work was based on the OLTPBenchmark Project
@@ -34,7 +33,6 @@
  * limitations under the License.
 
  */
-
 
 package com.olxpbenchmark.benchmarks.web3benchmark;
 
@@ -58,7 +56,7 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
     private static final Logger LOG = Logger.getLogger(WEB3Worker.class);
 
     private final Random gen = new Random();
-    private static  CounterGenerator startRecord;
+    private static CounterGenerator startRecord;
 
     String distribution;
 
@@ -72,16 +70,18 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
 
     public WorkloadConfiguration workConf;
 
-    public WEB3Worker(WEB3Benchmark benchmarkModule, int id, String distri, int numScale, int startNum, WorkloadConfiguration workConf)
+    public WEB3Worker(WEB3Benchmark benchmarkModule, int id, String distri, int numScale, int startNum,
+            WorkloadConfiguration workConf)
             throws SQLException {
         super(benchmarkModule, id);
-        //zipf = new ZipfianGenerator(100);
+        // zipf = new ZipfianGenerator(100);
         distribution = distri;
         this.numScale = numScale;
         this.startNumber = startNum;
         startRecord = new CounterGenerator(this.startNumber);
         this.workConf = workConf;
     }
+
     /**
      * Executes a single TPCC transaction of type transactionType.
      */
@@ -104,7 +104,8 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
 
             int summaryNumber = workConf.getSummaryNumber();
             int insertRatio = workConf.getInsertRatio();
-            int deltaNumber = ((int) (workConf.getGapTime())) * (workConf.getRate()) * summaryNumber * insertRatio / 100;
+            int deltaNumber = ((int) (workConf.getGapTime())) * (workConf.getRate()) * summaryNumber * insertRatio
+                    / 100;
             int upperLimit = workConf.getStartNum() + deltaNumber - 1;
 
             int startNumber = startRecord.nextInt();
@@ -113,28 +114,28 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
             WEB3Procedure proc = (WEB3Procedure) this.getProcedure(nextTransaction.getProcedureClass());
             if (distribution.equals("rand")) {
                 proc.run(conn, gen, this, startNumber, 0, numScale, nodeid);
-            } 
+            }
             // else if (distribution.equals("zipf")) {
-            //     proc.run(conn, numScale, this, startNumber, 0);
+            // proc.run(conn, numScale, this, startNumber, 0);
             // }
             // else if (distribution.equals("poisson")) {
-            //     proc.run(conn, this, startNumber, 0, numScale, "poisson");
+            // proc.run(conn, this, startNumber, 0, numScale, "poisson");
             // }
             else if (distribution.equals("iRand")) {
                 proc.run(conn, gen, this, startNumber, upperLimit, numScale, nodeid);
             }
             // else if (distribution.equals("iZipf")) {
-            //     proc.run(conn, numScale, this, startNumber, upperLimit);
+            // proc.run(conn, numScale, this, startNumber, upperLimit);
             // }
             // else if (distribution.equals("iPoisson")){
-            //     proc.run(conn, this, startNumber, upperLimit, numScale, "iPoisson");
+            // proc.run(conn, this, startNumber, upperLimit, numScale, "iPoisson");
             // }
             else {
                 LOG.error("The INVALID distribution?!");
                 System.exit(-1);
             }
-        } catch (ClassCastException ex){
-            //fail gracefully
+        } catch (ClassCastException ex) {
+            // fail gracefully
             LOG.error("We have been invoked with an INVALID transactionType?!");
             throw new RuntimeException("Bad transaction type = " + nextTransaction);
         }

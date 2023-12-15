@@ -14,7 +14,6 @@
  *  limitations under the License.                                            *
  ******************************************************************************/
 
-
 package com.olxpbenchmark;
 
 import java.util.ArrayList;
@@ -26,9 +25,10 @@ public class LatencyRecord implements Iterable<LatencyRecord.Sample> {
 	static final int ALLOC_SIZE = 500000;
 
 	/**
-	 * Contains (start time, latency, transactionType, workerid, phaseid) pentiplets 
-	 * in microsecond form. The start times are "compressed" by encoding them as 
-	 * increments, starting from startNs. A 32-bit integer provides sufficient resolution
+	 * Contains (start time, latency, transactionType, workerid, phaseid) pentiplets
+	 * in microsecond form. The start times are "compressed" by encoding them as
+	 * increments, starting from startNs. A 32-bit integer provides sufficient
+	 * resolution
 	 * for an interval of 2146 seconds, or 35 minutes.
 	 */
 	private final ArrayList<Sample[]> values = new ArrayList<Sample[]>();
@@ -46,7 +46,7 @@ public class LatencyRecord implements Iterable<LatencyRecord.Sample> {
 
 	}
 
-    public void addLatency(int transType, long startNs, long endNs, int workerId, int phaseId) {
+	public void addLatency(int transType, long startNs, long endNs, int workerId, int phaseId) {
 		assert lastNs > 0;
 		assert lastNs - 500 <= startNs;
 		assert endNs >= startNs;
@@ -69,7 +69,7 @@ public class LatencyRecord implements Iterable<LatencyRecord.Sample> {
 
 	private void allocateChunk() {
 		assert (values.isEmpty() && nextIndex == 0)
-			|| nextIndex == ALLOC_SIZE;
+				|| nextIndex == ALLOC_SIZE;
 		values.add(new Sample[ALLOC_SIZE]);
 		nextIndex = 0;
 	}
@@ -92,7 +92,7 @@ public class LatencyRecord implements Iterable<LatencyRecord.Sample> {
 		public final int workerId;
 		public final int phaseId;
 
-        public Sample(int tranType, long startNs, long latencyUs, int workerId, int phaseId) {
+		public Sample(int tranType, long startNs, long latencyUs, int workerId, int phaseId) {
 			this.tranType = tranType;
 			this.startNs = startNs;
 			this.latencyUs = latencyUs;
@@ -150,7 +150,7 @@ public class LatencyRecord implements Iterable<LatencyRecord.Sample> {
 			}
 
 			// Previously, s.startNs was just an offset from the previous
-			// value.  Now we make it an absolute.
+			// value. Now we make it an absolute.
 			s.startNs += lastIteratorNs;
 			lastIteratorNs = s.startNs;
 

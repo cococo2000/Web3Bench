@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import java.sql.Connection;
@@ -34,82 +33,86 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 
 public class W13 extends WEB3Procedure {
 
-    private static final Logger LOG = Logger.getLogger(W13.class);
+        private static final Logger LOG = Logger.getLogger(W13.class);
 
-    public SQLStmt query_stmtSQL = new SQLStmt(
-            "insert into "
-                    + "transactions "
-                    + "values "
-                    + "(?, ?, ?, ?, ?,"
-                    + " ?, ?, ?, ?, ?,"
-                    + " ?, ?, ?, ?, ?,"
-                    + " ?, ?, ?, ?, ?)"
-    );
+        public SQLStmt query_stmtSQL = new SQLStmt(
+                        "insert into "
+                                        + "transactions "
+                                        + "values "
+                                        + "(?, ?, ?, ?, ?,"
+                                        + " ?, ?, ?, ?, ?,"
+                                        + " ?, ?, ?, ?, ?,"
+                                        + " ?, ?, ?, ?, ?)");
 
-    private PreparedStatement query_stmt = null;
+        private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
-        boolean trace = LOG.isTraceEnabled();
+        public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+                        String nodeid) throws SQLException {
+                boolean trace = LOG.isTraceEnabled();
 
-        // initializing all prepared statements
-        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
+                // initializing all prepared statements
+                query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String hash = WEB3Util.convertToTxnHashString(numScale * WEB3Config.configTransactionsCount + startNumber, nodeid);
-        long nonce = WEB3Util.randomNumber(0, 100, gen);
-        long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
-        String block_hash = WEB3Util.convertToBlockHashString(block_number);
-        long transaction_index = WEB3Util.randomNumber(0, 10000, gen);
-        String from_address = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        String to_address = WEB3Util.convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
-        long gas = WEB3Util.randomNumber(100, 1000000, gen);
-        long gas_price = WEB3Util.randomNumber(1000, 10000000, gen);
-        String input = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
-        long receipt_cumulative_gas_used = WEB3Util.randomNumber(100, 1000000, gen);
-        long receipt_gas_used = WEB3Util.randomNumber(10, gas, gen);
-        String receipt_contract_address = WEB3Util.convertToContractAddressString(WEB3Util.randomNumber(1, numScale * WEB3Config.configContractsCount, gen));
-        String receipt_root = WEB3Util.randomHashString();
-        long receipt_status = WEB3Util.randomNumber(0, 100, gen);
-        long block_timestamp = WEB3Util.getTimestamp(block_number);
-        long max_fee_per_gas = WEB3Util.randomNumber(100, 10000, gen);
-        long max_priority_fee_per_gas = WEB3Util.randomNumber(100, 10000, gen);
-        long transaction_type = WEB3Util.randomNumber(0, 100000, gen);
+                String hash = WEB3Util.convertToTxnHashString(
+                                numScale * WEB3Config.configTransactionsCount + startNumber,
+                                nodeid);
+                long nonce = WEB3Util.randomNumber(0, 100, gen);
+                long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
+                String block_hash = WEB3Util.convertToBlockHashString(block_number);
+                long transaction_index = WEB3Util.randomNumber(0, 10000, gen);
+                String from_address = WEB3Util
+                                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+                String to_address = WEB3Util
+                                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+                double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
+                long gas = WEB3Util.randomNumber(100, 1000000, gen);
+                long gas_price = WEB3Util.randomNumber(1000, 10000000, gen);
+                String input = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
+                long receipt_cumulative_gas_used = WEB3Util.randomNumber(100, 1000000, gen);
+                long receipt_gas_used = WEB3Util.randomNumber(10, gas, gen);
+                String receipt_contract_address = WEB3Util.convertToContractAddressString(
+                                WEB3Util.randomNumber(1, numScale * WEB3Config.configContractsCount, gen));
+                String receipt_root = WEB3Util.randomHashString();
+                long receipt_status = WEB3Util.randomNumber(0, 100, gen);
+                long block_timestamp = WEB3Util.getTimestamp(block_number);
+                long max_fee_per_gas = WEB3Util.randomNumber(100, 10000, gen);
+                long max_priority_fee_per_gas = WEB3Util.randomNumber(100, 10000, gen);
+                long transaction_type = WEB3Util.randomNumber(0, 100000, gen);
 
+                int idx = 1;
+                query_stmt.setString(idx++, hash);
+                query_stmt.setLong(idx++, nonce);
+                query_stmt.setString(idx++, block_hash);
+                query_stmt.setLong(idx++, block_number);
+                query_stmt.setLong(idx++, transaction_index);
+                query_stmt.setString(idx++, from_address);
+                query_stmt.setString(idx++, to_address);
+                query_stmt.setDouble(idx++, value);
+                query_stmt.setLong(idx++, gas);
+                query_stmt.setLong(idx++, gas_price);
+                query_stmt.setString(idx++, input);
+                query_stmt.setLong(idx++, receipt_cumulative_gas_used);
+                query_stmt.setLong(idx++, receipt_gas_used);
+                query_stmt.setString(idx++, receipt_contract_address);
+                query_stmt.setString(idx++, receipt_root);
+                query_stmt.setLong(idx++, receipt_status);
+                query_stmt.setLong(idx++, block_timestamp);
+                query_stmt.setLong(idx++, max_fee_per_gas);
+                query_stmt.setLong(idx++, max_priority_fee_per_gas);
+                query_stmt.setLong(idx++, transaction_type);
 
-        int idx = 1;
-        query_stmt.setString(idx++, hash);
-        query_stmt.setLong(idx++, nonce);
-        query_stmt.setString(idx++, block_hash);
-        query_stmt.setLong(idx++, block_number);
-        query_stmt.setLong(idx++, transaction_index);
-        query_stmt.setString(idx++, from_address);
-        query_stmt.setString(idx++, to_address);
-        query_stmt.setDouble(idx++, value);
-        query_stmt.setLong(idx++, gas);
-        query_stmt.setLong(idx++, gas_price);
-        query_stmt.setString(idx++, input);
-        query_stmt.setLong(idx++, receipt_cumulative_gas_used);
-        query_stmt.setLong(idx++, receipt_gas_used);
-        query_stmt.setString(idx++, receipt_contract_address);
-        query_stmt.setString(idx++, receipt_root);
-        query_stmt.setLong(idx++, receipt_status);
-        query_stmt.setLong(idx++, block_timestamp);
-        query_stmt.setLong(idx++, max_fee_per_gas);
-        query_stmt.setLong(idx++, max_priority_fee_per_gas);
-        query_stmt.setLong(idx++, transaction_type);
+                if (trace)
+                        LOG.trace("query_stmt W13 InsertTransactions START");
+                int affectedRows = query_stmt.executeUpdate();
+                conn.commit();
+                if (trace)
+                        LOG.trace("query_stmt W13 InsertTransactions END");
 
-        if (trace) LOG.trace("query_stmt W13 InsertTransactions START");
-        int affectedRows = query_stmt.executeUpdate();
-        conn.commit();
-        if (trace) LOG.trace("query_stmt W13 InsertTransactions END");
+                if (LOG.isDebugEnabled()) {
+                        LOG.debug(queryToString(query_stmt));
+                        LOG.debug("query_stmt W13 InsertTransactions: " + affectedRows + " rows affected");
+                }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-            LOG.debug("query_stmt W13 InsertTransactions: " + affectedRows + " rows affected");
+                return null;
         }
-
-        return null;
-    }
 }
-
-

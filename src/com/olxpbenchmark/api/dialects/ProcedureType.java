@@ -21,7 +21,6 @@
 // Generated on: 2011.12.28 at 11:42:38 PM EST 
 //
 
-
 package com.olxpbenchmark.api.dialects;
 
 import java.util.ArrayList;
@@ -32,11 +31,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for procedureType complex type.
+ * <p>
+ * Java class for procedureType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="procedureType">
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "procedureType", propOrder = {
-    "statement"
+        "statement"
 })
 public class ProcedureType {
 
@@ -71,12 +72,14 @@ public class ProcedureType {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the statement property.
+     * This is why there is not a <CODE>set</CODE> method for the statement
+     * property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getStatement().add(newItem);
+     * getStatement().add(newItem);
      * </pre>
      * 
      * 
@@ -97,9 +100,9 @@ public class ProcedureType {
      * Gets the value of the name property.
      * 
      * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *         possible object is
+     *         {@link String }
+     * 
      */
     public String getName() {
         return name;
@@ -109,9 +112,9 @@ public class ProcedureType {
      * Sets the value of the name property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *              allowed object is
+     *              {@link String }
+     * 
      */
     public void setName(String value) {
         this.name = value;

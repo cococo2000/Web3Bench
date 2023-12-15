@@ -16,7 +16,6 @@
 
 package com.olxpbenchmark.distributions;
 
-
 import java.util.Random;
 
 public class ZipFianDistribution {

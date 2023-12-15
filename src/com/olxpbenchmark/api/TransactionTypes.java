@@ -25,13 +25,13 @@ import java.util.List;
 import org.apache.commons.collections15.map.ListOrderedMap;
 
 public class TransactionTypes implements Collection<TransactionType> {
-	
+
 	private final ListOrderedMap<String, TransactionType> types = new ListOrderedMap<String, TransactionType>();
-	
+
 	protected TransactionTypes() {
-	    // Nothing to see... nothing to do...
+		// Nothing to see... nothing to do...
 	}
-	
+
 	public TransactionTypes(List<TransactionType> transactiontypes) {
 		Collections.sort(transactiontypes, new Comparator<TransactionType>() {
 			@Override
@@ -40,18 +40,18 @@ public class TransactionTypes implements Collection<TransactionType> {
 			}
 		});
 		for (TransactionType tt : transactiontypes) {
-		    // System.err.println("Adding " + tt + " - " + this.types + " / " + transactiontypes);
-		    String key = tt.getName().toUpperCase();
-		    assert(this.types.containsKey(key) == false) :
-		        "Duplicate TransactionType '" + tt + "'\n" + this.types;
+			// System.err.println("Adding " + tt + " - " + this.types + " / " +
+			// transactiontypes);
+			String key = tt.getName().toUpperCase();
+			assert (this.types.containsKey(key) == false) : "Duplicate TransactionType '" + tt + "'\n" + this.types;
 			this.types.put(key, tt);
 		} // FOR
 	}
 
 	public TransactionType getType(String procName) {
-	    return (this.types.get(procName.toUpperCase()));
+		return (this.types.get(procName.toUpperCase()));
 	}
-	
+
 	public TransactionType getType(Class<? extends Procedure> procClass) {
 		return (this.getType(procClass.getSimpleName()));
 	}
@@ -59,7 +59,7 @@ public class TransactionTypes implements Collection<TransactionType> {
 	public TransactionType getType(int id) {
 		return (this.types.getValue(id));
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.types.values().toString();
@@ -67,8 +67,8 @@ public class TransactionTypes implements Collection<TransactionType> {
 
 	@Override
 	public boolean add(TransactionType tt) {
-	    String key = tt.getName().toUpperCase();
-	    this.types.put(key, tt);
+		String key = tt.getName().toUpperCase();
+		this.types.put(key, tt);
 		return (true);
 	}
 
@@ -136,5 +136,5 @@ public class TransactionTypes implements Collection<TransactionType> {
 	public <T> T[] toArray(T[] a) {
 		return (this.types.values().toArray(a));
 	}
-	
+
 }

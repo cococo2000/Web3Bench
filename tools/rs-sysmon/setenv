@@ -53,4 +53,3 @@ export DSTAT_MYSQL_USER=$mysql_user
 export DSTAT_MYSQL_PWD=$mysql_pass
 export DSTAT_MYSQL_PORT=$mysql_port
 export DSTAT_MYSQL_HOST=$mysql_host
-

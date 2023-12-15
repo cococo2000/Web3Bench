@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.procedures;
 
 import java.sql.Connection;
@@ -37,13 +36,13 @@ public class W51 extends WEB3Procedure {
 
     public SQLStmt query_stmtSQL = new SQLStmt(
             "update token_transfers "
-                + "set value = ? "
-                + "where to_address = from_address "
-    );
+                    + "set value = ? "
+                    + "where to_address = from_address ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen,  WEB3Worker w, int startNumber, int upperLimit, int numScale, String nodeid) throws SQLException {
+    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
@@ -51,11 +50,13 @@ public class W51 extends WEB3Procedure {
 
         double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
         query_stmt.setDouble(1, value);
-        
-        if (trace) LOG.trace("query_stmt W51 UpdateQuery2 START");
+
+        if (trace)
+            LOG.trace("query_stmt W51 UpdateQuery2 START");
         int affectedRows = query_stmt.executeUpdate();
         conn.commit();
-        if (trace) LOG.trace("query_stmt W51 UpdateQuery2 END");
+        if (trace)
+            LOG.trace("query_stmt W51 UpdateQuery2 END");
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(queryToString(query_stmt));
@@ -65,5 +66,3 @@ public class W51 extends WEB3Procedure {
         return null;
     }
 }
-
-

@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.pojo;
 
 public class Token_transfers {

@@ -16,7 +16,6 @@
 
  */
 
-
 /******************************************************************************
  *  Copyright 2015 by OLTPBenchmark Project                                   *
  *                                                                            *
@@ -32,7 +31,6 @@
  *  See the License for the specific language governing permissions and       *
  *  limitations under the License.                                            *
  ******************************************************************************/
-
 
 package com.olxpbenchmark;
 
@@ -63,7 +61,6 @@ import com.olxpbenchmark.util.StringUtil;
 public class ThreadBench implements Thread.UncaughtExceptionHandler {
     private static final Logger LOG = Logger.getLogger(ThreadBench.class);
 
-    
     private static BenchmarkState testState;
     private final List<? extends Worker<? extends BenchmarkModule>> workers;
     private final ArrayList<Thread> workerThreads;
@@ -73,11 +70,13 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
     ArrayList<LatencyRecord.Sample> samples = new ArrayList<LatencyRecord.Sample>();
     private int intervalMonitor = 0;
 
-    private ThreadBench(List<? extends Worker<? extends BenchmarkModule>> workers, List<WorkloadConfiguration> workConfs) {
+    private ThreadBench(List<? extends Worker<? extends BenchmarkModule>> workers,
+            List<WorkloadConfiguration> workConfs) {
         this(workers, null, workConfs);
     }
 
-    public ThreadBench(List<? extends Worker<? extends BenchmarkModule>> workers, File profileFile, List<WorkloadConfiguration> workConfs) {
+    public ThreadBench(List<? extends Worker<? extends BenchmarkModule>> workers, File profileFile,
+            List<WorkloadConfiguration> workConfs) {
         this.workers = workers;
         this.workConfs = workConfs;
         this.workerThreads = new ArrayList<Thread>(workers.size());
@@ -92,7 +91,7 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
          * @param samples
          * @param windowSizeSeconds
          * @param txType
-         *            Allows to filter transactions by type
+         *                          Allows to filter transactions by type
          */
         public TimeBucketIterable(Iterable<Sample> samples, int windowSizeSeconds, TransactionType txType) {
             this.samples = samples;
@@ -120,9 +119,10 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
          * @param samples
          * @param windowSizeSeconds
          * @param txType
-         *            Allows to filter transactions by type
+         *                          Allows to filter transactions by type
          */
-        public TimeBucketIterator(Iterator<LatencyRecord.Sample> samples, int windowSizeSeconds, TransactionType txType) {
+        public TimeBucketIterator(Iterator<LatencyRecord.Sample> samples, int windowSizeSeconds,
+                TransactionType txType) {
             this.samples = samples;
             this.windowSizeSeconds = windowSizeSeconds;
             this.txType = txType;
@@ -215,6 +215,7 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
 
     /**
      * This method blocks until all of the worker threads finish execution
+     * 
      * @param workerThreads
      * @return
      * @throws InterruptedException
@@ -228,16 +229,15 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
 
         for (int i = 0, cnt = workerThreads.size(); i < cnt; i++) {
             Thread t = workerThreads.get(i);
-            assert(t != null);
+            assert (t != null);
             Worker<? extends BenchmarkModule> w = this.workers.get(i);
-            assert(w != null);
-            
+            assert (w != null);
 
             // FIXME not sure this is the best solution... ensure we don't hang
-            // forever, however we might ignore 
+            // forever, however we might ignore
             // problems
             t.join(60000); // wait for 60second for threads
-                                              // to terminate... hands otherwise
+                           // to terminate... hands otherwise
 
             /*
              * // CARLO: Maybe we might want to do this to kill threads that are
@@ -259,7 +259,7 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
         }
 
         private boolean stop = false;
-        
+
         @Override
         public void run() {
             Map<String, Object> m = new ListOrderedMap<String, Object>();
@@ -286,13 +286,14 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
         {
             this.setDaemon(true);
         }
-        
+
         /**
          * @param interval How long to wait between polling in milliseconds
          */
         MonitorThread(int interval) {
             this.intervalMonitor = interval;
         }
+
         @Override
         public void run() {
             LOG.info("Starting MonitorThread Interval [" + this.intervalMonitor + "ms]");
@@ -317,7 +318,7 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
             } // WHILE
         }
     } // CLASS
-    
+
     /*
      * public static Results runRateLimitedBenchmark(List<Worker> workers, File
      * profileFile) throws QueueLimitException, IOException { ThreadBench bench
@@ -325,7 +326,8 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
      * bench.runRateLimitedFromFile(); }
      */
 
-    public static Results runRateLimitedBenchmark(List<Worker<? extends BenchmarkModule>> workers, List<WorkloadConfiguration> workConfs, int intervalMonitoring) throws QueueLimitException, IOException {
+    public static Results runRateLimitedBenchmark(List<Worker<? extends BenchmarkModule>> workers,
+            List<WorkloadConfiguration> workConfs, int intervalMonitoring) throws QueueLimitException, IOException {
         ThreadBench bench = new ThreadBench(workers, workConfs);
         bench.intervalMonitor = intervalMonitoring;
         return bench.runRateLimitedMultiPhase();
@@ -383,7 +385,7 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
         boolean lastEntry = false;
 
         // Initialize the Monitor
-        if(this.intervalMonitor > 0 ) {
+        if (this.intervalMonitor > 0) {
             new MonitorThread(this.intervalMonitor).start();
         }
         // Allow workers to start work.
@@ -429,7 +431,7 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
                 TraceReader tr = workConfs.get(0).getTraceReader();
                 if (tr != null) {
                     // If a trace script is present, the phase complete iff the
-                    // trace reader has no more 
+                    // trace reader has no more
                     for (WorkloadConfiguration workConf : workConfs) {
                         phaseComplete = false;
                         tr = workConf.getTraceReader();
@@ -439,15 +441,13 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
                         }
                         phaseComplete = true;
                     }
-                }
-                else if (phase.isLatencyRun())
+                } else if (phase.isLatencyRun())
                     // Latency runs (serial run through each query) have their own
                     // state to mark completion
-                    phaseComplete = testState.getState()
-                                    == State.LATENCY_COMPLETE;
+                    phaseComplete = testState.getState() == State.LATENCY_COMPLETE;
                 else
                     phaseComplete = testState.getState() == State.MEASURE
-                                    && (start + delta <= now);
+                            && (start + delta <= now);
             }
 
             // Go to next phase if this one is complete
@@ -509,7 +509,7 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
             // Update the test state appropriately
             State state = testState.getState();
             if (state == State.WARMUP && now >= warmup) {
-                synchronized(testState) {
+                synchronized (testState) {
                     if (phase != null && phase.isLatencyRun()) {
                         testState.startColdQuery();
                     } else {
@@ -535,7 +535,6 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
             }
         } // WHILE (main loop)
         LOG.info("Attempting to stop worker threads and collect measurements");
-        
 
         try {
             int requests = finalizeWorkers(this.workerThreads);

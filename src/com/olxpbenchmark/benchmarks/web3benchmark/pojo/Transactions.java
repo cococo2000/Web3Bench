@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark.pojo;
 
 public class Transactions {
@@ -69,4 +68,3 @@ public class Transactions {
                 + "\n**********************************************");
     }
 }
-

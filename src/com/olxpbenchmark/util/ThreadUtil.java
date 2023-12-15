@@ -53,10 +53,11 @@ public abstract class ThreadUtil {
     public static int availableProcessors() {
         return Math.max(1, Runtime.getRuntime().availableProcessors());
     }
-    
+
     /**
      * Convenience wrapper around Thread.sleep() for when we don't care about
      * exceptions
+     * 
      * @param millis
      */
     public static void sleep(long millis) {
@@ -68,29 +69,30 @@ public abstract class ThreadUtil {
             }
         }
     }
-    
+
     /**
      * Have shutdown actually means shutdown. Tasks that need to complete should use
      * futures.
      */
-    public static ScheduledThreadPoolExecutor getScheduledThreadPoolExecutor(String name, UncaughtExceptionHandler handler, int poolSize, int stackSize) {
+    public static ScheduledThreadPoolExecutor getScheduledThreadPoolExecutor(String name,
+            UncaughtExceptionHandler handler, int poolSize, int stackSize) {
         // HACK: ScheduledThreadPoolExecutor won't let use the handler so
-        // if we're using ExceptionHandlingRunnable then we'll be able to 
+        // if we're using ExceptionHandlingRunnable then we'll be able to
         // pick up the exceptions
         Thread.setDefaultUncaughtExceptionHandler(handler);
-        
+
         ThreadFactory factory = getThreadFactory(name, handler);
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize, factory);
         executor.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
         executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
         return executor;
     }
-    
+
     public static ThreadFactory getThreadFactory(final String name, final UncaughtExceptionHandler handler) {
         return new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
-                Thread t = new Thread(null, r, name, 1024*1024);
+                Thread t = new Thread(null, r, name, 1024 * 1024);
                 t.setDaemon(true);
                 t.setUncaughtExceptionHandler(handler);
                 return t;
@@ -101,6 +103,7 @@ public abstract class ThreadUtil {
     /**
      * Executes the given command and returns a pair containing the PID and
      * Process handle
+     * 
      * @param command
      * @return
      */
@@ -127,7 +130,8 @@ public abstract class ThreadUtil {
         }
         assert (pid != null) : "Failed to get pid for " + p;
 
-        if (LOG.isDebugEnabled()) LOG.debug("Starting new process with PID " + pid);
+        if (LOG.isDebugEnabled())
+            LOG.debug("Starting new process with PID " + pid);
         return (Pair.of(pid, p));
     }
 
@@ -146,7 +150,8 @@ public abstract class ThreadUtil {
      * @param stop_observable
      * @param print_output
      */
-    public static <T> void fork(String command[], final EventObservable<T> stop_observable, final String prefix, final boolean print_output) {
+    public static <T> void fork(String command[], final EventObservable<T> stop_observable, final String prefix,
+            final boolean print_output) {
         if (LOG.isDebugEnabled())
             LOG.debug("Forking off process: " + Arrays.toString(command));
 
@@ -247,7 +252,7 @@ public abstract class ThreadUtil {
         } // SYNCHRONIZED
         ThreadUtil.run(runnables, ThreadUtil.pool, false);
     }
-    
+
     public static synchronized void shutdownGlobalPool() {
         if (ThreadUtil.pool != null) {
             ThreadUtil.pool.shutdown();
@@ -284,7 +289,8 @@ public abstract class ThreadUtil {
      * @param max_concurrent
      * @throws Exception
      */
-    private static final <R extends Runnable> void run(final Collection<R> runnables, final ExecutorService pool, final boolean stop_pool) {
+    private static final <R extends Runnable> void run(final Collection<R> runnables, final ExecutorService pool,
+            final boolean stop_pool) {
         final long start = System.currentTimeMillis();
         final int num_threads = runnables.size();
         final CountDownLatch latch = new CountDownLatch(num_threads);
@@ -312,7 +318,7 @@ public abstract class ThreadUtil {
         if (LOG.isDebugEnabled()) {
             final long stop = System.currentTimeMillis();
             LOG.debug(String.format("Finished executing %d threads [time=%.02fs]",
-                      num_threads, (stop - start) / 1000d));
+                    num_threads, (stop - start) / 1000d));
         }
         return;
     }

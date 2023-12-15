@@ -21,7 +21,6 @@
 // Generated on: 2011.12.28 at 11:42:38 PM EST 
 //
 
-
 package com.olxpbenchmark.api.dialects;
 
 import java.util.ArrayList;
@@ -31,11 +30,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for dialectsType complex type.
+ * <p>
+ * Java class for dialectsType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="dialectsType">
@@ -53,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dialectsType", propOrder = {
-    "dialect"
+        "dialect"
 })
 public class DialectsType {
 
@@ -71,8 +72,9 @@ public class DialectsType {
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getDialect().add(newItem);
+     * getDialect().add(newItem);
      * </pre>
      * 
      * 

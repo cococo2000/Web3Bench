@@ -12,4 +12,3 @@ RUN:
 - configure the variable in "setenv" following inline instructions
 - launch . ./setenv   (sets few variables)
 - launch ./monitor.sh 
-

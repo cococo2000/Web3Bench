@@ -16,7 +16,6 @@
 
  */
 
-
 /*
  * Copyright 2021 OLxPBench
  * This work was based on the OLTPBenchmark Project
@@ -35,13 +34,12 @@
 
  */
 
-
 package com.olxpbenchmark.benchmarks.web3benchmark;
 
 public class WEB3Constants {
-    public static final String TABLENAME_BLOCKS          = "blocks";
-    public static final String TABLENAME_TRANSACTIONS    = "transactions";
+    public static final String TABLENAME_BLOCKS = "blocks";
+    public static final String TABLENAME_TRANSACTIONS = "transactions";
     public static final String TABLENAME_TOKEN_TRANSFERS = "token_transfers";
-    public static final String TABLENAME_CONTRACTS       = "contracts";
-    public static final String TABLENAME_TEMPTABLE       = "temp_table";
+    public static final String TABLENAME_CONTRACTS = "contracts";
+    public static final String TABLENAME_TEMPTABLE = "temp_table";
 }

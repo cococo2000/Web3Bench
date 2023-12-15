@@ -29,7 +29,7 @@ public class Phase {
     private static final Logger LOG = Logger.getLogger(Phase.class);
 
     public enum Arrival {
-        REGULAR,POISSON,
+        REGULAR, POISSON,
     }
 
     private final Random gen = new Random();
@@ -67,7 +67,7 @@ public class Phase {
         this.serial = serial;
         this.timed = timed;
         this.activeTerminals = activeTerminals;
-        this.arrival=a;
+        this.arrival = a;
 
         if (this.serial) {
             List<Integer> starts = new ArrayList<Integer>(this.activeTerminals);
@@ -139,10 +139,11 @@ public class Phase {
     public int getWeightCount() {
         return (this.num_weights);
     }
+
     public List<Double> getWeights() {
         return (this.weights);
     }
-    
+
     /**
      * Computes the sum of weights. Usually needs to add up to 100%
      * 
@@ -154,7 +155,7 @@ public class Phase {
             total += d;
         return total;
     }
-    
+
     /**
      * This simply computes the next transaction by randomly selecting one based
      * on the weights of this phase.
@@ -171,7 +172,7 @@ public class Phase {
 
         if (isSerial()) {
             int ret;
-            synchronized(this) {
+            synchronized (this) {
                 int next = this.nextSerials.get(terminalId);
                 ret = next;
 
@@ -198,36 +199,34 @@ public class Phase {
             }
             LOG.debug(String.format("Worker %d (serial): executing txn #%d next", terminalId, ret));
             return ret;
-        }
-        else {
-            int randomPercentage = gen.nextInt((int)totalWeight()) + 1;
-        double weight = 0.0;
-        for (int i = 0; i < this.num_weights; i++) {
-            weight += weights.get(i).doubleValue();
-            if (randomPercentage <= weight) {
-                return i + 1;
-            }
-        } // FOR
+        } else {
+            int randomPercentage = gen.nextInt((int) totalWeight()) + 1;
+            double weight = 0.0;
+            for (int i = 0; i < this.num_weights; i++) {
+                weight += weights.get(i).doubleValue();
+                if (randomPercentage <= weight) {
+                    return i + 1;
+                }
+            } // FOR
         }
 
         return -1;
     }
-    
+
     /**
      * Returns a string for logging purposes when entering the phase
      */
     public String currentPhaseString() {
         List<String> inner = new ArrayList<String>();
         inner.add("[Workload=" + benchmarkName.toUpperCase() + "]");
-        if (isDisabled()){
+        if (isDisabled()) {
             inner.add("[Disabled=true]");
         } else {
             if (isLatencyRun()) {
                 inner.add("[Serial=true]");
                 inner.add("[Time=n/a]");
-            }
-            else {
-                inner.add("[Serial="+ isSerial() + "]");
+            } else {
+                inner.add("[Serial=" + isSerial() + "]");
                 inner.add("[Time=" + time + "]");
             }
             inner.add("[WarmupTime=" + warmupTime + "]");
@@ -236,7 +235,7 @@ public class Phase {
             inner.add("[Ratios=" + getWeights() + "]");
             inner.add("[ActiveWorkers=" + getActiveTerminals() + "]");
         }
-        
+
         return StringUtil.bold("PHASE START") + " :: " + StringUtil.join(" ", inner);
     }
 

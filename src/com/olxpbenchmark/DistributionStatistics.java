@@ -16,7 +16,6 @@
 
  */
 
-
 package com.olxpbenchmark;
 
 /*
@@ -35,7 +34,6 @@ package com.olxpbenchmark;
  * limitations under the License.
 
  */
-
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -56,12 +54,11 @@ public class DistributionStatistics {
 	private static final int PERCENTILE_90TH = 4;
 	private static final int PERCENTILE_95TH = 5;
 	private static final int PERCENTILE_99TH = 6;
-	//everyadd
+	// everyadd
 	private static final int PERCENTILE_999TH = 7;
 	private static final int PERCENTILE_9999TH = 8;
 	private static final int MAXIMUM = 9;
-	//everyadd
-
+	// everyadd
 
 	private final int count;
 	private final long[] percentiles;
@@ -90,11 +87,11 @@ public class DistributionStatistics {
 			Arrays.fill(percentiles, -1);
 			return new DistributionStatistics(0, percentiles, -1, -1);
 
-//			long[] percentiles = new long[PERCENTILES.length];
-//			for (int i = 0; i < percentiles.length; ++i) {
-//				percentiles[i] = -1;
-//			}
-//			return new DistributionStatistics(values.length, percentiles, 0,0);
+			// long[] percentiles = new long[PERCENTILES.length];
+			// for (int i = 0; i < percentiles.length; ++i) {
+			// percentiles[i] = -1;
+			// }
+			// return new DistributionStatistics(values.length, percentiles, 0,0);
 
 		}
 		Arrays.sort(values);
@@ -171,10 +168,15 @@ public class DistributionStatistics {
 		return percentiles[PERCENTILE_99TH];
 	}
 
-	//everyadd
-	public double get999thPercentile() { return percentiles[PERCENTILE_999TH]; }
-	public double get9999thPercentile() { return  percentiles[PERCENTILE_9999TH]; }
-	//everyadd
+	// everyadd
+	public double get999thPercentile() {
+		return percentiles[PERCENTILE_999TH];
+	}
+
+	public double get9999thPercentile() {
+		return percentiles[PERCENTILE_9999TH];
+	}
+	// everyadd
 
 	public double getMaximum() {
 		return percentiles[MAXIMUM];
@@ -190,9 +192,10 @@ public class DistributionStatistics {
 				+ get90thPercentile() / 1e6 + ", " + "95th="
 				+ get95thPercentile() / 1e6 + ", " + "99th="
 				+ get99thPercentile() / 1e6 + ", " + "999th="
-				+ get999thPercentile() /1e6 + ", " + "9999th="
-				+ get9999thPercentile() /1e6 + "max=" + getMaximum()
-				/ 1e6 + "]";
+				+ get999thPercentile() / 1e6 + ", " + "9999th="
+				+ get9999thPercentile() / 1e6 + "max=" + getMaximum()
+						/ 1e6
+				+ "]";
 	}
 
 	public Map<String, Double> toMap() {
@@ -205,10 +208,10 @@ public class DistributionStatistics {
 		distMap.put("90th Percentile Latency (milliseconds)", get90thPercentile() / 1e3);
 		distMap.put("95th Percentile Latency (milliseconds)", get95thPercentile() / 1e3);
 		distMap.put("99th Percentile Latency (milliseconds)", get99thPercentile() / 1e3);
-		//everyadd
+		// everyadd
 		distMap.put("999th Percentile Latency (milliseconds)", get999thPercentile() / 1e3);
 		distMap.put("9999th Percentile Latency (milliseconds)", get9999thPercentile() / 1e3);
-		//everyadd
+		// everyadd
 		distMap.put("Maximum Latency (milliseconds)", getMaximum() / 1e3);
 		return distMap;
 	}

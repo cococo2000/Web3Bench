@@ -113,21 +113,21 @@ public abstract class DBCollector {
         DBCollector collector;
 
         switch (dbType) {
-        case MEMSQL: // Uses MySQLCollector
-        case MYSQL: {
-            collector = new MySQLCollector(dbUrl, dbUsername, dbPassword);
-            break;
-        }
-        case MYROCKS: {
-            collector = new MyRocksCollector(dbUrl, dbUsername, dbPassword);
-            break;
-        }
-        case POSTGRES: {
-            collector = new PostgresCollector(dbUrl, dbUsername, dbPassword);
-            break;
-        }
-        default:
-            collector = new NoopCollector(dbUrl, dbUsername, dbPassword);
+            case MEMSQL: // Uses MySQLCollector
+            case MYSQL: {
+                collector = new MySQLCollector(dbUrl, dbUsername, dbPassword);
+                break;
+            }
+            case MYROCKS: {
+                collector = new MyRocksCollector(dbUrl, dbUsername, dbPassword);
+                break;
+            }
+            case POSTGRES: {
+                collector = new PostgresCollector(dbUrl, dbUsername, dbPassword);
+                break;
+            }
+            default:
+                collector = new NoopCollector(dbUrl, dbUsername, dbPassword);
         }
         return collector;
     }

@@ -72,7 +72,7 @@ public class ResultUploader {
     DatabaseType dbType;
     String username, password;
     String benchType;
-//    int windowSize;
+    // int windowSize;
     String uploadCode, uploadUrl;
     String uploadHash;
 
@@ -86,21 +86,21 @@ public class ResultUploader {
         username = expConf.getString("username");
         password = expConf.getString("password");
         benchType = argsLine.getOptionValue("b");
-//        windowSize = 1;
-//        if (argsLine.hasOption("s")) {
-//        	windowSize = Integer.parseInt(argsLine.getOptionValue("s"));
-//        } else {
-//        	windowSize = 1;
-//        }
+        // windowSize = 1;
+        // if (argsLine.hasOption("s")) {
+        // windowSize = Integer.parseInt(argsLine.getOptionValue("s"));
+        // } else {
+        // windowSize = 1;
+        // }
         uploadCode = expConf.getString("uploadCode");
         uploadUrl = expConf.getString("uploadUrl");
         uploadHash = argsLine.getOptionValue("uploadHash");
         uploadHash = uploadHash == null ? "" : uploadHash;
 
         this.collector = DBCollector.createCollector(dbType, dbUrl, username, password);
-        assert(this.collector != null);
+        assert (this.collector != null);
     }
-    
+
     public DBCollector getConfCollector() {
         return (this.collector);
     }
@@ -108,14 +108,14 @@ public class ResultUploader {
     public void writeDBParameters(PrintStream os) {
         this.collector.writeParameters(os);
     }
-    
+
     public void writeDBMetrics(PrintStream os) {
         this.collector.writeMetrics(os);
     }
 
     public void writeBenchmarkConf(PrintStream os) throws ConfigurationException {
         XMLConfiguration outputConf = (XMLConfiguration) expConf.clone();
-        for (String key: IGNORE_CONF) {
+        for (String key : IGNORE_CONF) {
             outputConf.clearProperty(key);
         }
         outputConf.save(os);
@@ -131,7 +131,7 @@ public class ResultUploader {
         summaryMap.put("Benchmark Type", benchType);
         summaryMap.put("Latency Distribution", results.latencyDistribution.toMap());
         summaryMap.put("Throughput (requests/second)", results.getRequestsPerSecond());
-        for (String field: BENCHMARK_KEY_FIELD) {
+        for (String field : BENCHMARK_KEY_FIELD) {
             summaryMap.put(field, expConf.getString(field));
         }
         os.println(JSONUtil.format(JSONUtil.toJSONString(summaryMap)));
@@ -196,9 +196,9 @@ public class ResultUploader {
                 response.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace(); // To change body of catch statement use File | Settings | File Templates.
         } catch (ConfigurationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace(); // To change body of catch statement use File | Settings | File Templates.
         }
     }
 }

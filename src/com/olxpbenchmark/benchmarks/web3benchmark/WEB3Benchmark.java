@@ -16,7 +16,6 @@
 
  */
 
-
 /*
  * Copyright 2021 OLxPBench
  * This work was based on the OLTPBenchmark Project
@@ -34,7 +33,6 @@
  * limitations under the License.
 
  */
-
 
 package com.olxpbenchmark.benchmarks.web3benchmark;
 
@@ -76,8 +74,8 @@ public class WEB3Benchmark extends BenchmarkModule {
         ArrayList<Worker<? extends BenchmarkModule>> workers = new ArrayList<Worker<? extends BenchmarkModule>>();
 
         try {
-            //int numTerminals = workConf.getTerminals();
-            //String distri = workConf.getDistri();
+            // int numTerminals = workConf.getTerminals();
+            // String distri = workConf.getDistri();
 
             List<WEB3Worker> terminals = createTerminals();
             workers.addAll(terminals);
@@ -107,20 +105,19 @@ public class WEB3Benchmark extends BenchmarkModule {
         }
 
         int startNum = workConf.getStartNum();
-        //System.out.println("startnum= " + startNum);
-        if (startNum <= 0 ) {
+        // System.out.println("startnum= " + startNum);
+        if (startNum <= 0) {
             startNum = 1;
         }
 
-
         int workerId = 0;
-            for (int terminalId = 0; terminalId < numTerminals; terminalId++) {
-                //LOG.info("numScale = " + numScale);
-                //LOG.info("workerID = " + workerId);
-                //LOG.info("terminalID = " + terminalId);
-                WEB3Worker terminal = new WEB3Worker(this, workerId++, generator, numScale, startNum, workConf);
-                terminals[terminalId] = terminal;
-            }
+        for (int terminalId = 0; terminalId < numTerminals; terminalId++) {
+            // LOG.info("numScale = " + numScale);
+            // LOG.info("workerID = " + workerId);
+            // LOG.info("terminalID = " + terminalId);
+            WEB3Worker terminal = new WEB3Worker(this, workerId++, generator, numScale, startNum, workConf);
+            terminals[terminalId] = terminal;
+        }
         assert terminals[terminals.length - 1] != null;
 
         ArrayList<WEB3Worker> ret = new ArrayList<>(Arrays.asList(terminals));
@@ -129,13 +126,15 @@ public class WEB3Benchmark extends BenchmarkModule {
 
     /**
      * Hack to support postgres-specific timestamps
+     * 
      * @param time
      * @return
      */
     public Timestamp getTimestamp(long time) {
         Timestamp timestamp;
 
-        // 2020-03-03: I am no longer aware of any DBMS that needs a specialized data type for timestamps.
+        // 2020-03-03: I am no longer aware of any DBMS that needs a specialized data
+        // type for timestamps.
         timestamp = new java.sql.Timestamp(time);
 
         return (timestamp);
