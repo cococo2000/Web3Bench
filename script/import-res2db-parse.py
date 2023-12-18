@@ -7,6 +7,7 @@ import time
 import json
 import xml.etree.ElementTree as ET
 import csv
+from tqdm import tqdm
 
 # Get the current machine's hostname
 hostname = socket.gethostname()
@@ -58,31 +59,33 @@ csv_directory = '../results/'
 for csv_file in os.listdir(csv_directory):
     if csv_file.endswith('.csv'):
         csv_path = os.path.join(csv_directory, csv_file)
-        # Print the CSV file name
-        print('Inserting data from ' + csv_path)
-        # Use Pandas to read the CSV file content
+        # Read the CSV file content
         df = pd.read_csv(csv_path)
         # Add the 'hostname' column
         df['hostname'] = hostname
         # Insert the data into the database
-        for _, row in df.iterrows():
+        chunk_size = 1000  # Adjust the chunk size as needed
+        for i in tqdm(range(0, len(df), chunk_size), desc="Inserting from " + csv_path):
+            chunk = df.iloc[i:i + chunk_size]
             insert_sql = '''
             INSERT INTO res_table 
             (batch_id, hostname, txn_type_index, txn_name, start_time_s, latency_us, worker_id, phase_id)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
             '''
-            cursor.execute(insert_sql, (
-                batch_id,
-                row['hostname'],
+            values = [(
+                batch_id, 
+                row['hostname'], 
                 row['Transaction Type Index'],
-                row['Transaction Name'],
+                row['Transaction Name'], 
                 row['Start Time (microseconds)'],
-                row['Latency (microseconds)'],
+                row['Latency (microseconds)'], 
                 row['Worker Id (start number)'],
                 row['Phase Id (index in config file)']
-            ))
-        # Commit the inserted data
-        conn.commit()
+                ) for _, row in chunk.iterrows()]
+            # Execute batch insert
+            cursor.executemany(insert_sql, values)
+            # Commit the inserted data after each chunk
+            conn.commit()
 
 # Get the test time from the xml config file
 xml_config_file = "../config/runthread1.xml"
