@@ -22,7 +22,9 @@ export_csv_file = data + "res.csv"
 # Get the test time from the xml config file
 xml_config_file = "../config/runthread1.xml"
 tree = ET.parse(xml_config_file)
-test_time = int(tree.find(".//time").text)
+time_element = tree.find(".//time")
+assert time_element is not None, "The time in config.xml should not be None"
+test_time = int(time_element.text)
 print(f"Get the test time from the xml config file {xml_config_file}")
 print(f"Test time: {test_time} minutes")
 

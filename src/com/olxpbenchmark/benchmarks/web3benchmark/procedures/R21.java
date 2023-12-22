@@ -37,15 +37,14 @@ public class R21 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R21.class);
 
-    // Small range or list of values on: hash or to_address or from_address in
-    // transaction table
+    // List of transactions excluding some black listed ones.
     public SQLStmt query_to_address_SQL = new SQLStmt(
             "select "
-                    + "* "
+                    + "count(*) "
                     + "from "
                     + "transactions "
                     + "where "
-                    + "to_address in (?, ?, ?) ");
+                    + "to_address not in (?, ?, ?) ");
     private PreparedStatement query_stmt = null;
 
     public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,

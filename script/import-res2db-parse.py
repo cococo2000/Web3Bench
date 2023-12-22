@@ -47,11 +47,8 @@ conn.commit()
 
 # Get current batch id from the database
 cursor.execute('SELECT MAX(batch_id) FROM res_table;')
-batch_id = cursor.fetchone()[0]
-if batch_id is None:
-    batch_id = 1
-else:
-    batch_id += 1
+result = cursor.fetchone()
+batch_id = result[0] + 1 if result is not None else 1
 
 # Specify the directory containing CSV files
 csv_directory = '../results/'
@@ -90,7 +87,9 @@ for csv_file in os.listdir(csv_directory):
 # Get the test time from the xml config file
 xml_config_file = "../config/runthread1.xml"
 tree = ET.parse(xml_config_file)
-test_time = int(tree.find(".//time").text)
+time_element = tree.find(".//time")
+assert time_element is not None, "The time in config.xml should not be None"
+test_time = int(time_element.text)
 print(f"Get the test time from the xml config file {xml_config_file}")
 print(f"Test time: {test_time} minutes")
 
@@ -103,7 +102,9 @@ latency_limit = json.load(latency_limit_file)
 # The total number of rows will not increase if all nodes have finished inserting data
 def get_count():
     cursor.execute('SELECT COUNT(*) FROM res_table;')
-    return cursor.fetchone()[0]
+    result = cursor.fetchone()
+    assert result is not None, "The result of count(*) should not be None"
+    return result[0]
 
 pre_count = get_count()
 while True:
@@ -168,6 +169,7 @@ WHERE batch_id = %s;
 '''
 cursor.execute(select_total_sql, (test_time * 60, test_time * 60, batch_id))
 total_row = cursor.fetchone()
+assert total_row is not None, "The total statistics should not be None"
 sum_stats["Total"] = {
     "Total Latency(s)": total_row[0], 
     "Number of Requests": total_row[1], 

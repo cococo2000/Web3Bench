@@ -37,49 +37,35 @@ public class R22 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R22.class);
 
-    // Small range or list of values on: hash or to_address or from_address in
-    // transaction table
-    public SQLStmt query_hash_SQL = new SQLStmt(
+    // Constraint checking that next_block_number <= block_number in token_transfers
+    // Query result should be empty.
+    public SQLStmt query_SQL = new SQLStmt(
             "select "
-                    + "* "
-                    + "from transactions "
+                    + "count(*)  "
+                    + "from token_transfers "
                     + "where "
-                    + "hash in (?, ?, ?, ?) "
-                    + "and to_address <> from_address ");
-    private PreparedStatement query_hash_stmt = null;
+                    + "next_block_number <= block_number "
+                    + "group by next_block_number ");
+    private PreparedStatement query_stmt = null;
 
     public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
-        query_hash_stmt = this.getPreparedStatement(conn, query_hash_SQL);
+        query_stmt = this.getPreparedStatement(conn, query_SQL);
 
-        String hash1 = WEB3Util
-                .convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
-        String hash2 = WEB3Util
-                .convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
-        String hash3 = WEB3Util
-                .convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
-        String hash4 = WEB3Util
-                .convertToTxnHashString(WEB3Util.randomNumber(1, WEB3Config.configTransactionsCount * numScale, gen));
-
-        // Set parameter
-        query_hash_stmt.setString(1, hash1);
-        query_hash_stmt.setString(2, hash2);
-        query_hash_stmt.setString(3, hash3);
-        query_hash_stmt.setString(4, hash4);
         if (trace)
             LOG.trace("query_stmt R22 START");
         // Execute query and commit
-        ResultSet rs = query_hash_stmt.executeQuery();
+        ResultSet rs = query_stmt.executeQuery();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt R22 END");
 
         // Log query
         if (LOG.isDebugEnabled())
-            LOG.debug(queryToString(query_hash_stmt));
+            LOG.debug(queryToString(query_stmt));
         // Log result
         if (trace)
             LOG.trace(resultSetToString(rs));

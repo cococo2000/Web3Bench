@@ -327,7 +327,7 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
             // increase latency (queue delay) but we do this anyway since it is
             // useful sometimes
 
-            long start = pieceOfWork.getStartTime();
+            long start = System.nanoTime();
 
             TransactionType type = invalidTT;
             try {
