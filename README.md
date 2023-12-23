@@ -362,17 +362,18 @@ ALTER TABLE transactions ADD CONSTRAINT check_txn_gas_used CHECK (receipt_gas_us
     ```
 
 - R2: O queries
-    - R21: 
+    - R21: List of transactions excluding some black listed ones.
     ```sql
-    Select * 
+    Select count(*) 
     from transactions 
-    where to_address in (?, ?, ?)
+    where to_address not in (?, ?, ?)
     ```
-    - R22: 
+    - R22: Constraint checking that next_block_number <= block_number in token_transfers Query result should be empty.
     ```sql
-    Select *  
-    from transactions 
-    where hash in (?, ?, ?, ?) and to_adress <> from_address 
+    Select count(*)
+    from token_transfers 
+    where next_block_number <= block_number 
+    group by next_block_number
     ```
     - R23: top N with small N on full table scan. 
     ```sql
