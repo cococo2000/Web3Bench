@@ -67,11 +67,15 @@ CREATE TABLE token_transfers (
 );
 
 -- Add indexes
-CREATE INDEX idx_blocks_number ON blocks (number);
-CREATE INDEX idx_transactions_to_address ON transactions (to_address);
--- CREATE INDEX idx_tt_from_address ON token_transfers (from_address);
--- CREATE INDEX idx_tt_to_address ON token_transfers (to_address);
--- CREATE INDEX idx_tt_from_to_address ON token_transfers (from_address, to_address);
+-- for R23
+CREATE INDEX fk_fa_bn ON token_transfers (from_address, block_number);
+-- for R24, R25
+CREATE INDEX fk_ta_bn_nbn ON token_transfers (token_address, block_number, next_block_number);
+-- for R31 to use IndexMerge
+CREATE INDEX fk_fa_bt ON transactions (from_address, block_timestamp);
+CREATE INDEX fk_ta_bt ON transactions (to_address, block_timestamp);
+-- for R32, R33
+CREATE INDEX fk_bt ON transactions (block_timestamp);
 
 -- Add foreign keys
 ALTER TABLE contracts ADD FOREIGN KEY fk_bn (block_number) REFERENCES blocks (number);
