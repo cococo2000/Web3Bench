@@ -48,7 +48,7 @@ conn.commit()
 # Get current batch id from the database
 cursor.execute('SELECT MAX(batch_id) FROM res_table;')
 result = cursor.fetchone()
-batch_id = result[0] + 1 if result is not None else 1
+batch_id = result[0] + 1 if result is not None and result[0] is not None else 1
 
 # Specify the directory containing CSV files
 csv_directory = '../results/'
@@ -104,6 +104,7 @@ def get_count():
     cursor.execute('SELECT COUNT(*) FROM res_table;')
     result = cursor.fetchone()
     assert result is not None, "The result of count(*) should not be None"
+    assert result[0] is not None, "The result of count(*) should not be None"
     return result[0]
 
 pre_count = get_count()
