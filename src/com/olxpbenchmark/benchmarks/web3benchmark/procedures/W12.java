@@ -36,13 +36,13 @@ public class W12 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(W12.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "insert into "
+            "explain analyze insert into "
                     + "contracts "
                     + "values (?, ?, ?, ?, ?, ?) ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -67,16 +67,19 @@ public class W12 extends WEB3Procedure {
 
         if (trace)
             LOG.trace("query_stmt W12 InsertContracts START");
-        int affectedRows = query_stmt.executeUpdate();
+        // int affectedRows = query_stmt.executeUpdate();
+        ResultSet rs = query_stmt.executeQuery();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W12 InsertContracts END");
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-            LOG.debug("W12 InsertContracts: " + affectedRows + " rows affected");
-        }
+        // if (LOG.isDebugEnabled()) {
+        // LOG.debug(queryToString(query_stmt));
+        // LOG.debug("W12 InsertContracts: " + affectedRows + " rows affected");
+        // }
 
-        return null;
+        long latency_ns = getTimeFromRS(rs);
+        rs.close();
+        return latency_ns;
     }
 }

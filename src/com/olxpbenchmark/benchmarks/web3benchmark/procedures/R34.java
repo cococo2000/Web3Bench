@@ -39,49 +39,22 @@ public class R34 extends WEB3Procedure {
 
     // Find top N senders (from\_address) by total transaction value
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "select "
+            "explain analyze select "
                     + "sum(value) as totalamount, "
                     + "count(value) as transactioncount, "
                     + "from_address as fromaddress "
                     + "from "
                     + "transactions "
-                    // + "where "
-                    // + "to_address = ? and block_timestamp >= ? and block_timestamp <= ? and value
-                    // > ? "
                     + "group by from_address "
                     + "order by sum(value) desc limit 10");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
-
-        // String to_address = WEB3Util
-        // .convertToAddressString(WEB3Util.randomNumber(1,
-        // WEB3Config.configAccountsCount, gen));
-        // // Get the random block_timestamp1 and block_timestamp2
-        // long min_timestamp = WEB3Util.getTimestamp(1);
-        // long max_timestamp = WEB3Util.getTimestamp(numScale *
-        // WEB3Config.configBlocksCount);
-        // long block_timestamp1 = WEB3Util.randomNumber(min_timestamp, max_timestamp,
-        // gen);
-        // long block_timestamp2 = WEB3Util.randomNumber(min_timestamp, max_timestamp,
-        // gen);
-        // // keep block_timestamp1 < block_timestamp2
-        // if (block_timestamp1 > block_timestamp2) {
-        // long tmp = block_timestamp1;
-        // block_timestamp1 = block_timestamp2;
-        // block_timestamp2 = tmp;
-        // }
-        // double value = (double) (WEB3Util.randomNumber(10, 10000, gen) / 100.0);
-
-        // query_stmt.setString(1, to_address);
-        // query_stmt.setLong(2, block_timestamp1);
-        // query_stmt.setLong(3, block_timestamp2);
-        // query_stmt.setDouble(4, value);
 
         if (trace)
             LOG.trace("query_stmt R34 START");
@@ -97,7 +70,8 @@ public class R34 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
+        long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return null;
+        return latency_ns;
     }
 }

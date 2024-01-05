@@ -86,7 +86,8 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
      * Executes a single TPCC transaction of type transactionType.
      */
     @Override
-    protected TransactionStatus executeWork(TransactionType nextTransaction) throws UserAbortException, SQLException {
+    protected long executeWork(TransactionType nextTransaction) throws UserAbortException, SQLException {
+        long latency_ns = 0;
         try {
             if (workConf.getGapTime() != 0) {
                 // The upper limit of read-only queries after inserting ops.
@@ -113,7 +114,7 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
 
             WEB3Procedure proc = (WEB3Procedure) this.getProcedure(nextTransaction.getProcedureClass());
             if (distribution.equals("rand")) {
-                proc.run(conn, gen, this, startNumber, 0, numScale, nodeid);
+                latency_ns = proc.run(conn, gen, this, startNumber, 0, numScale, nodeid);
             }
             // else if (distribution.equals("zipf")) {
             // proc.run(conn, numScale, this, startNumber, 0);
@@ -122,7 +123,7 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
             // proc.run(conn, this, startNumber, 0, numScale, "poisson");
             // }
             else if (distribution.equals("iRand")) {
-                proc.run(conn, gen, this, startNumber, upperLimit, numScale, nodeid);
+                latency_ns = proc.run(conn, gen, this, startNumber, upperLimit, numScale, nodeid);
             }
             // else if (distribution.equals("iZipf")) {
             // proc.run(conn, numScale, this, startNumber, upperLimit);
@@ -140,6 +141,9 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
             throw new RuntimeException("Bad transaction type = " + nextTransaction);
         }
         conn.commit();
-        return (TransactionStatus.SUCCESS);
+        // return (TransactionStatus.SUCCESS);
+        // Return the latency of the transaction and add TransactionStatus.SUCCESS(range
+        // from 0 to 4) to the lowest of the number of the latency.
+        return latency_ns + TransactionStatus.SUCCESS.ordinal();
     }
 }

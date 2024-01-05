@@ -39,13 +39,13 @@ public class W4 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(W4.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "update transactions "
+            "explain analyze update transactions "
                     + "set gas_price = ? "
                     + "where hash = ? ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -60,16 +60,19 @@ public class W4 extends WEB3Procedure {
         query_stmt.setString(2, hash);
         if (trace)
             LOG.trace("query_stmt W4 UpdateQuery1 START");
-        int affectedRows = query_stmt.executeUpdate();
+        // int affectedRows = query_stmt.executeUpdate();
+        ResultSet rs = query_stmt.executeQuery();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W4 UpdateQuery1 END");
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-            LOG.debug("W4 UpdateQuery1: " + affectedRows + " rows affected");
-        }
+        // if (LOG.isDebugEnabled()) {
+        // LOG.debug(queryToString(query_stmt));
+        // LOG.debug("W4 UpdateQuery1: " + affectedRows + " rows affected");
+        // }
 
-        return null;
+        long latency_ns = getTimeFromRS(rs);
+        rs.close();
+        return latency_ns;
     }
 }

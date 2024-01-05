@@ -40,7 +40,7 @@ public class R22 extends WEB3Procedure {
     // Constraint checking that next_block_number <= block_number in token_transfers
     // Query result should be empty.
     public SQLStmt query_SQL = new SQLStmt(
-            "select "
+            "explain analyze select "
                     + "count(*)  "
                     + "from token_transfers "
                     + "where "
@@ -48,7 +48,7 @@ public class R22 extends WEB3Procedure {
                     + "group by next_block_number ");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -70,7 +70,8 @@ public class R22 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
+        long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return null;
+        return latency_ns;
     }
 }

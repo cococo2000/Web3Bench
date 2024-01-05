@@ -39,7 +39,7 @@ public class R21 extends WEB3Procedure {
 
     // List of transactions excluding some black listed ones.
     public SQLStmt query_to_address_SQL = new SQLStmt(
-            "select "
+            "explain analyze select "
                     + "count(*) "
                     + "from "
                     + "transactions "
@@ -47,7 +47,7 @@ public class R21 extends WEB3Procedure {
                     + "to_address not in (?, ?, ?) ");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -80,7 +80,8 @@ public class R21 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
+        long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return null;
+        return latency_ns;
     }
 }

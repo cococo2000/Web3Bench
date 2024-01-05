@@ -24,7 +24,7 @@ new_terminals_thread1=5
 new_rate_thread1=$((1000*$new_scalefactor/48))
 # terminals and rate for R2*
 new_terminals_R2x=1
-# Total number of requests per minute for R2* = 10 * SF
+# Total number of requests per minute for R2* = 10 * SF / 60
 new_rate_R2x=$((10*$new_scalefactor/60))
 ###########################################################
 

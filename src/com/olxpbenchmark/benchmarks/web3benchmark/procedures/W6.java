@@ -37,12 +37,12 @@ public class W6 extends WEB3Procedure {
 
     // Single record deletes for the transaction table.
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "delete from transactions "
+            "explain analyze delete from transactions "
                     + "where hash = ? ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -54,16 +54,19 @@ public class W6 extends WEB3Procedure {
         query_stmt.setString(1, hash);
         if (trace)
             LOG.trace("query_stmt W6 single record deletes for the transaction table START");
-        int affectedRows = query_stmt.executeUpdate();
+        // int affectedRows = query_stmt.executeUpdate();
+        ResultSet rs = query_stmt.executeQuery();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W6 single record deletes for the transaction table END");
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-            LOG.debug("W6 Single Delete: " + affectedRows + " rows affected");
-        }
+        // if (LOG.isDebugEnabled()) {
+        // LOG.debug(queryToString(query_stmt));
+        // LOG.debug("W6 Single Delete: " + affectedRows + " rows affected");
+        // }
 
-        return null;
+        long latency_ns = getTimeFromRS(rs);
+        rs.close();
+        return latency_ns;
     }
 }

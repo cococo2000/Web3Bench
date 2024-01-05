@@ -40,7 +40,7 @@ public class R31 extends WEB3Procedure {
     // For a specific person, find transactions where this person is either a sender
     // or receiver. Limit the result by the most recent timestamp.
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "select "
+            "explain analyze select "
                     + "* "
                     + "from "
                     + "transactions "
@@ -50,7 +50,7 @@ public class R31 extends WEB3Procedure {
                     + "block_timestamp desc limit 10");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -77,7 +77,8 @@ public class R31 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
+        long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return null;
+        return latency_ns;
     }
 }

@@ -39,13 +39,13 @@ public class R33 extends WEB3Procedure {
 
     // Find the number of unique senders (from\_address) in transactions
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "select "
+            "explain analyze select "
                     + "count(distinct from_address) "
                     + "from "
                     + "transactions ");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -65,7 +65,8 @@ public class R33 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
+        long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return null;
+        return latency_ns;
     }
 }

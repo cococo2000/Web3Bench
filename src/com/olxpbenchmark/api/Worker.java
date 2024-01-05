@@ -104,6 +104,9 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
 
     private boolean seenDone = false;
 
+    // The latency of the last transaction in nanoseconds
+    protected long latency_ns = 0;
+
     public Worker(T benchmarkModule, int id) {
         this.id = id;
         this.benchmarkModule = benchmarkModule;
@@ -358,6 +361,13 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
             // PART 4: Record results
 
             long end = System.nanoTime();
+            LOG.info("Start:" + start + " End:" + end + " Start - End:" + (end - start));
+            LOG.info("Latency:" + latency_ns);
+            assert latency_ns != 0 : "Latency is 0";
+            // Overwrite the end time with the latency time
+            end = start + latency_ns;
+            latency_ns = 0;
+
             postState = wrkldState.getGlobalState();
             postPhase = wrkldState.getCurrentPhase();
 
@@ -436,7 +446,10 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
                         status = TransactionStatus.SUCCESS;
                     } else {
                         status = TransactionStatus.UNKNOWN;
-                        status = this.executeWork(next);
+                        long temp = this.executeWork(next);
+                        // Extract the status and latency from the return value
+                        status = TransactionStatus.values()[(int) (temp % 10)];
+                        latency_ns = temp - status.ordinal();
                     }
 
                     // User Abort Handling
@@ -626,7 +639,9 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
      * @throws SQLException
      *                            TODO
      */
-    protected abstract TransactionStatus executeWork(TransactionType txnType) throws UserAbortException, SQLException;
+    // protected abstract TransactionStatus executeWork(TransactionType txnType)
+    // throws UserAbortException, SQLException;
+    protected abstract long executeWork(TransactionType txnType) throws UserAbortException, SQLException;
 
     /**
      * Called at the end of the test to do any clean up that may be required.

@@ -39,7 +39,7 @@ public class R24 extends WEB3Procedure {
 
     // Aggregation with no group by on a small range
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "select "
+            "explain analyze select "
                     + "count(*) "
                     + "from "
                     + "token_transfers "
@@ -47,7 +47,7 @@ public class R24 extends WEB3Procedure {
                     + "token_address = ? ");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -74,7 +74,8 @@ public class R24 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
+        long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return null;
+        return latency_ns;
     }
 }

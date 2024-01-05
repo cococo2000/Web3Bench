@@ -36,11 +36,11 @@ public class W3 extends WEB3Procedure {
 
     // Insert 1000 rows into transactions from a temp table
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "insert transactions select * from temp_table limit 1000 ");
+            "explain analyze insert transactions select * from temp_table limit 1000 ");
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -49,16 +49,19 @@ public class W3 extends WEB3Procedure {
 
         if (trace)
             LOG.trace("query_stmt W3 InsertSelect START");
-        int affectedRows = query_stmt.executeUpdate();
+        // int affectedRows = query_stmt.executeUpdate();
+        ResultSet rs = query_stmt.executeQuery();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W3 InsertSelect END");
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-            LOG.debug("W3 InsertSelect: " + affectedRows + " rows affected");
-        }
+        // if (LOG.isDebugEnabled()) {
+        // LOG.debug(queryToString(query_stmt));
+        // LOG.debug("W3 InsertSelect: " + affectedRows + " rows affected");
+        // }
 
-        return null;
+        long latency_ns = getTimeFromRS(rs);
+        rs.close();
+        return latency_ns;
     }
 }

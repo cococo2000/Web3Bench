@@ -39,7 +39,7 @@ public class R1 extends WEB3Procedure {
 
     // Equality on hash in transaction table
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "select "
+            "explain analyze select "
                     + "to_address, from_address "
                     + "from "
                     + "transactions "
@@ -48,7 +48,7 @@ public class R1 extends WEB3Procedure {
 
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -75,7 +75,8 @@ public class R1 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
+        long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return null;
+        return latency_ns;
     }
 }

@@ -40,7 +40,7 @@ public class R35 extends WEB3Procedure {
     // Total count of token transfers for a specific sender and token transfers for
     // recipients who are also senders in other transactions.
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "select "
+            "explain analyze select "
                     + "count(*) as count "
                     + "from "
                     + "( "
@@ -58,7 +58,7 @@ public class R35 extends WEB3Procedure {
                     + ") as temp ");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -84,7 +84,8 @@ public class R35 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
+        long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return null;
+        return latency_ns;
     }
 }

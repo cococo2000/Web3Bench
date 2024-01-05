@@ -38,7 +38,7 @@ public class R25 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(R25.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "select * "
+            "explain analyze select * "
                     + "from "
                     + "token_transfers "
                     + "where "
@@ -48,7 +48,7 @@ public class R25 extends WEB3Procedure {
                     + "order by block_number desc limit ?");
     private PreparedStatement query_stmt = null;
 
-    public ResultSet run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
             String nodeid) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
@@ -80,7 +80,8 @@ public class R25 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
+        long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return null;
+        return latency_ns;
     }
 }
