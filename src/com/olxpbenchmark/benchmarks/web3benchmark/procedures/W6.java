@@ -60,10 +60,9 @@ public class W6 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W6 single record deletes for the transaction table END");
 
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("W6 Single Delete: " + affectedRows + " rows affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

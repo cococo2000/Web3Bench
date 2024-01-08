@@ -361,11 +361,14 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
             // PART 4: Record results
 
             long end = System.nanoTime();
-            LOG.info("Start:" + start + " End:" + end + " Start - End:" + (end - start));
-            LOG.info("Latency:" + latency_ns);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Start:" + start + " End:" + end + " Start - End:" + (end - start));
+                LOG.debug("Latency:" + latency_ns);
+            }
             assert latency_ns != 0 : "Latency is 0";
             // Overwrite the end time with the latency time
             end = start + latency_ns;
+            // Reset the latency to 0
             latency_ns = 0;
 
             postState = wrkldState.getGlobalState();

@@ -63,10 +63,9 @@ public class W52 extends WEB3Procedure {
         // reset autocommit to false
         conn.setAutoCommit(false);
 
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("W52 UpdateQuery3: " + affectedRows + " rows affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

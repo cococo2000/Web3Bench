@@ -109,11 +109,9 @@ public class W13 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W13 InsertTransactions END");
 
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("query_stmt W13 InsertTransactions: " + affectedRows + " rows
-        // affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

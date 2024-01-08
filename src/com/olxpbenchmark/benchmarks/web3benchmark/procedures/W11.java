@@ -100,10 +100,9 @@ public class W11 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W11 InsertBlocks END");
 
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("W11 InsertBlocks: " + affectedRows + " rows affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

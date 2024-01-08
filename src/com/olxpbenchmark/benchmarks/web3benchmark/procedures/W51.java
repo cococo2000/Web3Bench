@@ -59,10 +59,9 @@ public class W51 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W51 UpdateQuery2 END");
 
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("W51 UpdateQuery2: " + affectedRows + " rows affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

@@ -108,9 +108,3 @@ CREATE TABLE temp_table (
   max_priority_fee_per_gas bigint,
   transaction_type bigint
 );
-
--- Add TiFlash replica
--- ALTER TABLE blocks          SET TIFLASH REPLICA 1;
--- ALTER TABLE contracts       SET TIFLASH REPLICA 1;
--- ALTER TABLE transactions    SET TIFLASH REPLICA 1;
--- ALTER TABLE token_transfers SET TIFLASH REPLICA 1;

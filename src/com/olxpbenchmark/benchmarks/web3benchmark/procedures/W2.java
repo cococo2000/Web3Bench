@@ -23,6 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
+import java.lang.String;
 
 import org.apache.log4j.Logger;
 
@@ -39,10 +40,12 @@ public class W2 extends WEB3Procedure {
             "explain analyze insert into "
                     + "transactions "
                     + "values "
-                    + "(?, ?, ?, ?, ?,"
-                    + " ?, ?, ?, ?, ?,"
-                    + " ?, ?, ?, ?, ?,"
-                    + " ?, ?, ?, ?, ?)");
+                    // Java 11
+                    // + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ".repeat(99)
+                    // Java 7
+                    + new String(new char[99]).replace("\0",
+                            "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ")
+                    + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     private PreparedStatement query_stmt = null;
 
@@ -54,17 +57,21 @@ public class W2 extends WEB3Procedure {
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
         // Small batch inserts (100 rows) for the transaction table.
+        int idx = 1;
         for (int i = 0; i < 100; i++) {
             String hash = WEB3Util.convertToTxnHashString(
-                    10 * numScale * WEB3Config.configTransactionsCount + 100 * startNumber + i, nodeid);
+                    10 * numScale * WEB3Config.configTransactionsCount + 100 * startNumber + i,
+                    nodeid);
             long nonce = WEB3Util.randomNumber(0, 100, gen);
             long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
             String block_hash = WEB3Util.convertToBlockHashString(block_number);
             long transaction_index = WEB3Util.randomNumber(0, 10000, gen);
             String from_address = WEB3Util
-                    .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+                    .convertToAddressString(
+                            WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
             String to_address = WEB3Util
-                    .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+                    .convertToAddressString(
+                            WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
             double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
             long gas = WEB3Util.randomNumber(100, 1000000, gen);
             long gas_price = WEB3Util.randomNumber(1000, 10000000, gen);
@@ -80,7 +87,6 @@ public class W2 extends WEB3Procedure {
             long max_priority_fee_per_gas = WEB3Util.randomNumber(100, 10000, gen);
             long transaction_type = WEB3Util.randomNumber(0, 100000, gen);
 
-            int idx = 1;
             query_stmt.setString(idx++, hash);
             query_stmt.setLong(idx++, nonce);
             query_stmt.setString(idx++, block_hash);
@@ -101,24 +107,20 @@ public class W2 extends WEB3Procedure {
             query_stmt.setLong(idx++, max_fee_per_gas);
             query_stmt.setLong(idx++, max_priority_fee_per_gas);
             query_stmt.setLong(idx++, transaction_type);
-
-            query_stmt.addBatch();
         }
 
         if (trace)
             LOG.trace("query_stmt W2 RangeInsertTransactions START");
-        // int affectedRows[] = query_stmt.executeBatch();
         ResultSet rs = query_stmt.executeQuery();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W2 RangeInsertTransactions END");
 
         // Log query and affected rows
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("W2 RangeInsertTransactions: " + affectedRows.length + " rows
-        // affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            // LOG.debug("Result: " + resultSetToString(rs));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

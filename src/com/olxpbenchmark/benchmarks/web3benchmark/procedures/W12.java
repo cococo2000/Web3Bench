@@ -73,10 +73,9 @@ public class W12 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W12 InsertContracts END");
 
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("W12 InsertContracts: " + affectedRows + " rows affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

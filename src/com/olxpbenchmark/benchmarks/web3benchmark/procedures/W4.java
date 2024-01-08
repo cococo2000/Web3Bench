@@ -66,10 +66,9 @@ public class W4 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W4 UpdateQuery1 END");
 
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("W4 UpdateQuery1: " + affectedRows + " rows affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

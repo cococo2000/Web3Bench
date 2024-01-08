@@ -80,10 +80,9 @@ public class W14 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W14 InsertTokenTransfers END");
 
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("W14 InsertTokenTransfers: " + affectedRows + " rows affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

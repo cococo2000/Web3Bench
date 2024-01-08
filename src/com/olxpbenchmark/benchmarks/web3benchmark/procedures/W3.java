@@ -55,10 +55,9 @@ public class W3 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W3 InsertSelect END");
 
-        // if (LOG.isDebugEnabled()) {
-        // LOG.debug(queryToString(query_stmt));
-        // LOG.debug("W3 InsertSelect: " + affectedRows + " rows affected");
-        // }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

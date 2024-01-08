@@ -120,7 +120,7 @@ public abstract class WEB3Procedure extends Procedure {
 
             if (matcher.find()) {
                 String timeValue = matcher.group(1);
-                System.out.println("Extracted time: " + timeValue);
+                // System.out.println("Extracted time: " + timeValue);
                 latency_ns = this.convertToNs(timeValue);
             } else {
                 return -1;
