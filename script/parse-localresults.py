@@ -48,6 +48,8 @@ for file in os.listdir("../results/" + data):
         for index, row in df.iterrows():
             type_name = row["Transaction Name"]
             l_time = row["Latency (microseconds)"]
+            if l_time == 0: # Ignore latency = 0
+                continue
             if type_name not in load_stats:
                 load_stats[type_name] = {"Total Latency": 0, "Number of Requests": 0, "Latencies": []}
             load_stats[type_name]["Total Latency"] += l_time

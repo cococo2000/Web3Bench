@@ -38,8 +38,18 @@ python3 parse-localresults.py
 # Or if you execute Web3Bench on multiple machines, you can merge the results by running the following command on all the machines.
 python3 import-res2db-parse.py
 # All results will be stored in res.csv and the sum_table table in the database.
-
 ```
+
+### Troubleshooting
+
+If you encounter issues during the process, refer to the following troubleshooting guide for assistance.
+
+- Issue: `error: unmappable character for encoding ASCII` when running `ant build` in `./loaddata.sh`
+    - Solution: set the environment variable `JAVA_TOOL_OPTIONS` to `-Dfile.encoding=UTF8`
+        ```bash
+        export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
+        ```
+
 
 ## Build Process
 1. Navigate to the project directory:
