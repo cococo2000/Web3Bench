@@ -95,12 +95,15 @@ If you encounter issues during the process, refer to the following troubleshooti
         new_scalefactor=6000
         # Test time in minutes
         new_time=60
-        # terminals and rate for runthread1.xml
+        # terminals and rate for runthread1: R1, W1* and W4
         new_terminals_thread1=5
-        new_rate_thread1=300
-        # terminals and rate for runR2*.xml
+        # Total number of requests in one hour for R1 = 1000 * SF
+        # then total rate per minute of thread1 = 1000 * SF / 80% / 60 = 1000 * SF / 48
+        new_rate_thread1=$((1000*$new_scalefactor/48))
+        # terminals and rate for R2*
         new_terminals_R2x=1
-        new_rate_R2x=1
+        # Total number of requests per minute for R2* = 10 * SF / 60
+        new_rate_R2x=$((10*$new_scalefactor/60))
         ###########################################################
         ```
     - Usage:
@@ -112,12 +115,16 @@ If you encounter issues during the process, refer to the following troubleshooti
 - config/*
     - This directory contains various configuration files used for testing on the VM. Each configuration file is designed to facilitate specific testing scenarios and workloads.
         - `loaddata.xml`: the configuration file for loading data into the database
-        - `runthread1.xml`: the configuration file for running point query workloads (R1, W1*, W4 and W6) at a rate of 300 requests per minute.
-        - `runthread2.xml`: the configuration file for running complex query workloads once in serial covering R3*, W2, W3 and W5*.
-        - `runR21.xml`: the configuration file for running R21 at a rate of 1 request per minute.
-        - `runR22.xml`: the configuration file for running R22 at a rate of 1 request per minute.
-        - `runR23.xml`: the configuration file for running R23 at a rate of 1 request per minute.
-        - `runR24.xml`: the configuration file for running R24 at a rate of 1 request per minute.
+        - `runthread1.xml`: the configuration file for running point query workloads (R1, W1* and W4) at a rate of 1000*scalefactor/48 requests per minute.
+            - Total number of requests in one hour for R1 = 1000*scalefactor
+            - The weight of R1:W11:W12:W13:W14:W4 = 80%:4%:4%:4%:4%:4%
+                - The weight of R1 is 80%, so the total number of requests in one hour for R1, W1* and W4 = 1000*scalefactor/80% = 1250*scalefactor
+                - The total rate per minute of thread1 = 1250*scalefactor/60 = 1000*scalefactor/48
+        - `runthread2.xml`: the configuration file for running complex query workloads once in serial covering R3*, W2, W3, W5* and W6.
+        - `runR21.xml`: the configuration file for running R21 at a rate of 10*scalefactor/60 request per minute.
+        - `runR22.xml`: the configuration file for running R22 at a rate of 10*scalefactor/60 request per minute.
+        - `runR23.xml`: the configuration file for running R23 at a rate of 10*scalefactor/60 request per minute.
+        - `runR24.xml`: the configuration file for running R24 at a rate of 10*scalefactor/60 request per minute.
 
 
 ### Workload Descriptor
@@ -141,7 +148,7 @@ When running a multi-phase experiment with varying a workload, it is imperative 
 <?xml version="1.0"?>
 <parameters>
     <!-- Connection details -->
-    <dbtype>mysql</dbtype>
+    <dbtype>tidb</dbtype>
     <driver>com.mysql.cj.jdbc.Driver</driver>
     <DBUrl>jdbc:mysql://127.0.0.1:4000/web3bench?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
     <username>root</username>
@@ -150,15 +157,16 @@ When running a multi-phase experiment with varying a workload, it is imperative 
     <distribution>rand</distribution>
     <uploadUrl></uploadUrl>
 
-    <scalefactor>3</scalefactor>
+    <nodeid>main</nodeid>
+    <scalefactor>6000</scalefactor>
 
     <!-- The workload -->
     <terminals>1</terminals>
     <works>
         <work>
             <warmup>0</warmup>
-            <time>5</time>
-            <rate>1</rate>
+            <time>60</time>
+            <rate>1000</rate>
             <weights>100</weights>
             <arrival>REGULAR</arrival>
         </work>
