@@ -271,7 +271,8 @@ usage: olxpbenchmark
                 - The sum results will be stored in `summary.csv` file and the `sum_table` table in the database you specified in the script `parse.py`.
                     ```sql
                     CREATE TABLE IF NOT EXISTS sum_table (
-                        txn_name                    VARCHAR(10) PRIMARY KEY,
+                        batch_id                    BIGINT,
+                        txn_name                    VARCHAR(10),
                         total_latency_s             DECIMAL(20, 6),
                         txn_count                   BIGINT,
                         average_latency_s           DECIMAL(20, 6),
@@ -280,19 +281,23 @@ usage: olxpbenchmark
                         tps                         DECIMAL(20, 6),
                         geometric_mean_latency_s    DECIMAL(20, 6),
                         avg_latency_limit_s         VARCHAR(10),
-                        pass_fail                   VARCHAR(10)
+                        pass_fail                   VARCHAR(10),
+                        start_time                  timestamp(6),
+                        end_time                    timestamp(6),
+                        PRIMARY KEY (batch_id, txn_name)
                     );
                     ```
             - `all`: export all the data (including the original data and the sum of the data) to the MySQL database. 
                 - `res_table` table (storing the original data) and `sum_table` table (storing the sum of the data) will be created in the MySQL database.
                     ```sql
                     CREATE TABLE IF NOT EXISTS res_table (
+                        batch_id        BIGINT,
                         id              BIGINT AUTO_INCREMENT PRIMARY KEY,
                         hostname        VARCHAR(30),
                         txn_type_index  BIGINT,
                         txn_name        VARCHAR(10),
-                        start_time_ms   DECIMAL(20, 6),
-                        latency_ms      BIGINT,
+                        start_time_s    DECIMAL(20, 6),
+                        latency_us      BIGINT,
                         worker_id       INT,
                         phase_id        INT
                     );
