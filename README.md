@@ -10,10 +10,10 @@ The benchmark encompasses a spectrum of tasks, including transactional, analytic
 - Install Java (v1.7 or newer) and Apache Ant.
 - Deploy TiDB cluster following the [TiDB documentation](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb).
     - If you want to test Web3Bench on TiDB, you can use the following commands to set or unlimit the memory quota for queries and server according to your environment.
-    ```sql
-    SET GLOBAL tidb_mem_quota_query=0;
-    SET GLOBAL tidb_server_memory_limit=0;
-    ```
+        ```sql
+        SET GLOBAL tidb_mem_quota_query=0;
+        SET GLOBAL tidb_server_memory_limit=0;
+        ```
 - Install required Python packages (tested on Python 3.8.10 & 3.8.18)
     ```bash
     pip3 install -r requirements.txt
@@ -32,12 +32,14 @@ cd [Web3Bench.dir]/script
 ./runbench.sh
 
 # Parse the results
-python3 parse-localresults.py
-# The outcomes will be saved in script/res.csv by default
-
-# Or if you execute Web3Bench on multiple machines, you can merge the results by running the following command on all the machines.
-python3 import-res2db-parse.py
-# All results will be stored in res.csv and the sum_table table in the database.
+python3 parse.py
+# The outcomes will be saved in script/summary.csv by default
+# Or if you want to import the results into the database, you can use the following command
+python3 parse.py --exportdb sum
+# The sum results will be stored in script/summary.csv and the sum_table table in the database you specified in the script parse.py
+# Or if you want to import the all results (including the original data and the sum of the data) into the database, you can use the following command
+python3 parse.py --exportdb all
+# The sum results will be stored in script/summary.csv, the res_table table (storing the original data) and sum_table table in the database you specified in the script parse.py
 ```
 
 ### Troubleshooting
@@ -234,51 +236,78 @@ usage: olxpbenchmark
     - The result files for the benchmark
 
 ### Parsing results
-- script/parse-localresults.py
-    - The script for parsing the local result files and generating the summary file in csv format
-    - Edit the head of the script to change the path of the results you want to parse
-        - data = "": the path will be "results/"
-        - data = "???" (not empty): the path will be "results/???"
+- script/parse.py
     - Usage:
         ```bash
-        cd script
-        python3 parse-localresults.py
+        $ python parse.py -h
+        usage: parse.py [-h] [--datadir DATADIR] [--exportcsv EXPORTCSV] [--exportdb EXPORTDB]
+                        [--testtime TESTTIME]
+
+        optional arguments:
+        -h, --help            show this help message and exit
+        --datadir DATADIR     The directory of the original csv data files. If it is empty, the script
+                                will parse all the csv files in the results directory. If it is not empty,
+                                the script will parse all the csv files in ../results/<datadir>
+        --exportcsv EXPORTCSV
+                                The name of the exported csv file, default is summary. The name of the
+                                exported csv file is <exportcsv>.csv, and it will be exported to the
+                                current directory
+        --exportdb EXPORTDB   If it is empty, the script will not export the data to the MySQL database.
+                                If it is not empty, the script will export the data to the MySQL database.
+                                The value of --exportdb can be sum or all. sum: export the sum of the data
+                                to the MySQL database. all: export all the data (including the original
+                                data and the sum of the data) to the MySQL database
+        --testtime TESTTIME   The test time in minutes, default is 0. If it is 0, the script will get the
+                                test time from the xml config file. If it is not 0, the script will use the
+                                value as the test time
         ```
-- script/import-res2db-parse.py
-    - The script for importing the result files into the database and parsing the results
-        - All the result files in csv format will be imported into the table **res_table** in the database you specified in the script
-        - The table **res_table** will be created if it does not exist
-            ```sql
-            CREATE TABLE IF NOT EXISTS res_table (
-                id              BIGINT AUTO_INCREMENT PRIMARY KEY,
-                hostname        VARCHAR(30),
-                txn_type_index  BIGINT,
-                txn_name        VARCHAR(10),
-                start_time_ms   DECIMAL(20, 6),
-                latency_ms      BIGINT,
-                worker_id       INT,
-                phase_id        INT
-            );
-            ```
-        - Import all results in `results/` dictionary into the `res_table` table.
-        - Parse the results in the `res_table` table
-            - Save the summary results in `res.csv` file
-            - Save the sum results in the `sum_table` table
-                ```sql
-                CREATE TABLE IF NOT EXISTS sum_table (
-                    txn_name                    VARCHAR(10) PRIMARY KEY,
-                    total_latency_s             DECIMAL(20, 6),
-                    txn_count                   BIGINT,
-                    average_latency_s           DECIMAL(20, 6),
-                    p99_latency_s               DECIMAL(20, 6),
-                    qps                         DECIMAL(20, 6),
-                    tps                         DECIMAL(20, 6),
-                    geometric_mean_latency_s    DECIMAL(20, 6),
-                    avg_latency_limit_s         VARCHAR(10),
-                    pass_fail                   VARCHAR(10)
-                );
+    - The script will parse all the csv files in the `results/` dictionary by default. 
+        - If you want to parse the csv files in another directory, you can use the option `--datadir` to specify the directory.
+    - The script will export the sum of the data to the summary.csv file by default. 
+        - If you want to export the sum of the data to another csv file, you can use the option `--exportcsv` to specify the name of the exported csv file.
+    - The script will not export the data to the MySQL database by default. 
+        - If you want to export the data to the MySQL database, you can use the option `--exportdb` to specify the value of the option. The value of `--exportdb` can be `sum` or `all`. 
+            - `sum`: export the sum of the data to the MySQL database. 
+                - The sum results will be stored in `summary.csv` file and the `sum_table` table in the database you specified in the script `parse.py`.
+                    ```sql
+                    CREATE TABLE IF NOT EXISTS sum_table (
+                        txn_name                    VARCHAR(10) PRIMARY KEY,
+                        total_latency_s             DECIMAL(20, 6),
+                        txn_count                   BIGINT,
+                        average_latency_s           DECIMAL(20, 6),
+                        p99_latency_s               DECIMAL(20, 6),
+                        qps                         DECIMAL(20, 6),
+                        tps                         DECIMAL(20, 6),
+                        geometric_mean_latency_s    DECIMAL(20, 6),
+                        avg_latency_limit_s         VARCHAR(10),
+                        pass_fail                   VARCHAR(10)
+                    );
+                    ```
+            - `all`: export all the data (including the original data and the sum of the data) to the MySQL database. 
+                - `res_table` table (storing the original data) and `sum_table` table (storing the sum of the data) will be created in the MySQL database.
+                    ```sql
+                    CREATE TABLE IF NOT EXISTS res_table (
+                        id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        hostname        VARCHAR(30),
+                        txn_type_index  BIGINT,
+                        txn_name        VARCHAR(10),
+                        start_time_ms   DECIMAL(20, 6),
+                        latency_ms      BIGINT,
+                        worker_id       INT,
+                        phase_id        INT
+                    );
+                    ```
+            - Specify the database settings at the top of the script `parse.py`:
+                ```python
+                # MySQL database connection configuration
+                db_config = {
+                    "host": "127.0.0.1",    # Replace with your MySQL host name
+                    "port": 4000,           # Replace with your MySQL port
+                    "user": "root",         # Replace with your database username
+                    "password": "",         # Replace with your database password
+                    "database": "web3bench" # Replace with your database name
+                }
                 ```
-            - Print the summary results in the console
 
 ## Implementation
 
