@@ -37,14 +37,14 @@ public class R24 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R24.class);
 
-    // Aggregation with no group by on a small range
-    public SQLStmt query_stmtSQL = new SQLStmt(
+    // List of transactions excluding some black listed ones.
+    public SQLStmt query_to_address_SQL = new SQLStmt(
             "explain analyze select "
                     + "count(*) "
                     + "from "
-                    + "token_transfers "
+                    + "transactions "
                     + "where "
-                    + "token_address = ? ");
+                    + "to_address not in (?, ?, ?) ");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
@@ -52,13 +52,19 @@ public class R24 extends WEB3Procedure {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
-        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
+        query_stmt = this.getPreparedStatement(conn, query_to_address_SQL);
 
-        String token_address = WEB3Util
-                .convertToTokenAddressString(WEB3Util.randomNumber(1, WEB3Config.configTokenCount, gen));
+        String to_address1 = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+        String to_address2 = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+        String to_address3 = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
 
         // Set parameter
-        query_stmt.setString(1, token_address);
+        query_stmt.setString(1, to_address1);
+        query_stmt.setString(2, to_address2);
+        query_stmt.setString(3, to_address3);
         if (trace)
             LOG.trace("query_stmt R24 START");
         // Execute query and commit

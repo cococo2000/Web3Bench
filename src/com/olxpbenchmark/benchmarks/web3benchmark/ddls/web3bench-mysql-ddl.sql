@@ -68,9 +68,9 @@ CREATE TABLE token_transfers (
 
 -- Add indexes
 CREATE INDEX idx_blocks_number ON blocks (number);
--- for R23
+-- for R21
 CREATE INDEX idx_fa_bn ON token_transfers (from_address, block_number);
--- for R24, R25
+-- for R22, R23
 CREATE INDEX idx_ta_bn_nbn ON token_transfers (token_address, block_number, next_block_number);
 
 -- Add foreign keys

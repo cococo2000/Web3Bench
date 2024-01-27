@@ -23,9 +23,19 @@ new_terminals_thread1=5
 # then total rate per minute of thread1 = 1000 * SF / 80% / 60 = 1000 * SF / 48
 new_rate_thread1=$((1000*$new_scalefactor/48))
 # terminals and rate for R2*
-new_terminals_R2x=1
-# Total number of requests per minute for R2* = 10 * SF / 60
-new_rate_R2x=$((10*$new_scalefactor/60))
+new_terminals_R21=1
+new_terminals_R22=1
+new_terminals_R23=1
+new_terminals_R24=1
+new_terminals_R25=1
+# Total number of requests per minute
+# R21, R22, R23 = 10 * SF / 60
+new_rate_R21=$((10*$new_scalefactor/60))
+new_rate_R22=$((10*$new_scalefactor/60))
+new_rate_R23=$((10*$new_scalefactor/60))
+# R24, R25 = SF / 6 / 60
+new_rate_R24=$(($new_scalefactor/360))
+new_rate_R25=$(($new_scalefactor/360))
 ###########################################################
 
 # Create ~/mysql.cnf file
@@ -86,9 +96,17 @@ echo "New nodeid: $new_nodeid"
 echo "New scalefactor: $new_scalefactor"
 echo "New test time: $new_time"
 echo "New terminals for runthread1: $new_terminals_thread1"
-echo "New rate for runthread1: $new_rate_thread1"
-echo "New terminals for runR2*: $new_terminals_R2x"
-echo "New rate for runR2*: $new_rate_R2x"
+echo "New rate for runthread1 per minute: $new_rate_thread1"
+echo "New terminals for runR21: $new_terminals_R21"
+echo "New rate for runR21 per minute: $new_rate_R21"
+echo "New terminals for runR22: $new_terminals_R22"
+echo "New rate for runR22 per minute: $new_rate_R22"
+echo "New terminals for runR23: $new_terminals_R23"
+echo "New rate for runR23 per minute: $new_rate_R23"
+echo "New terminals for runR24: $new_terminals_R24"
+echo "New rate for runR24 per minute: $new_rate_R24"
+echo "New terminals for runR25: $new_terminals_R25"
+echo "New rate for runR25 per minute: $new_rate_R25"
 echo "###########################################################"
 
 for file in "${files[@]}"; do
@@ -103,10 +121,21 @@ for file in "${files[@]}"; do
         if [ $file == "runthread1.xml" ]; then
             sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals_thread1</terminals>#g" "../config/$file"
             sed $SED_INPLACE_OPTION "s#<rate>.*</rate>#<rate>$new_rate_thread1</rate>#g" "../config/$file"
-        fi
-        if [[ $file == runR2* ]]; then
-            sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals_R2x</terminals>#g" "../config/$file"
-            sed $SED_INPLACE_OPTION "s#<rate>.*</rate>#<rate>$new_rate_R2x</rate>#g" "../config/$file"
+        elif [[ $file == "runR21.xml" ]]; then
+            sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals_R21</terminals>#g" "../config/$file"
+            sed $SED_INPLACE_OPTION "s#<rate>.*</rate>#<rate>$new_rate_R21</rate>#g" "../config/$file"
+        elif [[ $file == "runR22.xml" ]]; then
+            sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals_R22</terminals>#g" "../config/$file"
+            sed $SED_INPLACE_OPTION "s#<rate>.*</rate>#<rate>$new_rate_R22</rate>#g" "../config/$file"
+        elif [[ $file == "runR23.xml" ]]; then
+            sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals_R23</terminals>#g" "../config/$file"
+            sed $SED_INPLACE_OPTION "s#<rate>.*</rate>#<rate>$new_rate_R23</rate>#g" "../config/$file"
+        elif [[ $file == "runR24.xml" ]]; then
+            sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals_R24</terminals>#g" "../config/$file"
+            sed $SED_INPLACE_OPTION "s#<rate>.*</rate>#<rate>$new_rate_R24</rate>#g" "../config/$file"
+        elif [[ $file == "runR25.xml" ]]; then
+            sed $SED_INPLACE_OPTION "s#<terminals>.*</terminals>#<terminals>$new_terminals_R25</terminals>#g" "../config/$file"
+            sed $SED_INPLACE_OPTION "s#<rate>.*</rate>#<rate>$new_rate_R25</rate>#g" "../config/$file"
         fi
         rm -f ../config/$file\'\'
         echo -e "\tFile $file modified"

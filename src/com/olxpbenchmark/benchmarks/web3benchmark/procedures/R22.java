@@ -37,15 +37,14 @@ public class R22 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R22.class);
 
-    // Constraint checking that next_block_number <= block_number in token_transfers
-    // Query result should be empty.
-    public SQLStmt query_SQL = new SQLStmt(
+    // Aggregation with no group by on a small range
+    public SQLStmt query_stmtSQL = new SQLStmt(
             "explain analyze select "
-                    + "count(*)  "
-                    + "from token_transfers "
+                    + "count(*) "
+                    + "from "
+                    + "token_transfers "
                     + "where "
-                    + "next_block_number <= block_number "
-                    + "group by next_block_number ");
+                    + "token_address = ? ");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
@@ -53,8 +52,13 @@ public class R22 extends WEB3Procedure {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
-        query_stmt = this.getPreparedStatement(conn, query_SQL);
+        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
+        String token_address = WEB3Util
+                .convertToTokenAddressString(WEB3Util.randomNumber(1, WEB3Config.configTokenCount, gen));
+
+        // Set parameter
+        query_stmt.setString(1, token_address);
         if (trace)
             LOG.trace("query_stmt R22 START");
         // Execute query and commit

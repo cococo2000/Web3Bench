@@ -37,15 +37,15 @@ public class R25 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R25.class);
 
-    public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select * "
-                    + "from "
-                    + "token_transfers "
+    // Constraint checking that next_block_number <= block_number in token_transfers
+    // Query result should be empty.
+    public SQLStmt query_SQL = new SQLStmt(
+            "explain analyze select "
+                    + "count(*)  "
+                    + "from token_transfers "
                     + "where "
-                    + "token_address = ? "
-                    + "and block_number <= ? "
-                    + "and (next_block_number > ? or next_block_number = ?) "
-                    + "order by block_number desc limit ?");
+                    + "next_block_number <= block_number "
+                    + "group by next_block_number ");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
@@ -53,21 +53,11 @@ public class R25 extends WEB3Procedure {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
-        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
+        query_stmt = this.getPreparedStatement(conn, query_SQL);
 
-        String token_address = WEB3Util
-                .convertToTokenAddressString(WEB3Util.randomNumber(1, WEB3Config.configTokenCount, gen));
-        long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
-        long next_block_number = WEB3Util.randomNumber(1, block_number, gen);
-        int limit = WEB3Util.randomNumber(1, 100, gen);
-
-        query_stmt.setString(1, token_address);
-        query_stmt.setLong(2, block_number);
-        query_stmt.setLong(3, next_block_number);
-        query_stmt.setLong(4, next_block_number);
-        query_stmt.setInt(5, limit);
         if (trace)
             LOG.trace("query_stmt R25 START");
+        // Execute query and commit
         ResultSet rs = query_stmt.executeQuery();
         conn.commit();
         if (trace)

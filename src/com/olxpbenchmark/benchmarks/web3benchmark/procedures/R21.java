@@ -37,14 +37,13 @@ public class R21 extends WEB3Procedure {
 
     private static final Logger LOG = Logger.getLogger(R21.class);
 
-    // List of transactions excluding some black listed ones.
-    public SQLStmt query_to_address_SQL = new SQLStmt(
+    // top N with small N on full table scan
+    public SQLStmt query_stmtSQL = new SQLStmt(
             "explain analyze select "
-                    + "count(*) "
-                    + "from "
-                    + "transactions "
-                    + "where "
-                    + "to_address not in (?, ?, ?) ");
+                    + "* "
+                    + "from token_transfers "
+                    + "where from_address = ? "
+                    + "order by block_number desc limit 5 ");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
@@ -52,19 +51,13 @@ public class R21 extends WEB3Procedure {
         boolean trace = LOG.isTraceEnabled();
 
         // initializing all prepared statements
-        query_stmt = this.getPreparedStatement(conn, query_to_address_SQL);
+        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String to_address1 = WEB3Util
-                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        String to_address2 = WEB3Util
-                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-        String to_address3 = WEB3Util
+        String from_address = WEB3Util
                 .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
 
         // Set parameter
-        query_stmt.setString(1, to_address1);
-        query_stmt.setString(2, to_address2);
-        query_stmt.setString(3, to_address3);
+        query_stmt.setString(1, from_address);
         if (trace)
             LOG.trace("query_stmt R21 START");
         // Execute query and commit
