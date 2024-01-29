@@ -45,9 +45,6 @@ import com.olxpbenchmark.util.SQLUtil;
 import com.olxpbenchmark.util.json.Test;
 
 import org.apache.log4j.Logger;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.mapping.Map;
-import org.hsqldb.Tokens;
 
 import java.sql.*;
 import java.util.ArrayList;
