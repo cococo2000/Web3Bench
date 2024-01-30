@@ -2,11 +2,8 @@
 <project name="olxpbench" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
-<!--     <property name="javac.target" value="1.10"/> -->
-<!--     <property name="javac.source" value="1.10"/> -->
 
     <!-- *************************************** CONFIGURATION *************************************** -->
-    
     <property name="src.dir"                    location="src" />
     <property name="tests.dir"                  location="tests" />
     <property name="lib.dir"                    location="lib" />
@@ -26,26 +23,6 @@
         </fileset>
         <pathelement path="${java.class.path}"/>
     </path>
-    
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
-        <classpath>
-            <pathelement location="${lib.dir}/ant-contrib.jar"/>
-        </classpath>
-    </taskdef>
-    
-    <!-- EXEC ASSERTS -->
-    <condition property="assertions" value="false">
-        <not><isset property="assertions"/></not>
-    </condition>
-    <if>
-        <equals arg1="${assertions}" arg2="true" />
-        <then>
-            <assertions id="assertions"><enable /></assertions>
-        </then>
-        <else>
-            <assertions id="assertions"><disable /></assertions>
-        </else>
-    </if>
 
     <!-- ************************************** BOOTSTRAP IVY ************************************** -->
 
@@ -71,8 +48,7 @@
         <!-- <echo message="${ant.project.name}: ${ant.file}"/> -->
 
         <delete dir="${build.dir}"/> 
-        <mkdir dir="${build.dir}/META-INF"/>
-        <copy file="${src.dir}/META-INF/persistence.xml" todir="${build.dir}/META-INF"/>
+        <mkdir dir="${build.dir}"/>
         <javac debug="true" debuglevel="${debuglevel}" includeantruntime="false"
                destdir="${build.dir}">
             <src path="${src.dir}"/>

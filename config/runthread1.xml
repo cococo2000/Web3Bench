@@ -14,7 +14,7 @@
     <scalefactor>6000</scalefactor>
     
     <!-- The workload -->
-    <terminals>5</terminals>
+    <terminals>6</terminals>
     <works>
         <work>
             <warmup>0</warmup>
@@ -44,8 +44,5 @@
         <transactiontype>
             <name>W4</name>
         </transactiontype>
-        <!-- <transactiontype>
-            <name>W6</name>
-        </transactiontype> -->
     </transactiontypes>
 </parameters>

@@ -18,10 +18,10 @@ new_scalefactor=6000
 # Test time in minutes
 new_time=60
 # terminals and rate for runthread1: R1, W1* and W4
-new_terminals_thread1=5
-# Total number of requests in one hour for R1 = 1000 * SF
-# then total rate per minute of thread1 = 1000 * SF / 80% / 60 = 1000 * SF / 48
-new_rate_thread1=$((1000*$new_scalefactor/48))
+new_terminals_thread1=6
+# Total number of requests in one hour for R1 = 1000 * 6000 = 6000000
+# then total rate per minute of thread1 = 1000 * 6000 / 80% / 60 = 1000 * 6000 / 48 = 125000
+new_rate_thread1=125000
 # terminals and rate for R2*
 new_terminals_R21=1
 new_terminals_R22=1
@@ -29,13 +29,13 @@ new_terminals_R23=1
 new_terminals_R24=1
 new_terminals_R25=1
 # Total number of requests per minute
-# R21, R22, R23 = 10 * SF / 60
-new_rate_R21=$((10*$new_scalefactor/60))
-new_rate_R22=$((10*$new_scalefactor/60))
-new_rate_R23=$((10*$new_scalefactor/60))
-# R24, R25 = SF / 6 / 60
-new_rate_R24=$(($new_scalefactor/360))
-new_rate_R25=$(($new_scalefactor/360))
+# R21, R22, R23 = 10 * 6000 / 60 = 1000
+new_rate_R21=1000
+new_rate_R22=1000
+new_rate_R23=1000
+# R24, R25 = 6000 / 6 / 60 = 16
+new_rate_R24=16
+new_rate_R25=16
 ###########################################################
 
 # Create ~/mysql.cnf file
