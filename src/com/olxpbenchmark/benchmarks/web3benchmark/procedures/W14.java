@@ -36,8 +36,9 @@ public class W14 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(W14.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze insert into "
-                    + "token_transfers "
+            "/* W14 */ "
+                    + "explain analyze "
+                    + "insert into token_transfers "
                     + "values "
                     + "(?, ?, ?, ?, ?, ?, ?)");
 

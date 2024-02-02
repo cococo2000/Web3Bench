@@ -39,11 +39,13 @@ public class R21 extends WEB3Procedure {
 
     // top N with small N on full table scan
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select "
-                    + "* "
+            "/* R21 */ "
+                    + "explain analyze "
+                    + "select * "
                     + "from token_transfers "
                     + "where from_address = ? "
-                    + "order by block_number desc limit 5 ");
+                    + "order by block_number desc "
+                    + "limit 5 ");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,

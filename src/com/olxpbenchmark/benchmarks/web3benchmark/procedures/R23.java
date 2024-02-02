@@ -38,14 +38,15 @@ public class R23 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(R23.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select * "
-                    + "from "
-                    + "token_transfers "
-                    + "where "
-                    + "token_address = ? "
+            "/* R23 */ "
+                    + "explain analyze "
+                    + "select * "
+                    + "from token_transfers "
+                    + "where token_address = ? "
                     + "and block_number <= ? "
                     + "and (next_block_number > ? or next_block_number = ?) "
-                    + "order by block_number desc limit ?");
+                    + "order by block_number desc "
+                    + "limit ?");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,

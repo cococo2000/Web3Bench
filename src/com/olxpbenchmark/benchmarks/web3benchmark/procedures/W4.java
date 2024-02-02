@@ -39,7 +39,9 @@ public class W4 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(W4.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze update transactions "
+            "/* W4 */ "
+                    + "explain analyze "
+                    + "update transactions "
                     + "set gas_price = ? "
                     + "where hash = ? ");
 

@@ -36,7 +36,10 @@ public class W3 extends WEB3Procedure {
 
     // Insert 1000 rows into transactions from a temp table
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze insert transactions select * from temp_table limit 1000 ");
+            "/* W3 */ "
+                    + "explain analyze "
+                    + "insert transactions "
+                    + "select * from temp_table limit 1000 ");
 
     private PreparedStatement query_stmt = null;
 

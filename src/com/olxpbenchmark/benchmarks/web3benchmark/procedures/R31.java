@@ -40,14 +40,13 @@ public class R31 extends WEB3Procedure {
     // For a specific person, find transactions where this person is either a sender
     // or receiver. Limit the result by the most recent timestamp.
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select "
-                    + "* "
-                    + "from "
-                    + "transactions "
-                    + "where "
-                    + "from_address = ? or to_address = ? "
-                    + "order by "
-                    + "block_timestamp desc limit 10");
+            "/* R31 */ "
+                    + "explain analyze "
+                    + "select * "
+                    + "from transactions "
+                    + "where from_address = ? or to_address = ? "
+                    + "order by block_timestamp desc "
+                    + "limit 10");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,

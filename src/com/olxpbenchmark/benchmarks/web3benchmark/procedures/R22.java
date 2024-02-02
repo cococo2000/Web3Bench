@@ -39,12 +39,11 @@ public class R22 extends WEB3Procedure {
 
     // Aggregation with no group by on a small range
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select "
-                    + "count(*) "
-                    + "from "
-                    + "token_transfers "
-                    + "where "
-                    + "token_address = ? ");
+            "/* R22 */ "
+                    + "explain analyze "
+                    + "select count(*) "
+                    + "from token_transfers "
+                    + "where token_address = ? ");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,

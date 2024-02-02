@@ -39,12 +39,11 @@ public class R1 extends WEB3Procedure {
 
     // Equality on hash in transaction table
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select "
-                    + "to_address, from_address "
-                    + "from "
-                    + "transactions "
-                    + "where "
-                    + "hash = ? ");
+            "/* R1 */ "
+                    + "explain analyze "
+                    + "select to_address, from_address "
+                    + "from transactions "
+                    + "where hash = ? ");
 
     private PreparedStatement query_stmt = null;
 

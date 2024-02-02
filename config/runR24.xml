@@ -14,7 +14,7 @@
     <scalefactor>6000</scalefactor>
 
     <!-- The workload -->
-    <terminals>1</terminals>
+    <terminals>2</terminals>
     <works>
         <work>
             <warmup>0</warmup>

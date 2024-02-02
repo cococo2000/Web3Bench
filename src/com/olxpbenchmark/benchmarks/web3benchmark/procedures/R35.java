@@ -40,19 +40,17 @@ public class R35 extends WEB3Procedure {
     // Total count of token transfers for a specific sender and token transfers for
     // recipients who are also senders in other transactions.
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select "
-                    + "count(*) as count "
+            "/* R35 */ "
+                    + "explain analyze "
+                    + "select count(*) as count "
                     + "from "
                     + "( "
                     + "select * "
-                    + "from "
-                    + "token_transfers t "
-                    + "where "
-                    + "from_address = ? "
+                    + "from token_transfers t "
+                    + "where from_address = ? "
                     + "union all "
                     + "select t2.* "
-                    + "from "
-                    + "token_transfers t2 "
+                    + "from token_transfers t2 "
                     + "inner join token_transfers t on t2.from_address = t.to_address "
                     + "and t.value < t2.value "
                     + ") as temp ");

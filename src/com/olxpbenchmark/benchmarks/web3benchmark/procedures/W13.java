@@ -36,8 +36,9 @@ public class W13 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(W13.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze insert into "
-                    + "transactions "
+            "/* W13 */ "
+                    + "explain analyze "
+                    + "insert into transactions "
                     + "values "
                     + "(?, ?, ?, ?, ?,"
                     + " ?, ?, ?, ?, ?,"
@@ -53,9 +54,8 @@ public class W13 extends WEB3Procedure {
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        String hash = WEB3Util.convertToTxnHashString(
-                numScale * WEB3Config.configTransactionsCount + startNumber,
-                nodeid);
+        String hash = WEB3Util.convertToTxnHashString(startNumber, nodeid + "-W13");
+        LOG.info(startNumber);
         long nonce = WEB3Util.randomNumber(0, 100, gen);
         long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
         String block_hash = WEB3Util.convertToBlockHashString(block_number);

@@ -37,7 +37,9 @@ public class W6 extends WEB3Procedure {
 
     // Single record deletes for the transaction table.
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze delete from transactions "
+            "/* W6 */ "
+                    + "explain analyze "
+                    + "delete from transactions "
                     + "where hash = ? ");
 
     private PreparedStatement query_stmt = null;

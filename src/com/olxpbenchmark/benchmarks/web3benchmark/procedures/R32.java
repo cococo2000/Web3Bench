@@ -39,12 +39,12 @@ public class R32 extends WEB3Procedure {
 
     // Top N transactions based on block timestamp.
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select "
-                    + "* "
-                    + "from "
-                    + "transactions "
-                    + "order by "
-                    + "block_timestamp desc limit 100");
+            "/* R32 */ "
+                    + "explain analyze "
+                    + "select * "
+                    + "from transactions "
+                    + "order by block_timestamp desc "
+                    + "limit 100");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,

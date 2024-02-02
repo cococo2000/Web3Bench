@@ -35,7 +35,9 @@ public class W52 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(W52.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze update token_transfers "
+            "/* W52 */ "
+                    + "explain analyze "
+                    + "update token_transfers "
                     + "set value = value + 1 "
                     + "where from_address in "
                     + "(select to_address from token_transfers) ");

@@ -36,8 +36,9 @@ public class W11 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(W11.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze insert into "
-                    + "blocks "
+            "/* W11 */ "
+                    + "explain analyze "
+                    + "insert into blocks "
                     + "values "
                     + "(?, ?, ?, ?, ?,"
                     + " ?, ?, ?, ?, ?,"
@@ -54,7 +55,7 @@ public class W11 extends WEB3Procedure {
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
         long number = numScale * WEB3Config.configBlocksCount + startNumber;
-        String hash = WEB3Util.convertToBlockHashString(number, nodeid);
+        String hash = WEB3Util.convertToBlockHashString(startNumber, nodeid + "-W11");
         String parent_hash = WEB3Util.convertToBlockHashString(number - 1);
         String nonce = WEB3Util.randomHexString(42);
         String sha3_uncles = WEB3Util.randomHashString();

@@ -37,8 +37,9 @@ public class W2 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(W2.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze insert into "
-                    + "transactions "
+            "/* W2 */ "
+                    + "explain analyze "
+                    + "insert into transactions "
                     + "values "
                     // Java 11
                     // + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ".repeat(99)
@@ -59,9 +60,7 @@ public class W2 extends WEB3Procedure {
         // Small batch inserts (100 rows) for the transaction table.
         int idx = 1;
         for (int i = 0; i < 100; i++) {
-            String hash = WEB3Util.convertToTxnHashString(
-                    10 * numScale * WEB3Config.configTransactionsCount + 100 * startNumber + i,
-                    nodeid);
+            String hash = WEB3Util.convertToTxnHashString(startNumber + i, nodeid + "-W2");
             long nonce = WEB3Util.randomNumber(0, 100, gen);
             long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
             String block_hash = WEB3Util.convertToBlockHashString(block_number);

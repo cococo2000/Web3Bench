@@ -39,14 +39,16 @@ public class R34 extends WEB3Procedure {
 
     // Find top N senders (from\_address) by total transaction value
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select "
+            "/* R34 */ "
+                    + "explain analyze "
+                    + "select "
                     + "sum(value) as totalamount, "
                     + "count(value) as transactioncount, "
                     + "from_address as fromaddress "
-                    + "from "
-                    + "transactions "
+                    + "from transactions "
                     + "group by from_address "
-                    + "order by sum(value) desc limit 10");
+                    + "order by sum(value) desc "
+                    + "limit 10 ");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,

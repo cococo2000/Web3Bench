@@ -40,11 +40,11 @@ public class R25 extends WEB3Procedure {
     // Constraint checking that next_block_number <= block_number in token_transfers
     // Query result should be empty.
     public SQLStmt query_SQL = new SQLStmt(
-            "explain analyze select "
-                    + "count(*)  "
+            "/* R25 */ "
+                    + "explain analyze "
+                    + "select count(*) "
                     + "from token_transfers "
-                    + "where "
-                    + "next_block_number <= block_number "
+                    + "where next_block_number <= block_number "
                     + "group by next_block_number ");
     private PreparedStatement query_stmt = null;
 

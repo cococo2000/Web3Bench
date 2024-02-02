@@ -36,8 +36,9 @@ public class W12 extends WEB3Procedure {
     private static final Logger LOG = Logger.getLogger(W12.class);
 
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze insert into "
-                    + "contracts "
+            "/* W12 */ "
+                    + "explain analyze "
+                    + "insert into contracts "
                     + "values (?, ?, ?, ?, ?, ?) ");
 
     private PreparedStatement query_stmt = null;
@@ -50,7 +51,7 @@ public class W12 extends WEB3Procedure {
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
         String address = WEB3Util
-                .convertToContractAddressString(numScale * WEB3Config.configContractsCount + startNumber, nodeid);
+                .convertToContractAddressString(startNumber, nodeid + "-W12");
         String bytecode = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
         String function_sighashes = WEB3Util.randomStr(WEB3Util.randomNumber(1, 1000, gen));
         boolean is_erc20 = false; // gen.nextBoolean();

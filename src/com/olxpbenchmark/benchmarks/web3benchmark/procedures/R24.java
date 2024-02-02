@@ -39,12 +39,11 @@ public class R24 extends WEB3Procedure {
 
     // List of transactions excluding some black listed ones.
     public SQLStmt query_to_address_SQL = new SQLStmt(
-            "explain analyze select "
-                    + "count(*) "
-                    + "from "
-                    + "transactions "
-                    + "where "
-                    + "to_address not in (?, ?, ?) ");
+            "/* R24 */ "
+                    + "explain analyze "
+                    + "select count(*) "
+                    + "from transactions "
+                    + "where to_address not in (?, ?, ?) ");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,

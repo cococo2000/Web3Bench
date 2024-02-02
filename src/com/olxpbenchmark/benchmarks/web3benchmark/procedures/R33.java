@@ -39,10 +39,10 @@ public class R33 extends WEB3Procedure {
 
     // Find the number of unique senders (from\_address) in transactions
     public SQLStmt query_stmtSQL = new SQLStmt(
-            "explain analyze select "
-                    + "count(distinct from_address) "
-                    + "from "
-                    + "transactions ");
+            "/* R33 */ "
+                    + "explain analyze "
+                    + "select count(distinct from_address) "
+                    + "from transactions ");
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
