@@ -16,7 +16,7 @@ new_password=
 new_nodeid="main"
 new_scalefactor=6000
 # Test time in minutes
-new_time=360
+new_time=60
 # terminals and rate for runthread1: R1, W1* and W4
 new_terminals_thread1=20
 # Total number of requests in one hour for R1 = 1000 * 6000 = 6000000

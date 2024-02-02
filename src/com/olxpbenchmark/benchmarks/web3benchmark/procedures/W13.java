@@ -55,7 +55,6 @@ public class W13 extends WEB3Procedure {
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
         String hash = WEB3Util.convertToTxnHashString(startNumber, nodeid + "-W13");
-        LOG.info(startNumber);
         long nonce = WEB3Util.randomNumber(0, 100, gen);
         long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
         String block_hash = WEB3Util.convertToBlockHashString(block_number);

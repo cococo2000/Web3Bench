@@ -133,16 +133,17 @@ If you encounter issues during the process, refer to the following troubleshooti
 - config/*
   - This directory contains various configuration files used for testing on the VM. Each configuration file is designed to facilitate specific testing scenarios and workloads.
     - `loaddata.xml`: the configuration file for loading data into the database
-    - `runthread1.xml`: the configuration file for running point query workloads (R1, W1* and W4) at a rate of 1000*scalefactor/48 requests per minute.
-      - Total number of requests in one hour for R1 = 1000*scalefactor
+    - `runthread1.xml`: the configuration file for running point query workloads (R1, W1* and W4) at a rate of 7,500,000 requests per minute.
+      - Total number of requests in one hour for R1 = 6,000,000
       - The weight of R1:W11:W12:W13:W14:W4 = 80%:4%:4%:4%:4%:4%
-        - The weight of R1 is 80%, so the total number of requests in one hour for R1, W1* and W4 = 1000*scalefactor/80% = 1250*scalefactor
-        - The total rate per minute of thread1 = 1250*scalefactor/60 = 1000*scalefactor/48
+        - The weight of R1 is 80%, so the total number of requests in one hour for R1, W1* and W4 = 6,000,000/80% = 7,500,000
+        - The total rate per minute of thread1 = 7,500,000/60 = 125,000
     - `runthread2.xml`: the configuration file for running complex query workloads once in serial covering R3*, W2, W3, W5* and W6.
-    - `runR21.xml`: the configuration file for running R21 at a rate of 10*scalefactor/60 request per minute.
-    - `runR22.xml`: the configuration file for running R22 at a rate of 10*scalefactor/60 request per minute.
-    - `runR23.xml`: the configuration file for running R23 at a rate of 10*scalefactor/60 request per minute.
-    - `runR24.xml`: the configuration file for running R24 at a rate of 10*scalefactor/60 request per minute.
+    - `runR21.xml`: the configuration file for running R21 at a rate of 1,000 request per minute.
+    - `runR22.xml`: the configuration file for running R22 at a rate of 1,000 request per minute.
+    - `runR23.xml`: the configuration file for running R23 at a rate of 1,000 request per minute.
+    - `runR24.xml`: the configuration file for running R24 at a rate of 16 request per minute.
+    - `runR25.xml`: the configuration file for running R25 at a rate of 6 request per minute.
 
 ### Workload Descriptor
 
@@ -179,7 +180,7 @@ When running a multi-phase experiment with varying a workload, it is imperative 
     <scalefactor>6000</scalefactor>
 
     <!-- The workload -->
-    <terminals>1</terminals>
+    <terminals>2</terminals>
     <works>
         <work>
             <warmup>0</warmup>
