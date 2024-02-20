@@ -18,7 +18,7 @@ new_scalefactor=6000
 # Test time in minutes
 new_time=60
 # terminals and rate for runthread1: R1, W1* and W4
-new_terminals_thread1=20
+new_terminals_thread1=30
 # Total number of requests in one hour for R1 = 1000 * 6000 = 6000000
 # then total rate per minute of thread1 = 1000 * 6000 / 80% / 60 = 1000 * 6000 / 48 = 125000
 new_rate_thread1=125000

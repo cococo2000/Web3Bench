@@ -54,6 +54,9 @@ public class W6 extends WEB3Procedure {
         String hash = WEB3Util.convertToTxnHashString(startNumber % (WEB3Config.configTransactionsCount * numScale));
 
         query_stmt.setString(1, hash);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
         if (trace)
             LOG.trace("query_stmt W6 single record deletes for the transaction table START");
         // int affectedRows = query_stmt.executeUpdate();
@@ -61,10 +64,6 @@ public class W6 extends WEB3Procedure {
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W6 single record deletes for the transaction table END");
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

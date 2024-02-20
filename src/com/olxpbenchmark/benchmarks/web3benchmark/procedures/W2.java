@@ -108,18 +108,18 @@ public class W2 extends WEB3Procedure {
             query_stmt.setLong(idx++, transaction_type);
         }
 
+        // Log query and affected rows
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+            // LOG.debug("Result: " + resultSetToString(rs));
+        }
+
         if (trace)
             LOG.trace("query_stmt W2 RangeInsertTransactions START");
         ResultSet rs = query_stmt.executeQuery();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W2 RangeInsertTransactions END");
-
-        // Log query and affected rows
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-            // LOG.debug("Result: " + resultSetToString(rs));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

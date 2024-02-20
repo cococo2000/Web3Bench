@@ -50,6 +50,10 @@ public class W3 extends WEB3Procedure {
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
+
         if (trace)
             LOG.trace("query_stmt W3 InsertSelect START");
         // int affectedRows = query_stmt.executeUpdate();
@@ -57,10 +61,6 @@ public class W3 extends WEB3Procedure {
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W3 InsertSelect END");
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

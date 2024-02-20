@@ -64,6 +64,9 @@ public class R24 extends WEB3Procedure {
         query_stmt.setString(1, to_address1);
         query_stmt.setString(2, to_address2);
         query_stmt.setString(3, to_address3);
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
         if (trace)
             LOG.trace("query_stmt R24 START");
         // Execute query and commit
@@ -72,9 +75,6 @@ public class R24 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt R24 END");
 
-        // Log query
-        if (LOG.isDebugEnabled())
-            LOG.debug(queryToString(query_stmt));
         // Log result
         if (trace)
             LOG.trace(resultSetToString(rs));

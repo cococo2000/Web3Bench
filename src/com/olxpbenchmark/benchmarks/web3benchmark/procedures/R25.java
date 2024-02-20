@@ -54,7 +54,9 @@ public class R25 extends WEB3Procedure {
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_SQL);
-
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
         if (trace)
             LOG.trace("query_stmt R25 START");
         // Execute query and commit
@@ -63,9 +65,6 @@ public class R25 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt R25 END");
 
-        // Log query
-        if (LOG.isDebugEnabled())
-            LOG.debug(queryToString(query_stmt));
         // Log result
         if (trace)
             LOG.trace(resultSetToString(rs));

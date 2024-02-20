@@ -59,6 +59,9 @@ public class R1 extends WEB3Procedure {
 
         // Set parameter
         query_stmt.setString(1, hash);
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
         if (trace)
             LOG.trace("query_stmt R1 START");
         // Execute query and commit
@@ -66,10 +69,6 @@ public class R1 extends WEB3Procedure {
         conn.commit();
         if (trace)
             LOG.trace("query_stmt R1 END");
-
-        // Log query
-        if (LOG.isDebugEnabled())
-            LOG.debug(queryToString(query_stmt));
         // Log result
         if (trace)
             LOG.trace(resultSetToString(rs));

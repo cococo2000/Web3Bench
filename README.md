@@ -110,14 +110,24 @@ If you encounter issues during the process, refer to the following troubleshooti
     # Test time in minutes
     new_time=60
     # terminals and rate for runthread1: R1, W1* and W4
-    new_terminals_thread1=5
-    # Total number of requests in one hour for R1 = 1000 * SF
-    # then total rate per minute of thread1 = 1000 * SF / 80% / 60 = 1000 * SF / 48
-    new_rate_thread1=$((1000*$new_scalefactor/48))
+    new_terminals_thread1=30
+    # Total number of requests in one hour for R1 = 1000 * 6000 = 6000000
+    # then total rate per minute of thread1 = 1000 * 6000 / 80% / 60 = 1000 * 6000 / 48 = 125000
+    new_rate_thread1=125000
     # terminals and rate for R2*
-    new_terminals_R2x=1
-    # Total number of requests per minute for R2* = 10 * SF / 60
-    new_rate_R2x=$((10*$new_scalefactor/60))
+    new_terminals_R21=2
+    new_terminals_R22=2
+    new_terminals_R23=2
+    new_terminals_R24=2
+    new_terminals_R25=2
+    # Total number of requests per minute
+    # R21, R22, R23 = 10 * 6000 / 60 = 1000
+    new_rate_R21=1000
+    new_rate_R22=1000
+    new_rate_R23=1000
+    # R24, R25 = 6000 / 6 / 60 = 16
+    new_rate_R24=16
+    new_rate_R25=16
     ###########################################################
     ```
 
@@ -143,7 +153,7 @@ If you encounter issues during the process, refer to the following troubleshooti
     - `runR22.xml`: the configuration file for running R22 at a rate of 1,000 request per minute.
     - `runR23.xml`: the configuration file for running R23 at a rate of 1,000 request per minute.
     - `runR24.xml`: the configuration file for running R24 at a rate of 16 request per minute.
-    - `runR25.xml`: the configuration file for running R25 at a rate of 6 request per minute.
+    - `runR25.xml`: the configuration file for running R25 at a rate of 16 request per minute.
 
 ### Workload Descriptor
 
@@ -257,7 +267,7 @@ usage: olxpbenchmark
 ```
 
 - **-b,--bench**: the benchmark class. Currently, only web3benchmark is supported.
-- **--create=true**: create the database schema by excuting the SQL script in ddl files(e.g., src/com/olxpbenchmark/benchmarks/web3benchmark/ddls/web3benchmark-mysql-ddl.sql)
+- **--create=true**: create the database schema by excuting the SQL script in ddl files(e.g., src/com/olxpbenchmark/benchmarks/web3benchmark/ddls/web3bench-mysql-ddl.sql)
 - **--load=true**: load data into the database
 - **--execute=true**: run the workload
 

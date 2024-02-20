@@ -52,6 +52,9 @@ public class W51 extends WEB3Procedure {
 
         double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
         query_stmt.setDouble(1, value);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         if (trace)
             LOG.trace("query_stmt W51 UpdateQuery2 START");
@@ -60,10 +63,6 @@ public class W51 extends WEB3Procedure {
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W51 UpdateQuery2 END");
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

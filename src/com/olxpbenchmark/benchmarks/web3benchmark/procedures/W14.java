@@ -73,6 +73,10 @@ public class W14 extends WEB3Procedure {
         query_stmt.setLong(idx++, block_number);
         query_stmt.setLong(idx++, next_block_number);
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
+
         if (trace)
             LOG.trace("query_stmt W14 InsertTokenTransfers START");
         // int affectedRows = query_stmt.executeUpdate();
@@ -80,10 +84,6 @@ public class W14 extends WEB3Procedure {
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W14 InsertTokenTransfers END");
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

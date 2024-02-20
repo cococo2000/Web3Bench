@@ -53,6 +53,9 @@ public class R32 extends WEB3Procedure {
 
         // initializing prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
 
         if (trace)
             LOG.trace("query_stmt R32 START");
@@ -61,9 +64,6 @@ public class R32 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt R32 END");
 
-        // Log query
-        if (LOG.isDebugEnabled())
-            LOG.debug(queryToString(query_stmt));
         // Log result
         if (trace)
             LOG.trace(resultSetToString(rs));

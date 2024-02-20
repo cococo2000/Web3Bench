@@ -67,6 +67,9 @@ public class R35 extends WEB3Procedure {
                 .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
 
         query_stmt.setString(1, from_address);
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
 
         if (trace)
             LOG.trace("query_stmt R35 START");
@@ -75,9 +78,6 @@ public class R35 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt R35 END");
 
-        // Log query
-        if (LOG.isDebugEnabled())
-            LOG.debug(queryToString(query_stmt));
         // Log result
         if (trace)
             LOG.trace(resultSetToString(rs));

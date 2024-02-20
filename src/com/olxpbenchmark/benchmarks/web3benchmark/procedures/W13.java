@@ -100,6 +100,10 @@ public class W13 extends WEB3Procedure {
         query_stmt.setLong(idx++, max_priority_fee_per_gas);
         query_stmt.setLong(idx++, transaction_type);
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
+
         if (trace)
             LOG.trace("query_stmt W13 InsertTransactions START");
         // int affectedRows = query_stmt.executeUpdate();
@@ -107,10 +111,6 @@ public class W13 extends WEB3Procedure {
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W13 InsertTransactions END");
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

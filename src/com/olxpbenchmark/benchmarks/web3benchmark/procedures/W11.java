@@ -93,6 +93,10 @@ public class W11 extends WEB3Procedure {
         query_stmt.setLong(idx++, transaction_count);
         query_stmt.setLong(idx++, base_fee_per_gas);
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
+
         if (trace)
             LOG.trace("query_stmt W11 InsertBlocks START");
         // int affectedRows = query_stmt.executeUpdate();
@@ -100,10 +104,6 @@ public class W11 extends WEB3Procedure {
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W11 InsertBlocks END");
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

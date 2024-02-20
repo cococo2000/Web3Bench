@@ -66,6 +66,10 @@ public class W12 extends WEB3Procedure {
         query_stmt.setBoolean(idx++, is_erc721);
         query_stmt.setLong(idx++, block_number);
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
+
         if (trace)
             LOG.trace("query_stmt W12 InsertContracts START");
         // int affectedRows = query_stmt.executeUpdate();
@@ -73,10 +77,6 @@ public class W12 extends WEB3Procedure {
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W12 InsertContracts END");
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

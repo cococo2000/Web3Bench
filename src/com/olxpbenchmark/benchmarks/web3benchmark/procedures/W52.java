@@ -50,6 +50,9 @@ public class W52 extends WEB3Procedure {
 
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
 
         // set autocommit to true
         conn.setAutoCommit(true);
@@ -64,10 +67,6 @@ public class W52 extends WEB3Procedure {
 
         // reset autocommit to false
         conn.setAutoCommit(false);
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

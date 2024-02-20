@@ -60,6 +60,9 @@ public class W4 extends WEB3Procedure {
 
         query_stmt.setLong(1, gas_price);
         query_stmt.setString(2, hash);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(queryToString(query_stmt));
+        }
         if (trace)
             LOG.trace("query_stmt W4 UpdateQuery1 START");
         // int affectedRows = query_stmt.executeUpdate();
@@ -67,10 +70,6 @@ public class W4 extends WEB3Procedure {
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W4 UpdateQuery1 END");
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(queryToString(query_stmt));
-        }
 
         long latency_ns = getTimeFromRS(rs);
         rs.close();

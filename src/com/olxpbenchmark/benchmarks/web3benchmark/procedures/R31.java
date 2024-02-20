@@ -62,6 +62,9 @@ public class R31 extends WEB3Procedure {
 
         query_stmt.setString(1, from_address);
         query_stmt.setString(2, to_address);
+        // Log query
+        if (LOG.isDebugEnabled())
+            LOG.debug(queryToString(query_stmt));
         if (trace)
             LOG.trace("query_stmt R31 START");
         ResultSet rs = query_stmt.executeQuery();
@@ -69,9 +72,6 @@ public class R31 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt R31 END");
 
-        // Log query
-        if (LOG.isDebugEnabled())
-            LOG.debug(queryToString(query_stmt));
         // Log result
         if (trace)
             LOG.trace(resultSetToString(rs));
