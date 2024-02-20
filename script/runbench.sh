@@ -42,6 +42,9 @@ fi
 # modify the config
 ./config.sh
 
+# Build the project
+./build.sh
+
 # Navigate to the project directory
 cd ..
 
