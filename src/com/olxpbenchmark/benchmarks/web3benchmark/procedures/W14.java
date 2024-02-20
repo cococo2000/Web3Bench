@@ -59,8 +59,11 @@ public class W14 extends WEB3Procedure {
         String to_address = WEB3Util
                 .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
         double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
-        String transaction_hash = WEB3Util.convertToTxnHashString(
-                WEB3Util.randomNumber(1, numScale * WEB3Config.configTransactionsCount, gen));
+        int transaction_hash_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configTransactionsCount,
+                gen);
+        // make sure the startNumber is even, to avoid foreign key conflicts with W6
+        transaction_hash_number = transaction_hash_number - (transaction_hash_number % 2);
+        String transaction_hash = WEB3Util.convertToTxnHashString(transaction_hash_number);
         long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
         long next_block_number = block_number + 1;
 

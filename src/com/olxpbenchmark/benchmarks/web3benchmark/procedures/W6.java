@@ -51,8 +51,11 @@ public class W6 extends WEB3Procedure {
         // initializing all prepared statements
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
+        // make sure the startNumber is odd, to avoid foreign key conflicts with W14
+        startNumber = startNumber - (startNumber % 2) + 1;
         String hash = WEB3Util.convertToTxnHashString(startNumber % (WEB3Config.configTransactionsCount * numScale));
 
+        // Setting the parameters for the query
         query_stmt.setString(1, hash);
         if (LOG.isDebugEnabled()) {
             LOG.debug(queryToString(query_stmt));
