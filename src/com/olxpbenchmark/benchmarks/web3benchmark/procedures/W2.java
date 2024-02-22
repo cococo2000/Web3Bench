@@ -38,7 +38,7 @@ public class W2 extends WEB3Procedure {
 
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* W2 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "insert into transactions "
                     + "values "
                     // Java 11
@@ -116,13 +116,13 @@ public class W2 extends WEB3Procedure {
 
         if (trace)
             LOG.trace("query_stmt W2 RangeInsertTransactions START");
-        ResultSet rs = query_stmt.executeQuery();
+        query_stmt.executeUpdate();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W2 RangeInsertTransactions END");
 
-        long latency_ns = getTimeFromRS(rs);
-        rs.close();
-        return latency_ns;
+        // long latency_ns = getTimeFromRS(rs);
+        // rs.close();
+        return 0;
     }
 }

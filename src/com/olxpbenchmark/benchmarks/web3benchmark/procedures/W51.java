@@ -36,7 +36,7 @@ public class W51 extends WEB3Procedure {
 
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* W51 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "update token_transfers "
                     + "set value = ? "
                     + "where to_address = from_address ");
@@ -59,13 +59,13 @@ public class W51 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W51 UpdateQuery2 START");
         // int affectedRows = query_stmt.executeUpdate();
-        ResultSet rs = query_stmt.executeQuery();
+        query_stmt.executeUpdate();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W51 UpdateQuery2 END");
 
-        long latency_ns = getTimeFromRS(rs);
-        rs.close();
-        return latency_ns;
+        // long latency_ns = getTimeFromRS(rs);
+        // rs.close();
+        return 0;
     }
 }

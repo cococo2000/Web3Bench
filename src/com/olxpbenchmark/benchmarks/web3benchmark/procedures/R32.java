@@ -40,7 +40,7 @@ public class R32 extends WEB3Procedure {
     // Top N transactions based on block timestamp.
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* R32 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select * "
                     + "from transactions "
                     + "order by block_timestamp desc "
@@ -68,8 +68,8 @@ public class R32 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

@@ -40,7 +40,7 @@ public class R21 extends WEB3Procedure {
     // top N with small N on full table scan
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* R21 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select * "
                     + "from token_transfers "
                     + "where from_address = ? "
@@ -75,8 +75,8 @@ public class R21 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

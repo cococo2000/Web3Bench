@@ -41,7 +41,7 @@ public class R31 extends WEB3Procedure {
     // or receiver. Limit the result by the most recent timestamp.
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* R31 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select * "
                     + "from transactions "
                     + "where from_address = ? or to_address = ? "
@@ -76,8 +76,8 @@ public class R31 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

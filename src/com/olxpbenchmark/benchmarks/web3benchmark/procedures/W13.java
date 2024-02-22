@@ -37,7 +37,7 @@ public class W13 extends WEB3Procedure {
 
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* W13 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "insert into transactions "
                     + "values "
                     + "(?, ?, ?, ?, ?,"
@@ -107,13 +107,13 @@ public class W13 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W13 InsertTransactions START");
         // int affectedRows = query_stmt.executeUpdate();
-        ResultSet rs = query_stmt.executeQuery();
+        query_stmt.executeUpdate();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W13 InsertTransactions END");
 
-        long latency_ns = getTimeFromRS(rs);
-        rs.close();
-        return latency_ns;
+        // long latency_ns = getTimeFromRS(rs);
+        // rs.close();
+        return 0;
     }
 }

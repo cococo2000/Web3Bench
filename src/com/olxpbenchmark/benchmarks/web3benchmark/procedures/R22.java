@@ -40,7 +40,7 @@ public class R22 extends WEB3Procedure {
     // Aggregation with no group by on a small range
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* R22 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select count(*) "
                     + "from token_transfers "
                     + "where token_address = ? ");
@@ -73,8 +73,8 @@ public class R22 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

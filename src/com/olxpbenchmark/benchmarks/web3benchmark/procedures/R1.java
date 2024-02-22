@@ -40,7 +40,7 @@ public class R1 extends WEB3Procedure {
     // Equality on hash in transaction table
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* R1 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select to_address, from_address "
                     + "from transactions "
                     + "where hash = ? ");
@@ -73,8 +73,8 @@ public class R1 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

@@ -41,7 +41,7 @@ public class R35 extends WEB3Procedure {
     // recipients who are also senders in other transactions.
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* R35 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select count(*) as count "
                     + "from "
                     + "( "
@@ -82,8 +82,8 @@ public class R35 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

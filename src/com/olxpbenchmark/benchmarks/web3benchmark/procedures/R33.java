@@ -40,7 +40,7 @@ public class R33 extends WEB3Procedure {
     // Find the number of unique senders (from\_address) in transactions
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* R33 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select count(distinct from_address) "
                     + "from transactions ");
     private PreparedStatement query_stmt = null;
@@ -65,8 +65,8 @@ public class R33 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

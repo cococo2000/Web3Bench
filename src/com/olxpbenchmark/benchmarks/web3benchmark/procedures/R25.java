@@ -41,7 +41,7 @@ public class R25 extends WEB3Procedure {
     // Query result should be empty.
     public SQLStmt query_SQL = new SQLStmt(
             "/* R25 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select count(*) "
                     + "from token_transfers "
                     + "where next_block_number <= block_number "
@@ -69,8 +69,8 @@ public class R25 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

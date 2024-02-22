@@ -40,7 +40,7 @@ public class R34 extends WEB3Procedure {
     // Find top N senders (from\_address) by total transaction value
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* R34 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select "
                     + "sum(value) as totalamount, "
                     + "count(value) as transactioncount, "
@@ -72,8 +72,8 @@ public class R34 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

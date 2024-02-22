@@ -37,7 +37,7 @@ public class W3 extends WEB3Procedure {
     // Insert 1000 rows into transactions from a temp table
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* W3 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "insert transactions "
                     + "select * from temp_table limit 1000 ");
 
@@ -57,13 +57,13 @@ public class W3 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W3 InsertSelect START");
         // int affectedRows = query_stmt.executeUpdate();
-        ResultSet rs = query_stmt.executeQuery();
+        query_stmt.executeUpdate();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W3 InsertSelect END");
 
-        long latency_ns = getTimeFromRS(rs);
-        rs.close();
-        return latency_ns;
+        // long latency_ns = getTimeFromRS(rs);
+        // rs.close();
+        return 0;
     }
 }

@@ -40,7 +40,7 @@ public class R24 extends WEB3Procedure {
     // List of transactions excluding some black listed ones.
     public SQLStmt query_to_address_SQL = new SQLStmt(
             "/* R24 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select count(*) "
                     + "from transactions "
                     + "where to_address not in (?, ?, ?) ");
@@ -79,8 +79,8 @@ public class R24 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }

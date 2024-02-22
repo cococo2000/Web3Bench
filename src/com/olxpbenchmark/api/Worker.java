@@ -365,9 +365,11 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
                 LOG.debug("Start:" + start + " End:" + end + " Start - End:" + (end - start));
                 LOG.debug("Latency:" + latency_ns);
             }
-            assert latency_ns != 0 : "Latency is 0";
-            // Overwrite the end time with the latency time
-            end = start + latency_ns;
+            // Use the latency_ns if it's not 0, otherwise use the real end time to
+            // calculate the latency
+            if (latency_ns != 0) {
+                end = start + latency_ns;
+            }
             // Reset the latency to 0
             latency_ns = 0;
 

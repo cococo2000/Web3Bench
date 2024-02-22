@@ -39,7 +39,7 @@ public class R23 extends WEB3Procedure {
 
     public SQLStmt query_stmtSQL = new SQLStmt(
             "/* R23 */ "
-                    + "explain analyze "
+                    // + "explain analyze "
                     + "select * "
                     + "from token_transfers "
                     + "where token_address = ? "
@@ -81,8 +81,8 @@ public class R23 extends WEB3Procedure {
         if (trace)
             LOG.trace(resultSetToString(rs));
 
-        long latency_ns = getTimeFromRS(rs);
+        // long latency_ns = getTimeFromRS(rs);
         rs.close();
-        return latency_ns;
+        return 0;
     }
 }
