@@ -35,6 +35,7 @@
 package com.olxpbenchmark.api;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -182,13 +183,15 @@ public abstract class Loader<T extends BenchmarkModule> {
     public void unload(Connection conn, Catalog catalog) throws SQLException {
         conn.setAutoCommit(false);
         conn.setTransactionIsolation(workConf.getIsolationMode());
-        Statement st = conn.createStatement();
-        for (Table catalog_tbl : catalog.getTables()) {
-            LOG.debug(String.format("Deleting data from %s.%s", workConf.getDBName(), catalog_tbl.getName()));
-            String sql = "DELETE FROM " + catalog_tbl.getEscapedName();
-            st.execute(sql);
-        } // FOR
-        conn.commit();
+        String deleteSql = "DELETE FROM ?";
+        try (PreparedStatement ps = conn.prepareStatement(deleteSql)) {
+            for (Table catalog_tbl : catalog.getTables()) {
+                LOG.debug(String.format("Deleting data from %s.%s", workConf.getDBName(), catalog_tbl.getName()));
+                ps.setString(1, catalog_tbl.getEscapedName());
+                ps.executeUpdate();
+            } // FOR
+            conn.commit();
+        }
     }
 
     /**

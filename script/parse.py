@@ -4,7 +4,7 @@ import os
 import csv
 import math
 import json
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 from tqdm import tqdm
 import mysql.connector
 import argparse
