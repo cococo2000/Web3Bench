@@ -103,25 +103,6 @@ public abstract class StringUtil {
     }
 
     /**
-     * Return the MD5 checksum of the given string
-     * 
-     * @param input
-     * @return
-     */
-    public static String md5sum(String input) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException ex) {
-            throw new RuntimeException("Unable to compute md5sum for string", ex);
-        }
-        assert (digest != null);
-        digest.update(input.getBytes());
-        BigInteger hash = new BigInteger(1, digest.digest());
-        return (hash.toString(16));
-    }
-
-    /**
      * Split the multi-lined strings into separate columns
      * 
      * @param strs
