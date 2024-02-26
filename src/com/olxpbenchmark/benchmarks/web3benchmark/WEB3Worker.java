@@ -48,7 +48,6 @@ import java.util.Random;
 
 import com.olxpbenchmark.WorkloadConfiguration;
 import com.olxpbenchmark.distributions.CounterGenerator;
-import com.olxpbenchmark.distributions.ZipfianGenerator;
 import com.olxpbenchmark.util.RandomGenerator;
 
 public class WEB3Worker extends Worker<WEB3Benchmark> {
@@ -74,7 +73,6 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
             WorkloadConfiguration workConf)
             throws SQLException {
         super(benchmarkModule, id);
-        // zipf = new ZipfianGenerator(100);
         distribution = distri;
         this.numScale = numScale;
         this.startNumber = startNum;
@@ -111,10 +109,11 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
 
             int startNumber = startRecord.nextInt();
             String nodeid = workConf.getNodeId();
+            boolean isExplainAnalyze = workConf.getisExplainAnalyze();
 
             WEB3Procedure proc = (WEB3Procedure) this.getProcedure(nextTransaction.getProcedureClass());
             if (distribution.equals("rand")) {
-                latency_ns = proc.run(conn, gen, this, startNumber, 0, numScale, nodeid);
+                latency_ns = proc.run(conn, gen, this, startNumber, 0, numScale, nodeid, isExplainAnalyze);
             }
             // else if (distribution.equals("zipf")) {
             // proc.run(conn, numScale, this, startNumber, 0);
@@ -123,7 +122,7 @@ public class WEB3Worker extends Worker<WEB3Benchmark> {
             // proc.run(conn, this, startNumber, 0, numScale, "poisson");
             // }
             else if (distribution.equals("iRand")) {
-                latency_ns = proc.run(conn, gen, this, startNumber, upperLimit, numScale, nodeid);
+                latency_ns = proc.run(conn, gen, this, startNumber, upperLimit, numScale, nodeid, isExplainAnalyze);
             }
             // else if (distribution.equals("iZipf")) {
             // proc.run(conn, numScale, this, startNumber, upperLimit);

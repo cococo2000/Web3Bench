@@ -34,42 +34,59 @@ import java.sql.SQLException;
 import java.util.Random;
 
 public class R25 extends WEB3Procedure {
-
     private static final Logger LOG = Logger.getLogger(R25.class);
 
+    public String classname = this.getClass().getSimpleName();
+    public String classname_note = "/* " + classname + " */ ";
     // Constraint checking that next_block_number <= block_number in token_transfers
     // Query result should be empty.
-    public SQLStmt query_SQL = new SQLStmt(
-            "/* R25 */ "
-                    // + "explain analyze "
-                    + "select count(*) "
-                    + "from token_transfers "
-                    + "where next_block_number <= block_number "
-                    + "group by next_block_number ");
+    public String query = ""
+            + "select count(*) "
+            + "from token_transfers "
+            + "where next_block_number <= block_number "
+            + "group by next_block_number ";
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
-            String nodeid) throws SQLException {
+            String nodeid, boolean isExplainAnalyze) throws SQLException {
+        boolean debug = LOG.isDebugEnabled();
         boolean trace = LOG.isTraceEnabled();
 
-        // initializing all prepared statements
-        query_stmt = this.getPreparedStatement(conn, query_SQL);
+        // Prepare statement
+        SQLStmt query_stmtSQL = new SQLStmt(
+                classname_note + (isExplainAnalyze ? SQL_EXPLAIN_ANALYZE : "") + query);
+        // Create statement and set parameters
+        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
+
         // Log query
-        if (LOG.isDebugEnabled())
+        if (debug) {
             LOG.debug(queryToString(query_stmt));
-        if (trace)
-            LOG.trace("query_stmt R25 START");
+        }
+
+        if (trace) {
+            LOG.trace("Query" + classname + " START");
+        }
         // Execute query and commit
         ResultSet rs = query_stmt.executeQuery();
         conn.commit();
-        if (trace)
-            LOG.trace("query_stmt R25 END");
+        if (trace) {
+            LOG.trace("Query" + classname + " END");
+        }
+
+        if (isExplainAnalyze) {
+            // If explain analyze, then return the latency
+            // Get the latency from the result set
+            long latency_ns = getTimeFromRS(rs);
+            rs.close();
+            return latency_ns;
+        }
 
         // Log result
-        if (trace)
+        if (trace) {
             LOG.trace(resultSetToString(rs));
+        }
 
-        // long latency_ns = getTimeFromRS(rs);
+        // Close result set
         rs.close();
         return 0;
     }

@@ -34,52 +34,64 @@ import java.sql.SQLException;
 import java.util.Random;
 
 public class R24 extends WEB3Procedure {
-
     private static final Logger LOG = Logger.getLogger(R24.class);
 
+    public String classname = this.getClass().getSimpleName();
+    public String classname_note = "/* " + classname + " */ ";
     // List of transactions excluding some black listed ones.
-    public SQLStmt query_to_address_SQL = new SQLStmt(
-            "/* R24 */ "
-                    // + "explain analyze "
-                    + "select count(*) "
-                    + "from transactions "
-                    + "where to_address not in (?, ?, ?) ");
+    public String query = ""
+            + "select count(*) "
+            + "from transactions "
+            + "where to_address not in (?, ?, ?) ";
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
-            String nodeid) throws SQLException {
+            String nodeid, boolean isExplainAnalyze) throws SQLException {
+        boolean debug = LOG.isDebugEnabled();
         boolean trace = LOG.isTraceEnabled();
 
-        // initializing all prepared statements
-        query_stmt = this.getPreparedStatement(conn, query_to_address_SQL);
-
+        // Prepare statement
+        SQLStmt query_stmtSQL = new SQLStmt(
+                classname_note + (isExplainAnalyze ? SQL_EXPLAIN_ANALYZE : "") + query);
+        // Parameters
         String to_address1 = WEB3Util
                 .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
         String to_address2 = WEB3Util
                 .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
         String to_address3 = WEB3Util
                 .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+        // Create statement and set parameters
+        query_stmt = this.getPreparedStatement(conn, query_stmtSQL, to_address1, to_address2, to_address3);
 
-        // Set parameter
-        query_stmt.setString(1, to_address1);
-        query_stmt.setString(2, to_address2);
-        query_stmt.setString(3, to_address3);
         // Log query
-        if (LOG.isDebugEnabled())
+        if (debug) {
             LOG.debug(queryToString(query_stmt));
-        if (trace)
-            LOG.trace("query_stmt R24 START");
+        }
+
+        if (trace) {
+            LOG.trace("Query" + classname + " START");
+        }
         // Execute query and commit
         ResultSet rs = query_stmt.executeQuery();
         conn.commit();
-        if (trace)
-            LOG.trace("query_stmt R24 END");
+        if (trace) {
+            LOG.trace("Query" + classname + " END");
+        }
+
+        if (isExplainAnalyze) {
+            // If explain analyze, then return the latency
+            // Get the latency from the result set
+            long latency_ns = getTimeFromRS(rs);
+            rs.close();
+            return latency_ns;
+        }
 
         // Log result
-        if (trace)
+        if (trace) {
             LOG.trace(resultSetToString(rs));
+        }
 
-        // long latency_ns = getTimeFromRS(rs);
+        // Close result set
         rs.close();
         return 0;
     }

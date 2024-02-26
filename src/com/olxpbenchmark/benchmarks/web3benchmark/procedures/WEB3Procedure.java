@@ -51,7 +51,7 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 public abstract class WEB3Procedure extends Procedure {
     // rand and iRand
     public abstract long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit,
-            int numScale, String nodeid) throws SQLException;
+            int numScale, String nodeid, boolean isExplainAnalyze) throws SQLException;
 
     protected String queryToString(PreparedStatement query) {
         return query.toString().split(":")[1].trim();

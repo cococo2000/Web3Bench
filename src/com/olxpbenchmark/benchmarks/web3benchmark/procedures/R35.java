@@ -34,55 +34,71 @@ import java.sql.SQLException;
 import java.util.Random;
 
 public class R35 extends WEB3Procedure {
-
     private static final Logger LOG = Logger.getLogger(R35.class);
 
+    public String classname = this.getClass().getSimpleName();
+    public String classname_note = "/* " + classname + " */ ";
     // Total count of token transfers for a specific sender and token transfers for
     // recipients who are also senders in other transactions.
-    public SQLStmt query_stmtSQL = new SQLStmt(
-            "/* R35 */ "
-                    // + "explain analyze "
-                    + "select count(*) as count "
-                    + "from "
-                    + "( "
-                    + "select * "
-                    + "from token_transfers t "
-                    + "where from_address = ? "
-                    + "union all "
-                    + "select t2.* "
-                    + "from token_transfers t2 "
-                    + "inner join token_transfers t on t2.from_address = t.to_address "
-                    + "and t.value < t2.value "
-                    + ") as temp ");
+    public String query = ""
+            + "select count(*) as count "
+            + "from "
+            + "( "
+            + "select * "
+            + "from token_transfers t "
+            + "where from_address = ? "
+            + "union all "
+            + "select t2.* "
+            + "from token_transfers t2 "
+            + "inner join token_transfers t on t2.from_address = t.to_address "
+            + "and t.value < t2.value "
+            + ") as temp ";
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
-            String nodeid) throws SQLException {
+            String nodeid, boolean isExplainAnalyze) throws SQLException {
+        boolean debug = LOG.isDebugEnabled();
         boolean trace = LOG.isTraceEnabled();
 
         // initializing prepared statements
-        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
-
+        // Prepare statement
+        SQLStmt query_stmtSQL = new SQLStmt(
+                classname_note + (isExplainAnalyze ? SQL_EXPLAIN_ANALYZE : "") + query);
+        // Parameters
         String from_address = WEB3Util
                 .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+        // Create statement and set parameters
+        query_stmt = this.getPreparedStatement(conn, query_stmtSQL, from_address);
 
-        query_stmt.setString(1, from_address);
         // Log query
-        if (LOG.isDebugEnabled())
+        if (debug) {
             LOG.debug(queryToString(query_stmt));
+        }
 
-        if (trace)
-            LOG.trace("query_stmt R35 START");
+        if (trace) {
+            LOG.trace("Query" + classname + " START");
+        }
+        // Execute query and commit
         ResultSet rs = query_stmt.executeQuery();
         conn.commit();
-        if (trace)
-            LOG.trace("query_stmt R35 END");
+        if (trace) {
+            LOG.trace("Query" + classname + " END");
+        }
+
+        if (isExplainAnalyze) {
+            // If explain analyze, then return the latency
+            // Get the latency from the result set
+            long latency_ns = getTimeFromRS(rs);
+            rs.close();
+            return latency_ns;
+        }
 
         // Log result
-        if (trace)
+        if (trace) {
             LOG.trace(resultSetToString(rs));
+        }
 
-        // long latency_ns = getTimeFromRS(rs);
+        // Close result set
         rs.close();
         return 0;
     }

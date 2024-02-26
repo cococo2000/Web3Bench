@@ -32,64 +32,87 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Util;
 import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 
 public class W14 extends WEB3Procedure {
+    private static final Logger LOG = Logger.getLogger(W14.class);
 
-        private static final Logger LOG = Logger.getLogger(W14.class);
+    public String classname = this.getClass().getSimpleName();
+    public String classname_note = "/* " + classname + " */ ";
+    public String query = ""
+            + "insert into token_transfers "
+            + "values "
+            + "(?, ?, ?, ?, ?, ?, ?)";
+    private PreparedStatement query_stmt = null;
 
-        public SQLStmt query_stmtSQL = new SQLStmt(
-                        "/* W14 */ "
-                                        // + "explain analyze "
-                                        + "insert into token_transfers "
-                                        + "values "
-                                        + "(?, ?, ?, ?, ?, ?, ?)");
+    public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
+            String nodeid, boolean isExplainAnalyze) throws SQLException {
+        boolean debug = LOG.isDebugEnabled();
+        boolean trace = LOG.isTraceEnabled();
 
-        private PreparedStatement query_stmt = null;
+        // Prepare statement
+        SQLStmt query_stmtSQL = new SQLStmt(
+                classname_note + (isExplainAnalyze ? SQL_EXPLAIN_ANALYZE : "") + query);
+        // Create statement and set parameters
+        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
-        public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
-                        String nodeid) throws SQLException {
-                boolean trace = LOG.isTraceEnabled();
+        String token_address = WEB3Util
+                .convertToTokenAddressString(
+                        WEB3Util.randomNumber(1, WEB3Config.configTokenCount, gen));
+        String from_address = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+        String to_address = WEB3Util
+                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
+        double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
+        int transaction_hash_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configTransactionsCount,
+                gen);
+        // make sure the startNumber is even, to avoid foreign key conflicts with W6
+        transaction_hash_number = transaction_hash_number - (transaction_hash_number % 2);
+        String transaction_hash = WEB3Util.convertToTxnHashString(transaction_hash_number);
+        long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
+        long next_block_number = block_number + 1;
 
-                // initializing all prepared statements
-                query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
+        int idx = 1;
+        query_stmt.setString(idx++, token_address);
+        query_stmt.setString(idx++, from_address);
+        query_stmt.setString(idx++, to_address);
+        query_stmt.setDouble(idx++, value);
+        query_stmt.setString(idx++, transaction_hash);
+        query_stmt.setLong(idx++, block_number);
+        query_stmt.setLong(idx++, next_block_number);
 
-                String token_address = WEB3Util
-                                .convertToTokenAddressString(
-                                                WEB3Util.randomNumber(1, WEB3Config.configTokenCount, gen));
-                String from_address = WEB3Util
-                                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-                String to_address = WEB3Util
-                                .convertToAddressString(WEB3Util.randomNumber(1, WEB3Config.configAccountsCount, gen));
-                double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
-                int transaction_hash_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configTransactionsCount,
-                                gen);
-                // make sure the startNumber is even, to avoid foreign key conflicts with W6
-                transaction_hash_number = transaction_hash_number - (transaction_hash_number % 2);
-                String transaction_hash = WEB3Util.convertToTxnHashString(transaction_hash_number);
-                long block_number = WEB3Util.randomNumber(1, numScale * WEB3Config.configBlocksCount, gen);
-                long next_block_number = block_number + 1;
-
-                int idx = 1;
-                query_stmt.setString(idx++, token_address);
-                query_stmt.setString(idx++, from_address);
-                query_stmt.setString(idx++, to_address);
-                query_stmt.setDouble(idx++, value);
-                query_stmt.setString(idx++, transaction_hash);
-                query_stmt.setLong(idx++, block_number);
-                query_stmt.setLong(idx++, next_block_number);
-
-                if (LOG.isDebugEnabled()) {
-                        LOG.debug(queryToString(query_stmt));
-                }
-
-                if (trace)
-                        LOG.trace("query_stmt W14 InsertTokenTransfers START");
-                // int affectedRows = query_stmt.executeUpdate();
-                query_stmt.executeUpdate();
-                conn.commit();
-                if (trace)
-                        LOG.trace("query_stmt W14 InsertTokenTransfers END");
-
-                // long latency_ns = getTimeFromRS(rs);
-                // rs.close();
-                return 0;
+        // Log query
+        if (debug) {
+            LOG.debug(queryToString(query_stmt));
         }
+
+        if (trace) {
+            LOG.trace("Query" + classname + " START");
+        }
+        int affectedRows = 0; // Number of rows affected
+        ResultSet rs = null;
+        // Execute query and commit
+        if (isExplainAnalyze) {
+            // Use executeQuery for explain analyze
+            rs = query_stmt.executeQuery();
+        } else {
+            // Use executeUpdate for normal query
+            affectedRows = query_stmt.executeUpdate();
+        }
+        conn.commit();
+        if (trace) {
+            LOG.trace("Query" + classname + " END");
+        }
+
+        if (isExplainAnalyze) {
+            // If explain analyze, then return the latency
+            // Get the latency from the result set
+            long latency_ns = getTimeFromRS(rs);
+            rs.close();
+            return latency_ns;
+        } else {
+            if (debug) {
+                LOG.debug("Affected Rows: " + affectedRows);
+            }
+        }
+
+        return 0;
+    }
 }

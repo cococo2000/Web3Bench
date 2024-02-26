@@ -92,6 +92,7 @@ public class WorkloadConfiguration {
 	private int loaderThreads = ThreadUtil.availableProcessors();
 	private int numTxnTypes;
 	private TraceReader traceReader = null;
+	private boolean isExplainAnalyze = true;
 
 	public TraceReader getTraceReader() {
 		return traceReader;
@@ -297,6 +298,20 @@ public class WorkloadConfiguration {
 	 */
 	public String getNodeId() {
 		return node_id;
+	}
+
+	/*
+	 * Return isExplainAnalyze flag
+	 */
+	public boolean getisExplainAnalyze() {
+		return isExplainAnalyze;
+	}
+
+	/*
+	 * Set isExplainAnalyze flag
+	 */
+	public void setisExplainAnalyze(boolean isExplainAnalyze) {
+		this.isExplainAnalyze = isExplainAnalyze;
 	}
 
 	/**
