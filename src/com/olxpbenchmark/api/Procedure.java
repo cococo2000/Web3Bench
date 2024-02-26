@@ -35,6 +35,8 @@ import com.olxpbenchmark.types.DatabaseType;
 public abstract class Procedure {
     private static final Logger LOG = Logger.getLogger(Procedure.class);
 
+    protected static final String SQL_EXPLAIN_ANALYZE = "EXPLAIN ANALYZE ";
+
     private final String procName;
     private DatabaseType dbType;
     private Map<String, SQLStmt> name_stmt_xref;

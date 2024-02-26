@@ -37,13 +37,13 @@ public class MyRocksCollector extends DBCollector {
 
     private static final String METRICS_SQL = "SHOW GLOBAL STATUS";
 
-    private static final String DB_METRICS_SQL = "SELECT * FROM information_schema.db_statistics WHERE db = '%s'";
+    private static final String DB_METRICS_SQL = "SELECT * FROM information_schema.db_statistics WHERE db = ?";
 
-    private static final String TABLE_METRICS_SQL = "SELECT * FROM information_schema.table_statistics WHERE table_schema = '%s'";
+    private static final String TABLE_METRICS_SQL = "SELECT * FROM information_schema.table_statistics WHERE table_schema = ?";
 
-    private static final String INDEX_METRICS_SQL = "SELECT * FROM information_schema.statistics WHERE TABLE_SCHEMA = '%s'";
+    private static final String INDEX_METRICS_SQL = "SELECT * FROM information_schema.statistics WHERE TABLE_SCHEMA = ?";
 
-    private static final String METRICS_VIEWS_SQL = "SELECT * FROM information_schema.%s";
+    private static final String METRICS_VIEWS_SQL = "SELECT * FROM information_schema.?";
 
     private static final String[] METRICS_VIEWS = {
             "index_statistics",
@@ -99,14 +99,14 @@ public class MyRocksCollector extends DBCollector {
 
             // Collect db-, table-, and index-level metrics (inherited from MySQL)
             String dbName = getDatabaseName(conn);
-            metrics.put("db_statistics", getColumnResults(conn, String.format(DB_METRICS_SQL, dbName)));
-            metrics.put("table_statistics", getColumnResults(conn, String.format(TABLE_METRICS_SQL, dbName)));
-            metrics.put("index_statistics", getColumnResults(conn, String.format(INDEX_METRICS_SQL, dbName)));
+            metrics.put("db_statistics", getColumnResults(conn, DB_METRICS_SQL, dbName));
+            metrics.put("table_statistics", getColumnResults(conn, TABLE_METRICS_SQL, dbName));
+            metrics.put("index_statistics", getColumnResults(conn, INDEX_METRICS_SQL, dbName));
 
             // Collect myrocks-specific metrics
             for (String viewName : METRICS_VIEWS) {
                 try {
-                    metrics.put(viewName, getColumnResults(conn, String.format(METRICS_VIEWS_SQL, viewName)));
+                    metrics.put(viewName, getColumnResults(conn, METRICS_VIEWS_SQL, viewName));
                 } catch (SQLException ex) {
                     if (LOG.isDebugEnabled())
                         LOG.warn("Error collecting DB metric view: " + ex.getMessage());

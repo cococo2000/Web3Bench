@@ -127,51 +127,16 @@ public class DBWorkload {
         }
         pluginConfig.setExpressionEngine(new XPathExpressionEngine());
         Options options = new Options();
-        options.addOption(
-                "b",
-                "bench",
-                true,
+        options.addOption("b", "bench", true,
                 "[required] Benchmark class. Currently supported: " + pluginConfig.getList("/plugin//@name"));
-        options.addOption(
-                "c",
-                "config",
-                true,
-                "[required] Workload configuration file");
-        options.addOption(
-                null,
-                "create",
-                true,
-                "Initialize the database for this benchmark");
-        options.addOption(
-                null,
-                "clear",
-                true,
-                "Clear all records in the database for this benchmark");
-        options.addOption(
-                null,
-                "load",
-                true,
-                "Load data using the benchmark's data loader");
-        options.addOption(
-                null,
-                "execute",
-                true,
-                "Execute the benchmark workload");
-        options.addOption(
-                null,
-                "runscript",
-                true,
-                "Run an SQL script");
-        options.addOption(
-                null,
-                "upload",
-                true,
-                "Upload the result");
-        options.addOption(
-                null,
-                "uploadHash",
-                true,
-                "git hash to be associated with the upload");
+        options.addOption("c", "config", true, "[required] Workload configuration file");
+        options.addOption(null, "create", true, "Initialize the database for this benchmark");
+        options.addOption(null, "clear", true, "Clear all records in the database for this benchmark");
+        options.addOption(null, "load", true, "Load data using the benchmark's data loader");
+        options.addOption(null, "execute", true, "Execute the benchmark workload");
+        options.addOption(null, "runscript", true, "Run an SQL script");
+        options.addOption(null, "upload", true, "Upload the result");
+        options.addOption(null, "uploadHash", true, "git hash to be associated with the upload");
 
         options.addOption("v", "verbose", false, "Display Messages");
         options.addOption("h", "help", false, "Print this help");
@@ -188,6 +153,7 @@ public class DBWorkload {
         options.addOption(null, "dialects-export", true, "Export benchmark SQL to a dialects file");
         options.addOption(null, "output-raw", true, "Output raw data");
         options.addOption(null, "output-samples", true, "Output sample data");
+        options.addOption("ea", "explain-analyze", true, "Use EXPLAIN ANALYZE for all queries");
 
         // parse the command line arguments
         CommandLine argsLine = parser.parse(options, args);
@@ -217,6 +183,15 @@ public class DBWorkload {
             hostName = localHost.getHostName();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        // Use EXPLAIN ANALYZE for all queries
+        Boolean isExplainAnalyze = false;
+        if (isBooleanOptionSet(argsLine, "explain-analyze")) {
+            isExplainAnalyze = true;
+            LOG.info("Using EXPLAIN ANALYZE for all queries");
+        } else {
+            LOG.info("Not using EXPLAIN ANALYZE for all queries");
         }
 
         // -------------------------------------------------------------------
@@ -280,6 +255,7 @@ public class DBWorkload {
             wrkld.setScaleFactor(xmlConfig.getDouble("scalefactor", 1.0));
             wrkld.setRecordAbortMessages(xmlConfig.getBoolean("recordabortmessages", false));
             wrkld.setDataDir(xmlConfig.getString("datadir", "."));
+            wrkld.setisExplainAnalyze(isExplainAnalyze);
 
             // microadd
             wrkld.setDistri(xmlConfig.getString("distribution", "rand"));
@@ -330,6 +306,7 @@ public class DBWorkload {
             initDebug.put("Distribution", wrkld.getDistri());
             initDebug.put("StartNumber", wrkld.getStartNum());
             initDebug.put("GapTime", wrkld.getGapTime());
+            initDebug.put("isExplainAnalyze", wrkld.getisExplainAnalyze());
 
             if (selectivity != -1)
                 initDebug.put("Selectivity", selectivity);

@@ -31,27 +31,29 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Util;
 import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 
 public class W51 extends WEB3Procedure {
-
     private static final Logger LOG = Logger.getLogger(W51.class);
 
-    public SQLStmt query_stmtSQL = new SQLStmt(
-            "/* W51 */ "
-                    + "explain analyze "
-                    + "update token_transfers "
-                    + "set value = ? "
-                    + "where to_address = from_address ");
-
+    public String classname = this.getClass().getSimpleName();
+    public String classname_note = "/* " + classname + " */ ";
+    public String query = ""
+            + "update token_transfers "
+            + "set value = ? "
+            + "where to_address = from_address ";
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
-            String nodeid) throws SQLException {
+            String nodeid, boolean isExplainAnalyze) throws SQLException {
+        boolean debug = LOG.isDebugEnabled();
         boolean trace = LOG.isTraceEnabled();
 
-        // initializing all prepared statements
-        query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
-
+        // Prepare statement
+        SQLStmt query_stmtSQL = new SQLStmt(
+                classname_note + (isExplainAnalyze ? SQL_EXPLAIN_ANALYZE : "") + query);
+        // Parameters
         double value = (double) WEB3Util.randomNumber(0, 1000000, gen);
-        query_stmt.setDouble(1, value);
+        // Create statement and set parameters
+        query_stmt = this.getPreparedStatement(conn, query_stmtSQL, value);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug(queryToString(query_stmt));
         }
@@ -59,13 +61,13 @@ public class W51 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt W51 UpdateQuery2 START");
         // int affectedRows = query_stmt.executeUpdate();
-        ResultSet rs = query_stmt.executeQuery();
+        query_stmt.executeUpdate();
         conn.commit();
         if (trace)
             LOG.trace("query_stmt W51 UpdateQuery2 END");
 
-        long latency_ns = getTimeFromRS(rs);
-        rs.close();
-        return latency_ns;
+        // long latency_ns = getTimeFromRS(rs);
+        // rs.close();
+        return 0;
     }
 }

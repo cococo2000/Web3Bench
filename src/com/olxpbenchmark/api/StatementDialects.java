@@ -111,7 +111,9 @@ public class StatementDialects {
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             // But did not shoot unmarshaller!
             unmarshaller.setSchema(schema);
-            @SuppressWarnings("unchecked")
+            // Disable External Entity Resolution
+            unmarshaller.setProperty("javax.xml.stream.isReplacingEntityReferences", false);
+            unmarshaller.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
             JAXBElement<DialectsType> result = (JAXBElement<DialectsType>) unmarshaller.unmarshal(this.xmlFile);
             dialects = result.getValue();
         } catch (JAXBException ex) {

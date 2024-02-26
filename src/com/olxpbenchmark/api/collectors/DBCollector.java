@@ -20,6 +20,7 @@ import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -142,9 +143,14 @@ public abstract class DBCollector {
         return results;
     }
 
-    protected static List<Map<String, String>> getColumnResults(Connection conn, String sql) throws SQLException {
-        Statement s = conn.createStatement();
-        ResultSet out = s.executeQuery(sql);
+    protected static List<Map<String, String>> getColumnResults(Connection conn, String sql,
+            Object... params) throws SQLException {
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        // Set parameters if any
+        for (int i = 0; i < params.length; i++) {
+            pstmt.setObject(i + 1, params[i]);
+        }
+        ResultSet out = pstmt.executeQuery(sql);
 
         // Get column names
         ResultSetMetaData metadata = out.getMetaData();

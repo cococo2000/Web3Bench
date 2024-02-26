@@ -376,18 +376,18 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
 
         } catch (BatchUpdateException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (SQLException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (Exception ex) {
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             fail = true;
         } finally {
             if (fail) {
@@ -447,18 +447,18 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
 
         } catch (BatchUpdateException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (SQLException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (Exception ex) {
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             fail = true;
         } finally {
             if (fail) {
@@ -632,18 +632,18 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
 
         } catch (BatchUpdateException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (SQLException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (Exception ex) {
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             fail = true;
         } finally {
             if (fail) {
@@ -712,18 +712,18 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
 
         } catch (BatchUpdateException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (SQLException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (Exception ex) {
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             fail = true;
         } finally {
             if (fail) {
@@ -796,18 +796,18 @@ public class WEB3Loader extends Loader<WEB3Benchmark> {
             conn.commit();
         } catch (BatchUpdateException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (SQLException ex) {
             SQLException next = ex.getNextException();
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             if (next != null)
                 LOG.error(ex.getClass().getSimpleName() + " Cause => " + next.getMessage());
             fail = true;
         } catch (Exception ex) {
-            LOG.error("Failed to load data for TPC-C", ex);
+            LOG.error("Failed to load data for Web3Bench", ex);
             fail = true;
         } finally {
             if (fail) {

@@ -33,28 +33,30 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Util;
 import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 
 public class W2 extends WEB3Procedure {
-
     private static final Logger LOG = Logger.getLogger(W2.class);
 
-    public SQLStmt query_stmtSQL = new SQLStmt(
-            "/* W2 */ "
-                    + "explain analyze "
-                    + "insert into transactions "
-                    + "values "
-                    // Java 11
-                    // + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ".repeat(99)
-                    // Java 7
-                    + new String(new char[99]).replace("\0",
-                            "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ")
-                    + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
+    public String classname = this.getClass().getSimpleName();
+    public String classname_note = "/* " + classname + " */ ";
+    public String query = ""
+            + "insert into transactions "
+            + "values "
+            // Java 11
+            // + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ".repeat(99)
+            // Java 7
+            + new String(new char[99]).replace("\0",
+                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ")
+            + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
-            String nodeid) throws SQLException {
+            String nodeid, boolean isExplainAnalyze) throws SQLException {
+        boolean debug = LOG.isDebugEnabled();
         boolean trace = LOG.isTraceEnabled();
 
-        // initializing all prepared statements
+        // Prepare statement
+        SQLStmt query_stmtSQL = new SQLStmt(
+                classname_note + (isExplainAnalyze ? SQL_EXPLAIN_ANALYZE : "") + query);
+        // Create statement and set parameters
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
 
         // Small batch inserts (100 rows) for the transaction table.
@@ -108,21 +110,41 @@ public class W2 extends WEB3Procedure {
             query_stmt.setLong(idx++, transaction_type);
         }
 
-        // Log query and affected rows
-        if (LOG.isDebugEnabled()) {
+        // Log query
+        if (debug) {
             LOG.debug(queryToString(query_stmt));
-            // LOG.debug("Result: " + resultSetToString(rs));
         }
 
-        if (trace)
-            LOG.trace("query_stmt W2 RangeInsertTransactions START");
-        ResultSet rs = query_stmt.executeQuery();
+        if (trace) {
+            LOG.trace("Query" + classname + " START");
+        }
+        int[] affectedRows = null; // Number of rows affected
+        ResultSet rs = null;
+        // Execute query and commit
+        if (isExplainAnalyze) {
+            // Use executeQuery for explain analyze
+            rs = query_stmt.executeQuery();
+        } else {
+            // Use executeUpdate/Batch for normal queries
+            affectedRows = query_stmt.executeBatch();
+        }
         conn.commit();
-        if (trace)
-            LOG.trace("query_stmt W2 RangeInsertTransactions END");
+        if (trace) {
+            LOG.trace("Query" + classname + " END");
+        }
 
-        long latency_ns = getTimeFromRS(rs);
-        rs.close();
-        return latency_ns;
+        if (isExplainAnalyze) {
+            // If explain analyze, then return the latency
+            // Get the latency from the result set
+            long latency_ns = getTimeFromRS(rs);
+            rs.close();
+            return latency_ns;
+        } else {
+            if (debug) {
+                LOG.debug("Affected Rows: " + affectedRows.length);
+            }
+        }
+
+        return 0;
     }
 }

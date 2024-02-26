@@ -31,24 +31,26 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Util;
 import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 
 public class W52 extends WEB3Procedure {
-
     private static final Logger LOG = Logger.getLogger(W52.class);
 
-    public SQLStmt query_stmtSQL = new SQLStmt(
-            "/* W52 */ "
-                    + "explain analyze "
-                    + "update token_transfers "
-                    + "set value = value + 1 "
-                    + "where from_address in "
-                    + "(select to_address from token_transfers) ");
-
+    public String classname = this.getClass().getSimpleName();
+    public String classname_note = "/* " + classname + " */ ";
+    public String query = ""
+            + "update token_transfers "
+            + "set value = value + 1 "
+            + "where from_address in "
+            + "(select to_address from token_transfers) ";
     private PreparedStatement query_stmt = null;
 
     public long run(Connection conn, Random gen, WEB3Worker w, int startNumber, int upperLimit, int numScale,
-            String nodeid) throws SQLException {
+            String nodeid, boolean isExplainAnalyze) throws SQLException {
+        boolean debug = LOG.isDebugEnabled();
         boolean trace = LOG.isTraceEnabled();
 
-        // initializing all prepared statements
+        // Prepare statement
+        SQLStmt query_stmtSQL = new SQLStmt(
+                classname_note + (isExplainAnalyze ? SQL_EXPLAIN_ANALYZE : "") + query);
+        // Create statement and set parameters
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL);
         if (LOG.isDebugEnabled()) {
             LOG.debug(queryToString(query_stmt));
@@ -60,7 +62,7 @@ public class W52 extends WEB3Procedure {
         if (trace)
             LOG.trace("query_stmt UpdateQuery3 START");
         // int affectedRows = query_stmt.executeUpdate();
-        ResultSet rs = query_stmt.executeQuery();
+        query_stmt.executeUpdate();
         // conn.commit();
         if (trace)
             LOG.trace("query_stmt UpdateQuery3 END");
@@ -68,8 +70,8 @@ public class W52 extends WEB3Procedure {
         // reset autocommit to false
         conn.setAutoCommit(false);
 
-        long latency_ns = getTimeFromRS(rs);
-        rs.close();
-        return latency_ns;
+        // long latency_ns = getTimeFromRS(rs);
+        // rs.close();
+        return 0;
     }
 }
