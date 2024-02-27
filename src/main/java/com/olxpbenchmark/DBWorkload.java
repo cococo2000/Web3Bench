@@ -56,6 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,11 +70,15 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.collections15.map.ListOrderedMap;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.SubnodeConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
+import org.apache.commons.collections4.map.ListOrderedMap;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DisabledListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.HierarchicalConfiguration;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.tree.ImmutableNode;
+import org.apache.commons.configuration2.tree.xpath.XPathExpressionEngine;
 import org.apache.log4j.Logger;
 
 import com.olxpbenchmark.api.BenchmarkModule;
@@ -118,13 +123,8 @@ public class DBWorkload {
 
         // create the command line parser
         CommandLineParser parser = new PosixParser();
-        XMLConfiguration pluginConfig = null;
-        try {
-            pluginConfig = new XMLConfiguration("config/plugin.xml");
-        } catch (ConfigurationException e1) {
-            LOG.info("Plugin configuration file config/plugin.xml is missing");
-            e1.printStackTrace();
-        }
+        XMLConfiguration pluginConfig = pluginConfig = buildConfiguration("config/plugin.xml");
+
         pluginConfig.setExpressionEngine(new XPathExpressionEngine());
         Options options = new Options();
         options.addOption("b", "bench", true,
@@ -207,7 +207,7 @@ public class DBWorkload {
         List<TransactionType> activeTXTypes = new ArrayList<TransactionType>();
 
         String configFile = argsLine.getOptionValue("c");
-        XMLConfiguration xmlConfig = new XMLConfiguration(configFile);
+        XMLConfiguration xmlConfig = buildConfiguration(configFile);
         xmlConfig.setExpressionEngine(new XPathExpressionEngine());
 
         // Load the configuration for each benchmark
@@ -377,7 +377,7 @@ public class DBWorkload {
 
                 // Get the weights for this grouping and make sure that there
                 // is an appropriate number of them.
-                List<String> groupingWeights = xmlConfig.getList(key + "/weights");
+                List<String> groupingWeights = Arrays.asList(xmlConfig.getString(key + "/weights").split("\\s*,\\s*"));
                 if (groupingWeights.size() != numTxnTypes) {
                     LOG.fatal(String.format("Grouping \"%s\" has %d weights,"
                             + " but there are %d transactions in this"
@@ -404,24 +404,18 @@ public class DBWorkload {
 
             int size = xmlConfig.configurationsAt("/works/work").size();
             for (int i = 1; i < size + 1; i++) {
-                SubnodeConfiguration work = xmlConfig.configurationAt("works/work[" + i + "]");
+                final HierarchicalConfiguration<ImmutableNode> work = xmlConfig
+                        .configurationAt("works/work[" + i + "]");
                 List<String> weight_strings;
 
                 // use a workaround if there multiple workloads or single
                 // attributed workload
                 if (targetList.length > 1 || work.containsKey("weights[@bench]")) {
-                    String weightKey = work.getString("weights" + pluginTest).toLowerCase();
-                    if (groupings.containsKey(weightKey))
-                        weight_strings = groupings.get(weightKey);
-                    else
-                        weight_strings = getWeights(plugin, work);
+                    weight_strings = Arrays.asList(work.getString("weights" + pluginTest).split("\\s*,\\s*"));
                 } else {
-                    String weightKey = work.getString("weights[not(@bench)]").toLowerCase();
-                    if (groupings.containsKey(weightKey))
-                        weight_strings = groupings.get(weightKey);
-                    else
-                        weight_strings = work.getList("weights[not(@bench)]");
+                    weight_strings = Arrays.asList(work.getString("weights[not(@bench)]").split("\\s*,\\s*"));
                 }
+
                 int rate = 1;
                 boolean rateLimited = true;
                 boolean disabled = false;
@@ -646,6 +640,19 @@ public class DBWorkload {
         }
     }
 
+    public static XMLConfiguration buildConfiguration(String filename) throws ConfigurationException {
+        Parameters params = new Parameters();
+        FileBasedConfigurationBuilder<XMLConfiguration> builder = new FileBasedConfigurationBuilder<>(
+                XMLConfiguration.class)
+                .configure(
+                        params
+                                .xml()
+                                .setFileName(filename)
+                                .setListDelimiterHandler(new DisabledListDelimiterHandler())
+                                .setExpressionEngine(new XPathExpressionEngine()));
+        return builder.getConfiguration();
+    }
+
     private static String writeHistograms(Results r) {
         StringBuilder sb = new StringBuilder();
 
@@ -845,38 +852,6 @@ public class DBWorkload {
             ps.close();
         if (rs != null)
             rs.close();
-    }
-
-    /*
-     * buggy piece of shit of Java XPath implementation made me do it
-     * replaces good old [@bench="{plugin_name}", which doesn't work in Java XPath
-     * with lists
-     */
-    private static List<String> getWeights(String plugin, SubnodeConfiguration work) {
-
-        List<String> weight_strings = new LinkedList<String>();
-        @SuppressWarnings("unchecked")
-        List<SubnodeConfiguration> weights = work.configurationsAt("weights");
-        boolean weights_started = false;
-
-        for (SubnodeConfiguration weight : weights) {
-
-            // stop if second attributed node encountered
-            if (weights_started && weight.getRootNode().getAttributeCount() > 0) {
-                break;
-            }
-            // start adding node values, if node with attribute equal to current
-            // plugin encountered
-            if (weight.getRootNode().getAttributeCount() > 0
-                    && weight.getRootNode().getAttribute(0).getValue().equals(plugin)) {
-                weights_started = true;
-            }
-            if (weights_started) {
-                weight_strings.add(weight.getString(""));
-            }
-
-        }
-        return weight_strings;
     }
 
     private static void runScript(BenchmarkModule bench, String script) {

@@ -18,7 +18,7 @@ package com.olxpbenchmark.catalog;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * 

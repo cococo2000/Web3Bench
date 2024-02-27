@@ -59,8 +59,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections15.map.ListOrderedMap;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.collections4.map.ListOrderedMap;
+import org.apache.commons.configuration2.XMLConfiguration;
 
 import com.olxpbenchmark.api.TransactionTypes;
 import com.olxpbenchmark.types.DatabaseType;

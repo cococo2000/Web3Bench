@@ -19,7 +19,7 @@ package com.olxpbenchmark.util;
 import java.io.File;
 import java.util.Iterator;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 
 import com.olxpbenchmark.catalog.Column;
 import com.olxpbenchmark.catalog.Table;
