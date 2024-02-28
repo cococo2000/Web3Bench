@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.olxpbenchmark</groupId>
-  <artifactId>olxpbench</artifactId>
+  <artifactId>olxpbenchmark</artifactId>
   <version>2.0</version>
   <packaging>jar</packaging>
 
@@ -17,7 +17,39 @@
     <maven.compiler.target>8</maven.compiler.target>
   </properties>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>com.olxpbenchmark.DBWorkload</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+    </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
     <!-- JDBC Drivers -->
     <dependency>
       <groupId>org.xerial</groupId>
@@ -39,8 +71,6 @@
       <artifactId>hsqldb</artifactId>
       <version>2.7.2</version>
     </dependency>
-
-    <!-- Core Libraries -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -97,9 +127,6 @@
       <artifactId>ganymed-ssh2</artifactId>
       <version>261</version>
     </dependency>
-    <!-- Add other core libraries dependencies -->
-
-    <!-- Javax Stuff -->
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>

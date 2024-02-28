@@ -58,7 +58,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -66,10 +65,10 @@ import java.net.InetAddress;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -79,7 +78,8 @@ import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.tree.ImmutableNode;
 import org.apache.commons.configuration2.tree.xpath.XPathExpressionEngine;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import com.olxpbenchmark.api.BenchmarkModule;
 import com.olxpbenchmark.api.TransactionType;
@@ -97,7 +97,7 @@ import com.olxpbenchmark.util.JSONUtil;
 import com.olxpbenchmark.util.JSONSerializable;
 
 public class DBWorkload {
-    private static final Logger LOG = Logger.getLogger(DBWorkload.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DBWorkload.class);
 
     private static final String SINGLE_LINE = StringUtil.repeat("=", 70);
 
@@ -109,23 +109,11 @@ public class DBWorkload {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        // Initialize log4j
-        String log4jPath = System.getProperty("log4j.configuration");
-        if (log4jPath != null) {
-            org.apache.log4j.PropertyConfigurator.configure(log4jPath);
-        } else {
-            throw new RuntimeException("Missing log4j.properties file");
-        }
-
-        if (ClassUtil.isAssertsEnabled()) {
-            LOG.warn("\n" + getAssertWarning());
-        }
 
         // create the command line parser
-        CommandLineParser parser = new PosixParser();
-        XMLConfiguration pluginConfig = pluginConfig = buildConfiguration("config/plugin.xml");
+        CommandLineParser parser = new DefaultParser();
+        XMLConfiguration pluginConfig = buildConfiguration("config/plugin.xml");
 
-        pluginConfig.setExpressionEngine(new XPathExpressionEngine());
         Options options = new Options();
         options.addOption("b", "bench", true,
                 "[required] Benchmark class. Currently supported: " + pluginConfig.getList("/plugin//@name"));
@@ -165,7 +153,7 @@ public class DBWorkload {
             printUsage(options);
             return;
         } else if (argsLine.hasOption("b") == false) {
-            LOG.fatal("Missing Benchmark Class to load");
+            LOG.error("Missing Benchmark Class to load");
             printUsage(options);
             return;
         }
@@ -208,7 +196,6 @@ public class DBWorkload {
 
         String configFile = argsLine.getOptionValue("c");
         XMLConfiguration xmlConfig = buildConfiguration(configFile);
-        xmlConfig.setExpressionEngine(new XPathExpressionEngine());
 
         // Load the configuration for each benchmark
         int lastTxnId = 0;
@@ -365,12 +352,12 @@ public class DBWorkload {
                 // Get the name for the grouping and make sure it's valid.
                 String groupingName = xmlConfig.getString(key + "/name").toLowerCase();
                 if (!groupingName.matches("^[a-z]\\w*$")) {
-                    LOG.fatal(String.format("Grouping name \"%s\" is invalid."
+                    LOG.error(String.format("Grouping name \"%s\" is invalid."
                             + " Must begin with a letter and contain only"
                             + " alphanumeric characters.", groupingName));
                     System.exit(-1);
                 } else if (groupingName.equals("all")) {
-                    LOG.fatal("Grouping name \"all\" is reserved."
+                    LOG.error("Grouping name \"all\" is reserved."
                             + " Please pick a different name.");
                     System.exit(-1);
                 }
@@ -379,7 +366,7 @@ public class DBWorkload {
                 // is an appropriate number of them.
                 List<String> groupingWeights = Arrays.asList(xmlConfig.getString(key + "/weights").split("\\s*,\\s*"));
                 if (groupingWeights.size() != numTxnTypes) {
-                    LOG.fatal(String.format("Grouping \"%s\" has %d weights,"
+                    LOG.error(String.format("Grouping \"%s\" has %d weights,"
                             + " but there are %d transactions in this"
                             + " benchmark.", groupingName,
                             groupingWeights.size(), numTxnTypes));
@@ -433,18 +420,18 @@ public class DBWorkload {
                 } else if (rate_string.equals(RATE_UNLIMITED)) {
                     rateLimited = false;
                 } else if (rate_string.isEmpty()) {
-                    LOG.fatal(String.format("Please specify the rate for phase %d and workload %s", i, plugin));
+                    LOG.error(String.format("Please specify the rate for phase %d and workload %s", i, plugin));
                     System.exit(-1);
                 } else {
                     try {
                         rate = Integer.parseInt(rate_string);
                         if (rate < 1) {
-                            LOG.fatal("Rate limit must be at least 1. Use unlimited or disabled values instead.");
+                            LOG.error("Rate limit must be at least 1. Use unlimited or disabled values instead.");
                             System.exit(-1);
                         }
                         wrkld.setRate(rate);
                     } catch (NumberFormatException e) {
-                        LOG.fatal(String.format("Rate string must be '%s', '%s' or a number", RATE_DISABLED,
+                        LOG.error(String.format("Rate string must be '%s', '%s' or a number", RATE_DISABLED,
                                 RATE_UNLIMITED));
                         System.exit(-1);
                     }
@@ -466,7 +453,7 @@ public class DBWorkload {
                 } else if (serial_string.equals("false")) {
                     serial = false;
                 } else {
-                    LOG.fatal(String.format("Invalid string for serial: '%s'. Serial string must be 'true' or 'false'",
+                    LOG.error(String.format("Invalid string for serial: '%s'. Serial string must be 'true' or 'false'",
                             serial_string));
                     System.exit(-1);
                 }
@@ -501,7 +488,7 @@ public class DBWorkload {
                         LOG.info("Timer disabled for serial run; will execute"
                                 + " all queries exactly once.");
                     } else {
-                        LOG.fatal("Must provide positive time bound for"
+                        LOG.error("Must provide positive time bound for"
                                 + " non-serial executions. Either provide"
                                 + " a valid time or enable serial mode.");
                         System.exit(-1);
@@ -510,7 +497,7 @@ public class DBWorkload {
                     LOG.info("Timer enabled for serial run; will run queries"
                             + " serially in a loop until the timer expires.");
                 if (warmup < 0) {
-                    LOG.fatal("Must provide nonnegative time bound for"
+                    LOG.error("Must provide nonnegative time bound for"
                             + " warmup.");
                     System.exit(-1);
                 }
@@ -532,11 +519,11 @@ public class DBWorkload {
             for (Phase p : wrkld.getAllPhases()) {
                 j++;
                 if (p.getWeightCount() != wrkld.getNumTxnTypes()) {
-                    LOG.fatal(String.format(
+                    LOG.error(String.format(
                             "Configuration files is inconsistent, phase %d contains %d weights but you defined %d transaction types",
                             j, p.getWeightCount(), wrkld.getNumTxnTypes()));
                     if (p.isSerial()) {
-                        LOG.fatal(
+                        LOG.error(
                                 "However, note that since this a serial phase, the weights are irrelevant (but still must be included---sorry).");
                     }
                     System.exit(-1);

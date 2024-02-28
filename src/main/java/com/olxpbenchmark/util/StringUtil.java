@@ -16,12 +16,9 @@
 
 package com.olxpbenchmark.util;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -513,6 +510,7 @@ public abstract class StringUtil {
      * @param items
      * @return
      */
+    @SafeVarargs
     public static <T> String join(String delimiter, T... items) {
         return (join(delimiter, Arrays.asList(items)));
     }

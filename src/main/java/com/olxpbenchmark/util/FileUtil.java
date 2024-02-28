@@ -309,10 +309,10 @@ public abstract class FileUtil {
         while ((offset < bytes.length) && ((numRead = in.read(bytes, offset, bytes.length - offset)) >= 0)) {
             offset += numRead;
         } // WHILE
+        in.close();
         if (offset < bytes.length) {
             throw new IOException("Failed to read the entire contents of '" + file.getName() + "'");
         }
-        in.close();
         return (bytes);
     }
 

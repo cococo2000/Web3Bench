@@ -125,7 +125,7 @@ public abstract class ThreadUtil {
             pid_field.setAccessible(true);
             pid = pid_field.getInt(p);
         } catch (Exception ex) {
-            LOG.fatal("Faild to get pid for " + p, ex);
+            LOG.error("Faild to get pid for " + p, ex);
             return (null);
         }
         assert (pid != null) : "Failed to get pid for " + p;
@@ -162,7 +162,7 @@ public abstract class ThreadUtil {
         try {
             temp = pb.start();
         } catch (IOException e) {
-            LOG.fatal("Failed to fork command", e);
+            LOG.error("Failed to fork command", e);
             return;
         }
         assert (temp != null);
@@ -307,7 +307,7 @@ public abstract class ThreadUtil {
         try {
             latch.await();
         } catch (InterruptedException ex) {
-            LOG.fatal("ThreadUtil.run() was interupted!", ex);
+            LOG.error("ThreadUtil.run() was interupted!", ex);
             throw new RuntimeException(ex);
         } finally {
             if (handler.hasError()) {

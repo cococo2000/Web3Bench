@@ -3,4 +3,4 @@
 # Navigate to the project directory
 cd ..
 
-mvn clean install
+mvn clean package
