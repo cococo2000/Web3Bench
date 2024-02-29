@@ -32,7 +32,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.util.json.JSONArray;
 import com.olxpbenchmark.util.json.JSONException;
@@ -43,7 +44,7 @@ import com.olxpbenchmark.util.json.JSONStringer;
  * @author pavlo
  */
 public abstract class JSONUtil {
-    private static final Logger LOG = Logger.getLogger(JSONUtil.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(JSONUtil.class.getName());
 
     private static final String JSON_CLASS_SUFFIX = "_class";
     private static final Map<Class<?>, Field[]> SERIALIZABLE_FIELDS = new HashMap<Class<?>, Field[]>();

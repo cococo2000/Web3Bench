@@ -28,14 +28,15 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.sql.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tool to run database scripts
  * http://pastebin.com/f10584951
  */
 public class ScriptRunner {
-	private static final Logger LOG = Logger.getLogger(ScriptRunner.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ScriptRunner.class);
 
 	private static final String DEFAULT_DELIMITER = ";";
 

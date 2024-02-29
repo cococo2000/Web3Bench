@@ -32,7 +32,8 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -40,7 +41,7 @@ import org.apache.log4j.Logger;
  *
  */
 public abstract class ClassUtil {
-    private static final Logger LOG = Logger.getLogger(ClassUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClassUtil.class);
 
     private static final Class<?>[] EMPTY_ARRAY = new Class[] {};
 

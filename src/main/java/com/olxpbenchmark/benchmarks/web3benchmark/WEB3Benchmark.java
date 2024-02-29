@@ -45,7 +45,8 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Config;
 import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 import com.olxpbenchmark.benchmarks.web3benchmark.procedures.WEB3Procedure;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -55,7 +56,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class WEB3Benchmark extends BenchmarkModule {
-    private static final Logger LOG = Logger.getLogger(WEB3Benchmark.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WEB3Benchmark.class);
 
     public WEB3Benchmark(WorkloadConfiguration workConf) {
         super("web3bench", workConf, true);

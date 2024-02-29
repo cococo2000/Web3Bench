@@ -23,7 +23,8 @@ import java.util.LinkedList;
 
 import com.olxpbenchmark.types.State;
 import com.olxpbenchmark.util.QueueLimitException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used to share a state among the workers of a single
@@ -35,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class WorkloadState {
     private static final int RATE_QUEUE_LIMIT = 10000;
-    private static final Logger LOG = Logger.getLogger(ThreadBench.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ThreadBench.class);
 
     private LinkedList<SubmittedProcedure> workQueue = new LinkedList<SubmittedProcedure>();
     private BenchmarkState benchmarkState;

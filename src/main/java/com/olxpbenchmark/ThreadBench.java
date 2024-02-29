@@ -47,7 +47,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.commons.collections4.map.ListOrderedMap;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.LatencyRecord.Sample;
 import com.olxpbenchmark.api.BenchmarkModule;
@@ -59,7 +60,7 @@ import com.olxpbenchmark.util.QueueLimitException;
 import com.olxpbenchmark.util.StringUtil;
 
 public class ThreadBench implements Thread.UncaughtExceptionHandler {
-    private static final Logger LOG = Logger.getLogger(ThreadBench.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ThreadBench.class);
 
     private static BenchmarkState testState;
     private final List<? extends Worker<? extends BenchmarkModule>> workers;

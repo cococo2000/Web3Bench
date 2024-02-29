@@ -30,14 +30,15 @@ import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.catalog.Column;
 import com.olxpbenchmark.catalog.Table;
 import com.olxpbenchmark.types.DatabaseType;
 
 public abstract class SQLUtil {
-    private static final Logger LOG = Logger.getLogger(SQLUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SQLUtil.class);
 
     private static final DateFormat timestamp_formats[] = new DateFormat[] {
             new SimpleDateFormat("yyyy-MM-dd"),

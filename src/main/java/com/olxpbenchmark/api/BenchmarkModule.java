@@ -66,7 +66,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.WorkloadConfiguration;
 import com.olxpbenchmark.api.Loader.LoaderThread;
@@ -81,7 +82,7 @@ import com.olxpbenchmark.util.ThreadUtil;
  * Base class for all benchmark implementations
  */
 public abstract class BenchmarkModule {
-    private static final Logger LOG = Logger.getLogger(BenchmarkModule.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BenchmarkModule.class);
 
     /**
      * Each benchmark must put their all of the DBMS-specific DDLs

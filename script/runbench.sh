@@ -16,12 +16,13 @@ else
 fi
 
 # Modify log4j.properties based on dump_dml value
+log4j_properties="../src/main/resources/log4j.properties"
 case $dump_dml in
     INFO)
-        sed $SED_INPLACE_OPTION 's/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=.*/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=INFO, A2/' ../log4j.properties
+        sed $SED_INPLACE_OPTION 's/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=.*/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=INFO, A2/' $log4j_properties
         ;;
     TRACE)
-        sed $SED_INPLACE_OPTION 's/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=.*/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=TRACE, A2/' ../log4j.properties
+        sed $SED_INPLACE_OPTION 's/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=.*/log4j.logger.com.olxpbenchmark.benchmarks.web3benchmark.procedures=TRACE, A2/' $log4j_properties
         ;;
     *)
         echo "Unknown dump_dml value: $dump_dml"

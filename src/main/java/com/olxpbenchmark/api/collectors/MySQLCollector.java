@@ -19,11 +19,12 @@ package com.olxpbenchmark.api.collectors;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MySQLCollector extends DBCollector {
 
-    private static final Logger LOG = Logger.getLogger(MySQLCollector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MySQLCollector.class);
 
     private static final String PARAMETERS_SQL = "SHOW GLOBAL VARIABLES";
 

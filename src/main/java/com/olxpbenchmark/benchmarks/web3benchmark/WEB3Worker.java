@@ -41,7 +41,8 @@ import com.olxpbenchmark.benchmarks.web3benchmark.procedures.WEB3Procedure;
 import com.olxpbenchmark.api.TransactionType;
 import com.olxpbenchmark.api.Worker;
 import com.olxpbenchmark.types.TransactionStatus;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.Random;
@@ -52,7 +53,7 @@ import com.olxpbenchmark.util.RandomGenerator;
 
 public class WEB3Worker extends Worker<WEB3Benchmark> {
 
-    private static final Logger LOG = Logger.getLogger(WEB3Worker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WEB3Worker.class);
 
     private final Random gen = new Random();
     private static CounterGenerator startRecord;

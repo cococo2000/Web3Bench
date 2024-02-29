@@ -36,7 +36,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.olxpbenchmark.api.dialects.DialectType;
@@ -51,7 +52,7 @@ import com.olxpbenchmark.types.DatabaseType;
  * @author pavlo
  */
 public class StatementDialects {
-    private static final Logger LOG = Logger.getLogger(StatementDialects.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StatementDialects.class);
 
     private static final DatabaseType DEFAULT_DB_TYPE = DatabaseType.MYSQL;
 

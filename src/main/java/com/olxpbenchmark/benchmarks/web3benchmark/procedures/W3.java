@@ -24,14 +24,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.api.SQLStmt;
 import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Util;
 import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 
 public class W3 extends WEB3Procedure {
-    private static final Logger LOG = Logger.getLogger(W3.class);
+    private static final Logger LOG = LoggerFactory.getLogger(W3.class);
 
     public String classname = this.getClass().getSimpleName();
     public String classname_note = "/* " + classname + " */ ";

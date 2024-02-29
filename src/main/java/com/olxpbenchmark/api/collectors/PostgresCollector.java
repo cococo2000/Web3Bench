@@ -22,11 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PostgresCollector extends DBCollector {
 
-    private static final Logger LOG = Logger.getLogger(PostgresCollector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PostgresCollector.class);
 
     private static final String PARAMETERS_SQL = "SHOW ALL";
 

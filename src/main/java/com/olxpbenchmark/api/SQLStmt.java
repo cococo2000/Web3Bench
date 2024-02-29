@@ -19,7 +19,8 @@ package com.olxpbenchmark.api;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper Class for SQL Statements
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
  * @author pavlo
  */
 public final class SQLStmt {
-    private static final Logger LOG = Logger.getLogger(SQLStmt.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SQLStmt.class);
 
     private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("\\?\\?");
 

@@ -39,10 +39,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ThreadUtil {
-    private static final Logger LOG = Logger.getLogger(ThreadUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ThreadUtil.class);
 
     private static final Object lock = new Object();
     private static ExecutorService pool;

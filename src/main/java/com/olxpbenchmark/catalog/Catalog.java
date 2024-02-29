@@ -51,7 +51,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.io.IOUtils;
 
 import com.olxpbenchmark.api.BenchmarkModule;
@@ -66,7 +67,7 @@ import com.olxpbenchmark.util.StringUtil;
  * @author pavlo
  */
 public final class Catalog {
-    private static final Logger LOG = Logger.getLogger(Catalog.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Catalog.class);
 
     /**
      * TODO

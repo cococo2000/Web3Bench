@@ -21,12 +21,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.util.StringUtil;
 
 public class Phase {
-    private static final Logger LOG = Logger.getLogger(Phase.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Phase.class);
 
     public enum Arrival {
         REGULAR, POISSON,

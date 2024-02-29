@@ -19,7 +19,8 @@ package com.olxpbenchmark.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.catalog.Catalog;
 import com.olxpbenchmark.catalog.Column;
@@ -33,7 +34,7 @@ import com.olxpbenchmark.util.StringUtil;
  * @author pavlo
  */
 public class CreateDialects {
-    private static final Logger LOG = Logger.getLogger(CreateDialects.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CreateDialects.class);
 
     protected static final String DB_CONNECTION = "jdbc:sqlite:";
     private static final String SPACER = "   ";

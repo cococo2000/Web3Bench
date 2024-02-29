@@ -21,7 +21,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.util.json.*;
 
@@ -32,7 +33,7 @@ import com.olxpbenchmark.util.json.*;
  * @author pavlo
  */
 public class Histogram<X> implements JSONSerializable {
-    private static final Logger LOG = Logger.getLogger(Histogram.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Histogram.class);
 
     private static final String MARKER = "*";
     private static final Integer MAX_CHARS = 80;

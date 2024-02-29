@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.WorkloadConfiguration;
 import com.olxpbenchmark.catalog.Catalog;
@@ -39,7 +40,7 @@ import com.olxpbenchmark.util.JSONUtil;
 
 public abstract class DBCollector {
 
-    private static final Logger LOG = Logger.getLogger(DBCollector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DBCollector.class);
 
     protected static final String EMPTY_JSON = "{}";
 

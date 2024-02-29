@@ -1,2 +1,2 @@
 #!/bin/bash
-java -jar target/olxpbenchmark-2.0-jar-with-dependencies.jar -Dlog4j.configuration=log4j.properties $@
+java -jar target/olxpbenchmark-2.0-jar-with-dependencies.jar $@

@@ -41,7 +41,8 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.WorkloadConfiguration;
 import com.olxpbenchmark.catalog.Catalog;
@@ -55,7 +56,7 @@ import com.olxpbenchmark.util.SQLUtil;
  * @author pavlo
  */
 public abstract class Loader<T extends BenchmarkModule> {
-    private static final Logger LOG = Logger.getLogger(Loader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Loader.class);
 
     protected final T benchmark;
     protected final WorkloadConfiguration workConf;

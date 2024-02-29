@@ -23,7 +23,8 @@ import java.util.LinkedList;
 
 import com.olxpbenchmark.types.State;
 import com.olxpbenchmark.util.QueueLimitException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used for keeping track of the procedures that have been

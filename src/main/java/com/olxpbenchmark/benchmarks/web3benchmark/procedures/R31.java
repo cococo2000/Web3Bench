@@ -25,7 +25,8 @@ import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Util;
 import com.olxpbenchmark.benchmarks.web3benchmark.WEB3Worker;
 import com.olxpbenchmark.benchmarks.web3benchmark.procedures.WEB3Procedure;
 import com.olxpbenchmark.distributions.ZipfianGenerator;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,7 +35,7 @@ import java.sql.SQLException;
 import java.util.Random;
 
 public class R31 extends WEB3Procedure {
-    private static final Logger LOG = Logger.getLogger(R31.class);
+    private static final Logger LOG = LoggerFactory.getLogger(R31.class);
 
     public String classname = this.getClass().getSimpleName();
     public String classname_note = "/* " + classname + " */ ";

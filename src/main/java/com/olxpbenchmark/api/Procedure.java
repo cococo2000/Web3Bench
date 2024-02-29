@@ -27,13 +27,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.jdbc.AutoIncrementPreparedStatement;
 import com.olxpbenchmark.types.DatabaseType;
 
 public abstract class Procedure {
-    private static final Logger LOG = Logger.getLogger(Procedure.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Procedure.class);
 
     protected static final String SQL_EXPLAIN_ANALYZE = "EXPLAIN ANALYZE ";
 

@@ -44,7 +44,8 @@ import com.olxpbenchmark.catalog.Table;
 import com.olxpbenchmark.util.SQLUtil;
 import com.olxpbenchmark.util.json.Test;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class WEB3Loader extends Loader<WEB3Benchmark> {
-    private static final Logger LOG = Logger.getLogger(WEB3Loader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WEB3Loader.class);
 
     public WEB3Loader(WEB3Benchmark benchmark) {
         super(benchmark);

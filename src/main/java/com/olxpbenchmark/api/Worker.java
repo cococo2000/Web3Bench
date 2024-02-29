@@ -62,7 +62,8 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.olxpbenchmark.LatencyRecord;
 import com.olxpbenchmark.Phase;
@@ -78,7 +79,7 @@ import com.olxpbenchmark.util.Histogram;
 import com.olxpbenchmark.util.StringUtil;
 
 public abstract class Worker<T extends BenchmarkModule> implements Runnable {
-    private static final Logger LOG = Logger.getLogger(Worker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Worker.class);
 
     private WorkloadState wrkldState;
     private LatencyRecord latencies;
