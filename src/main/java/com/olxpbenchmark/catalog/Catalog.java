@@ -35,6 +35,7 @@
 package com.olxpbenchmark.catalog;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -316,7 +317,7 @@ public final class Catalog {
         URL ddl = this.benchmark.getDatabaseDDL(DatabaseType.HSQLDB);
         String ddlContents;
         try {
-            ddlContents = IOUtils.toString(ddl);
+            ddlContents = IOUtils.toString(ddl, Charset.defaultCharset());
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }

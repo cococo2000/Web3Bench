@@ -85,18 +85,6 @@ public abstract class BenchmarkModule {
     private static final Logger LOG = LoggerFactory.getLogger(BenchmarkModule.class);
 
     /**
-     * Each benchmark must put their all of the DBMS-specific DDLs
-     * in this directory.
-     */
-    public static final String DDLS_DIR = "ddls";
-
-    /**
-     * Each dialect xml file must put their all of the DBMS-specific DIALECTs
-     * in this directory.
-     */
-    public static final String DIALECTS_DIR = "dialects";
-
-    /**
      * The identifier for this benchmark
      */
     protected final String benchmarkName;
@@ -218,7 +206,10 @@ public abstract class BenchmarkModule {
         for (String ddlName : ddlNames) {
             if (ddlName == null)
                 continue;
-            URL ddlURL = this.getClass().getResource(DDLS_DIR + File.separator + ddlName);
+
+            URL ddlURL = this.getClass().getResource("/benchmarks/" + this.benchmarkName + "/" + ddlName);
+            LOG.debug(this.benchmarkName + " " + ddlName + " " + ddlURL);
+
             if (ddlURL != null) {
                 if (LOG.isDebugEnabled())
                     LOG.debug("Found DDL file for " + db_type + ": " + ddlURL);
@@ -256,7 +247,7 @@ public abstract class BenchmarkModule {
                 this.benchmarkName + "-dialects.xml",
         };
         for (String xmlName : xmlNames) {
-            URL ddlURL = this.getClass().getResource(DIALECTS_DIR + File.separator + xmlName);
+            URL ddlURL = this.getClass().getResource("/benchmarks/" + this.benchmarkName + "/" + xmlName);
             if (ddlURL != null) {
                 try {
                     return new File(ddlURL.toURI().getPath());
