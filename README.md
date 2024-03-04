@@ -6,22 +6,32 @@ Our data model is a simplified version of Ethereum's decentralized blockchain, e
 
 The benchmark encompasses a spectrum of tasks, including transactional, analytical, and online serving scenarios. It accommodates real-time and online activities with high query rates, while also executing batch tasks once during testing. Using a specialized driver, Web3Bench assesses both latency and throughput. As a proof of concept, we've successfully demonstrated its application on the [TiDB](https://github.com/pingcap/tidb) platform.
 
-## Environment Setup
+## Prerequisites
 
-- Install Java (v1.7 or newer) and Apache Ant.
-- Deploy TiDB cluster following the [TiDB documentation](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb).
-  - If you want to test Web3Bench on TiDB, you can use the following commands to set or unlimit the memory quota for queries and server according to your environment.
+Before you begin, ensure you have the following prerequisites installed:
 
-    ```sql
-    SET GLOBAL tidb_mem_quota_query=0;
-    SET GLOBAL tidb_server_memory_limit=0;
-    ```
+- Java 11
+- Apache Maven 3.6.3
+- Python3 (3.8 or later)
 
-- Install required Python packages (tested on Python 3.8.10 & 3.8.18)
+### Setting up TiDB Cluster
 
-    ```bash
-    pip3 install -r requirements.txt
-    ```
+To deploy a TiDB cluster, refer to the [TiDB documentation](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb).
+
+If you want to test Web3Bench on TiDB, you can use the following commands to set or unlimit the memory quota for queries and server according to your environment.
+
+```sql
+SET GLOBAL tidb_mem_quota_query=0;
+SET GLOBAL tidb_server_memory_limit=0;
+```
+
+### Installing Python Dependencies
+
+```bash
+pip3 install -r requirements.txt
+```
+
+> Note: Other versions of the prerequisites have not been fully tested and may encounter unknown issues.
 
 ## Quick Start Guide
 
@@ -66,23 +76,13 @@ If you encounter issues during the process, refer to the following troubleshooti
     cd [Web3Bench.dir]
     ```
 
-2. Bootstrap the project using Ant
+2. Run the following command to compile the project:
 
     ```bash
-    ant bootstrap
+    mvn clean package
     ```
 
-3. Resolve project dependencies
-
-    ```bash
-    ant resolve
-    ```
-
-4. Build the project
-
-    ```bash
-    ant build
-    ```
+Make sure you execute these commands in the root directory of your project.
 
 ## Config
 
@@ -93,6 +93,7 @@ If you encounter issues during the process, refer to the following troubleshooti
   - To adjust database settings such as name, access credentials, scaling factor, test duration, etc., edit the top section of the script:
 
     ```shell
+    # Values to modify
     ###########################################################
     # Database type: mysql, tidb, or sdb (singlestoredb)
     dbtype=tidb
@@ -106,13 +107,12 @@ If you encounter issues during the process, refer to the following troubleshooti
     new_username=root
     new_password=
     new_nodeid="main"
-    new_scalefactor=6000
+    new_scalefactor=3
     # Test time in minutes
-    new_time=60
-    # terminals and rate for runthread1: R1, W1* and W4
+    new_time=5
+    # terminals and rate for runthread1: R1, W1*, W4 and W6
     new_terminals_thread1=30
-    # Total number of requests in one hour for R1 = 1000 * 6000 = 6000000
-    # then total rate per minute of thread1 = 1000 * 6000 / 80% / 60 = 1000 * 6000 / 48 = 125000
+    # Total rate per minute of runthread1
     new_rate_thread1=125000
     # terminals and rate for R2*
     new_terminals_R21=2
@@ -121,11 +121,9 @@ If you encounter issues during the process, refer to the following troubleshooti
     new_terminals_R24=2
     new_terminals_R25=2
     # Total number of requests per minute
-    # R21, R22, R23 = 10 * 6000 / 60 = 1000
     new_rate_R21=1000
     new_rate_R22=1000
     new_rate_R23=1000
-    # R24, R25 = 6000 / 6 / 60 = 16
     new_rate_R24=16
     new_rate_R25=16
     ###########################################################
@@ -134,7 +132,7 @@ If you encounter issues during the process, refer to the following troubleshooti
   - Usage:
 
     ```bash
-    cd script
+    cd [Web3Bench.dir]/script
     ./config.sh
     ```
 
@@ -143,12 +141,9 @@ If you encounter issues during the process, refer to the following troubleshooti
 - config/*
   - This directory contains various configuration files used for testing on the VM. Each configuration file is designed to facilitate specific testing scenarios and workloads.
     - `loaddata.xml`: the configuration file for loading data into the database
-    - `runthread1.xml`: the configuration file for running point query workloads (R1, W1* and W4) at a rate of 7,500,000 requests per minute.
-      - Total number of requests in one hour for R1 = 6,000,000
-      - The weight of R1:W11:W12:W13:W14:W4 = 80%:4%:4%:4%:4%:4%
-        - The weight of R1 is 80%, so the total number of requests in one hour for R1, W1* and W4 = 6,000,000/80% = 7,500,000
-        - The total rate per minute of thread1 = 7,500,000/60 = 125,000
-    - `runthread2.xml`: the configuration file for running complex query workloads once in serial covering R3*, W2, W3, W5* and W6.
+    - `runthread1.xml`: the configuration file for running point query workloads (R1, W1*, W4 and W6) at a rate of 125,000 requests per minute.
+      - The weight of R1:W11:W12:W13:W14:W4:W6 = 80%:4%:4%:4%:4%:2%:2%
+    - `runthread2.xml`: the configuration file for running complex query workloads once in serial covering R3*, W2, W3, W51 and W52.
     - `runR21.xml`: the configuration file for running R21 at a rate of 1,000 request per minute.
     - `runR22.xml`: the configuration file for running R22 at a rate of 1,000 request per minute.
     - `runR23.xml`: the configuration file for running R23 at a rate of 1,000 request per minute.
@@ -164,12 +159,12 @@ When running a multi-phase experiment with varying a workload, it is imperative 
 
 > Note: weights have to sum up to 100%. The transactions are listed in the benchmark specific section labeled "transactiontypes". The order in which the transactions are declared is the same as their respective weights.
 
-- **DBUrl**: the URL to access the database
-- **username**: the username to access the database
-- **password**: the password to access the database
+- **DBUrl**: the URL to access the database.
+- **username**: the username to access the database.
+- **password**: the password to access the database.
 - **scalefactor**: the scale factor for loading data. When saclefactor = 1, the data size is around 80MB.
 - **time**: the duration of the workload in minutes
-- **rate**: the sending rate of the workload in transactions per minute
+- **rate**: the sending rate of the workload in transactions per minute.
 - **weights**: the weights of the transactions in the workload. The sum of the weights should be 100.
 - **transactiontypes**: the list of transactions in the workload. The order of the transactions should be the same as the order of the weights.
 
@@ -187,14 +182,14 @@ When running a multi-phase experiment with varying a workload, it is imperative 
     <uploadUrl></uploadUrl>
 
     <nodeid>main</nodeid>
-    <scalefactor>6000</scalefactor>
+    <scalefactor>3</scalefactor>
 
     <!-- The workload -->
     <terminals>2</terminals>
     <works>
         <work>
             <warmup>0</warmup>
-            <time>60</time>
+            <time>5</time>
             <rate>1000</rate>
             <weights>100</weights>
             <arrival>REGULAR</arrival>
@@ -267,16 +262,16 @@ usage: olxpbenchmark
 ```
 
 - **-b,--bench**: the benchmark class. Currently, only web3benchmark is supported.
-- **--create=true**: create the database schema by excuting the SQL script in ddl files(e.g., src/com/olxpbenchmark/benchmarks/web3benchmark/ddls/web3bench-mysql-ddl.sql)
-- **--load=true**: load data into the database
-- **--execute=true**: run the workload
+- **--create=true**: create the database schema by excuting the SQL script in ddl files(e.g., src/main/resources/benchmarks/web3bench/web3bench-mysql-ddl.sql).
+- **--load=true**: load data into the database.
+- **--execute=true**: run the workload.
 
 ## Results
 
 ### Output Directory
 
 - results/*
-  - The result files for the benchmark
+  - The result files for the benchmark.
 
 ### Parsing results
 

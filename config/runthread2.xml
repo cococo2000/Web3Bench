@@ -11,7 +11,7 @@
     <uploadUrl></uploadUrl>
 
     <nodeid>main</nodeid>
-    <scalefactor>6000</scalefactor>
+    <scalefactor>3</scalefactor>
 
     <!-- The workload -->
     <terminals>1</terminals>
