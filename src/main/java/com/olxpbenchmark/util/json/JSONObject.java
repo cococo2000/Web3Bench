@@ -832,7 +832,7 @@ public class JSONObject {
     public double optDouble(String key, double defaultValue) {
         try {
             Object o = opt(key);
-            return o instanceof Number ? ((Number) o).doubleValue() : new Double((String) o).doubleValue();
+            return o instanceof Number ? ((Number) o).doubleValue() : Double.parseDouble((String) o);
         } catch (Exception e) {
             return defaultValue;
         }
@@ -973,7 +973,7 @@ public class JSONObject {
      * @throws JSONException If the key is null or if the number is invalid.
      */
     public JSONObject put(String key, double value) throws JSONException {
-        put(key, new Double(value));
+        put(key, Double.valueOf(value));
         return this;
     }
 
@@ -986,7 +986,7 @@ public class JSONObject {
      * @throws JSONException If the key is null.
      */
     public JSONObject put(String key, int value) throws JSONException {
-        put(key, new Integer(value));
+        put(key, Integer.valueOf(value));
         return this;
     }
 
@@ -999,7 +999,7 @@ public class JSONObject {
      * @throws JSONException If the key is null.
      */
     public JSONObject put(String key, long value) throws JSONException {
-        put(key, new Long(value));
+        put(key, Long.valueOf(value));
         return this;
     }
 
@@ -1198,40 +1198,24 @@ public class JSONObject {
          * non-JSON forms as long as it accepts all correct JSON forms.
          */
 
-        char b = s.charAt(0);
-        if ((b >= '0' && b <= '9') || b == '.' || b == '-' || b == '+') {
-            if (b == '0') {
-                if (s.length() > 2 &&
-                        (s.charAt(1) == 'x' || s.charAt(1) == 'X')) {
-                    try {
-                        return new Integer(Integer.parseInt(s.substring(2),
-                                16));
-                    } catch (Exception e) {
-                        /* Ignore the error */
-                    }
-                } else {
-                    try {
-                        return new Integer(Integer.parseInt(s, 8));
-                    } catch (Exception e) {
-                        /* Ignore the error */
-                    }
-                }
+        try {
+            // Try parsing as Integer or Long
+            if (s.startsWith("0x") || s.startsWith("0X")) {
+                return Long.decode(s);
+            } else if (s.startsWith("0")) {
+                return Integer.parseInt(s, 8);
+            } else {
+                return Integer.parseInt(s);
             }
+        } catch (NumberFormatException e) {
             try {
-                return new Integer(s);
-            } catch (Exception e) {
-                try {
-                    return new Long(s);
-                } catch (Exception f) {
-                    try {
-                        return new Double(s);
-                    } catch (Exception g) {
-                        /* Ignore the error */
-                    }
-                }
+                // Try parsing as Double
+                return Double.parseDouble(s);
+            } catch (NumberFormatException f) {
+                // Return original string if parsing fails
+                return s;
             }
         }
-        return s;
     }
 
     /**

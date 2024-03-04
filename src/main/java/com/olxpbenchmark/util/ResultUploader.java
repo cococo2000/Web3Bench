@@ -193,7 +193,7 @@ public class ResultUploader {
             CloseableHttpResponse response = httpclient.execute(httppost);
             try {
                 HttpEntity resEntity = response.getEntity();
-                LOG.info(IOUtils.toString(resEntity.getContent()));
+                LOG.info(IOUtils.toString(resEntity.getContent(), "UTF-8"));
                 EntityUtils.consume(resEntity);
             } finally {
                 response.close();

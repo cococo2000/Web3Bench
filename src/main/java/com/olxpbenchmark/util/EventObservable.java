@@ -16,51 +16,32 @@
 
 package com.olxpbenchmark.util;
 
-import java.util.Observable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * EventObservable
- * 
  */
 public class EventObservable<T> {
 
-    protected class InnerObservable extends Observable {
-        @Override
-        public synchronized void setChanged() {
-            super.setChanged();
-        }
+    private final List<EventObserver<T>> observers = new ArrayList<>();
 
-        public EventObservable<T> getEventObservable() {
-            return (EventObservable.this);
+    public synchronized void addObserver(EventObserver<T> observer) {
+        if (observer != null) {
+            observers.add(observer);
         }
     }
 
-    private final InnerObservable observable;
-    private int observer_ctr = 0;
-
-    public EventObservable() {
-        this.observable = new InnerObservable();
-    }
-
-    public synchronized void addObserver(EventObserver<T> o) {
-        if (o != null) {
-            this.observable.addObserver(o.getObserver());
-            this.observer_ctr++;
-        }
-    }
-
-    public synchronized void deleteObserver(EventObserver<T> o) {
-        this.observable.deleteObserver(o.getObserver());
-        this.observer_ctr--;
+    public synchronized void deleteObserver(EventObserver<T> observer) {
+        observers.remove(observer);
     }
 
     public synchronized void deleteObservers() {
-        this.observable.deleteObservers();
-        this.observer_ctr = 0;
+        observers.clear();
     }
 
     public int countObservers() {
-        return (this.observer_ctr);
+        return observers.size();
     }
 
     /**
@@ -69,17 +50,15 @@ public class EventObservable<T> {
      * @param arg - the state that changed
      */
     public void notifyObservers(T arg) {
-        this.observable.setChanged();
-        if (this.observer_ctr > 0)
-            this.observable.notifyObservers(arg);
+        for (EventObserver<T> observer : observers) {
+            observer.update(this, arg);
+        }
     }
 
     /**
      * Notifies the Observers that a changed occurred
      */
     public void notifyObservers() {
-        this.observable.setChanged();
-        if (this.observer_ctr > 0)
-            this.observable.notifyObservers();
+        notifyObservers(null);
     }
-} // END CLASS
+}

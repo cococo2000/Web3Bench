@@ -55,20 +55,41 @@ public class W51 extends WEB3Procedure {
         // Create statement and set parameters
         query_stmt = this.getPreparedStatement(conn, query_stmtSQL, value);
 
-        if (LOG.isDebugEnabled()) {
+        // Log query
+        if (debug) {
             LOG.debug(queryToString(query_stmt));
         }
 
-        if (trace)
-            LOG.trace("query_stmt W51 UpdateQuery2 START");
-        // int affectedRows = query_stmt.executeUpdate();
-        query_stmt.executeUpdate();
+        if (trace) {
+            LOG.trace("Query" + classname + " START");
+        }
+        int affectedRows = 0; // Number of rows affected
+        ResultSet rs = null;
+        // Execute query and commit
+        if (isExplainAnalyze) {
+            // Use executeQuery for explain analyze
+            rs = query_stmt.executeQuery();
+        } else {
+            // Use executeUpdate for normal query
+            affectedRows = query_stmt.executeUpdate();
+        }
         conn.commit();
-        if (trace)
-            LOG.trace("query_stmt W51 UpdateQuery2 END");
+        if (trace) {
+            LOG.trace("Query" + classname + " END");
+        }
 
-        // long latency_ns = getTimeFromRS(rs);
-        // rs.close();
+        if (isExplainAnalyze) {
+            // If explain analyze, then return the latency
+            // Get the latency from the result set
+            long latency_ns = getTimeFromRS(rs);
+            rs.close();
+            return latency_ns;
+        } else {
+            if (debug) {
+                LOG.debug("Affected Rows: " + affectedRows);
+            }
+        }
+
         return 0;
     }
 }

@@ -33,6 +33,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Time;
@@ -359,9 +360,9 @@ public class AutoIncrementPreparedStatement implements PreparedStatement {
         this.stmt.setAsciiStream(parameterIndex, x, length);
     }
 
-    @Override
+    @Deprecated
     public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
-        this.stmt.setUnicodeStream(parameterIndex, x, length);
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
@@ -378,7 +379,6 @@ public class AutoIncrementPreparedStatement implements PreparedStatement {
     public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
         this.stmt.setObject(parameterIndex, x, targetSqlType);
         // TODO Auto-generated method stub
-
     }
 
     @Override

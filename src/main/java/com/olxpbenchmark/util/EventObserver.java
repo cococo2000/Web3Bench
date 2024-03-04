@@ -16,23 +16,18 @@
 
 package com.olxpbenchmark.util;
 
-import java.util.*;
-
 /**
- * EventObservable
+ * EventObserver
  */
 public abstract class EventObserver<T> {
 
-    protected class InnerObserver implements Observer {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        @Override
-        public void update(Observable o, Object arg) {
-            assert (o instanceof EventObservable<?>.InnerObservable);
-            EventObserver.this.update(((EventObservable.InnerObservable) o).getEventObservable(), (T) arg);
+    protected class InnerObserver {
+        public void update(EventObservable<T> o, T arg) {
+            EventObserver.this.update(o, arg);
         }
 
         public EventObserver<T> getEventObserver() {
-            return (EventObserver.this);
+            return EventObserver.this;
         }
     }
 
@@ -42,8 +37,8 @@ public abstract class EventObserver<T> {
         this.observer = new InnerObserver();
     }
 
-    protected Observer getObserver() {
-        return (this.observer);
+    protected InnerObserver getObserver() {
+        return this.observer;
     }
 
     public abstract void update(EventObservable<T> o, T arg);

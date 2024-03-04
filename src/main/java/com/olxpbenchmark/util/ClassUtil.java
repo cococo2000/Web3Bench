@@ -250,6 +250,7 @@ public abstract class ClassUtil {
      * @param expected the expected parent class or interface
      * @return a new object
      */
+    @SuppressWarnings("unchecked")
     public static <T> T newInstance(Class<?> theClass, Class<T> expected) {
         T result;
         try {

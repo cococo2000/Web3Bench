@@ -18,6 +18,7 @@ package com.olxpbenchmark.util;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -220,23 +221,6 @@ public abstract class CollectionUtil {
         return (CollectionUtil.random(list, rand));
     }
 
-    public static <E extends Enum<?>> Set<E> getAllExcluding(E elements[], E... excluding) {
-        Set<E> exclude_set = new HashSet<E>();
-        for (E e : excluding)
-            exclude_set.add(e);
-
-        Set<E> elements_set = new HashSet<E>();
-        for (int i = 0; i < elements.length; i++) {
-            if (!exclude_set.contains(elements[i]))
-                elements_set.add(elements[i]);
-        } // FOR
-        return (elements_set);
-        // Crappy java....
-        // Object new_elements[] = new Object[elements_set.size()];
-        // elements_set.toArray(new_elements);
-        // return ((E[])new_elements);
-    }
-
     /**
      * Add all the items in the array to a Collection
      * 
@@ -244,10 +228,9 @@ public abstract class CollectionUtil {
      * @param data
      * @param items
      */
+    @SuppressWarnings("unchecked")
     public static <T> Collection<T> addAll(Collection<T> data, T... items) {
-        for (T i : (T[]) items) {
-            data.add(i);
-        }
+        data.addAll(Arrays.asList(items));
         return (data);
     }
 
@@ -393,6 +376,7 @@ public abstract class CollectionUtil {
      * @param items
      * @return
      */
+    @SuppressWarnings("unchecked")
     public static <T> T last(T... items) {
         if (items != null && items.length > 0) {
             return (items[items.length - 1]);

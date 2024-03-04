@@ -17,6 +17,8 @@
 package com.olxpbenchmark.api;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
@@ -110,12 +113,18 @@ public class StatementDialects {
             SchemaFactory sf = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = sf.newSchema(this.xmlSchemaURL);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
-            // But did not shoot unmarshaller!
             unmarshaller.setSchema(schema);
             // Disable External Entity Resolution
             unmarshaller.setProperty("javax.xml.stream.isReplacingEntityReferences", false);
             unmarshaller.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
-            JAXBElement<DialectsType> result = (JAXBElement<DialectsType>) unmarshaller.unmarshal(this.xmlFile);
+            StreamSource streamSource;
+            try {
+                streamSource = new StreamSource(new FileInputStream(this.xmlFile));
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(String.format("Error reading XML file '%s'", this.xmlFile), ex);
+            }
+            JAXBElement<DialectsType> result = (JAXBElement<DialectsType>) unmarshaller.unmarshal(streamSource,
+                    DialectsType.class);
             dialects = result.getValue();
         } catch (JAXBException ex) {
             // Convert some linked exceptions to more friendly errors.

@@ -507,48 +507,6 @@ public abstract class JSONUtil {
     }
 
     /**
-     * For the given enum, load in the values from the JSON object into the current
-     * object
-     * This will throw errors if a field is missing
-     * 
-     * @param <E>
-     * @param json_object
-     * @param catalog_db
-     * @param members
-     * @throws JSONException
-     */
-    public static <E extends Enum<?>, T> void fieldsFromJSON(JSONObject json_object, T object,
-            Class<? extends T> base_class, E... members) throws JSONException {
-        JSONUtil.fieldsFromJSON(json_object, object, base_class, false, members);
-    }
-
-    /**
-     * For the given enum, load in the values from the JSON object into the current
-     * object
-     * If ignore_missing is false, then JSONUtil will not throw an error if a field
-     * is missing
-     * 
-     * @param <E>
-     * @param <T>
-     * @param json_object
-     * @param catalog_db
-     * @param object
-     * @param base_class
-     * @param ignore_missing
-     * @param members
-     * @throws JSONException
-     */
-    public static <E extends Enum<?>, T> void fieldsFromJSON(JSONObject json_object, T object,
-            Class<? extends T> base_class, boolean ignore_missing, E... members) throws JSONException {
-        try {
-            fieldsFromJSON(json_object, object, base_class, ignore_missing,
-                    ClassUtil.getFieldsFromMembersEnum(base_class, members));
-        } catch (NoSuchFieldException ex) {
-            throw new JSONException(ex);
-        }
-    }
-
-    /**
      * For the given list of Fields, load in the values from the JSON object into
      * the current object
      * If ignore_missing is false, then JSONUtil will not throw an error if a field
@@ -586,8 +544,6 @@ public abstract class JSONUtil {
             try {
                 readFieldValue(json_object, json_key, field_handle, object);
             } catch (Exception ex) {
-                // System.err.println(field_class + ": " +
-                // ClassUtil.getSuperClasses(field_class));
                 LOG.error("Unable to deserialize field '" + json_key + "' from " + base_class.getSimpleName(), ex);
                 throw new JSONException(ex);
             }

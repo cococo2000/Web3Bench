@@ -153,7 +153,7 @@ public class JSONArray {
                 case ']':
                 case ')':
                     if (q != c) {
-                        throw x.syntaxError("Expected a '" + new Character(q) + "'");
+                        throw x.syntaxError("Expected a '" + Character.valueOf(q) + "'");
                     }
                     return;
                 default:
@@ -581,87 +581,22 @@ public class JSONArray {
     }
 
     /**
-     * Append a boolean value. This increases the array's length by one.
-     *
-     * @param value A boolean value.
-     * @return this.
-     */
-    public JSONArray put(boolean value) {
-        put(value ? Boolean.TRUE : Boolean.FALSE);
-        return this;
-    }
-
-    /**
-     * Put a value in the JSONArray, where the value will be a
-     * JSONArray which is produced from a Collection.
+     * Put a value in the JSONArray.
      * 
-     * @param value A Collection value.
+     * @param value A boolean value, Collection, double value, int value, long
+     *              value, Map value, or object value.
      * @return this.
-     */
-    public JSONArray put(Collection<?> value) {
-        put(new JSONArray(value));
-        return this;
-    }
-
-    /**
-     * Append a double value. This increases the array's length by one.
-     *
-     * @param value A double value.
-     * @throws JSONException if the value is not finite.
-     * @return this.
-     */
-    public JSONArray put(double value) throws JSONException {
-        Double d = new Double(value);
-        JSONObject.testValidity(d);
-        put(d);
-        return this;
-    }
-
-    /**
-     * Append an int value. This increases the array's length by one.
-     *
-     * @param value An int value.
-     * @return this.
-     */
-    public JSONArray put(int value) {
-        put(new Integer(value));
-        return this;
-    }
-
-    /**
-     * Append an long value. This increases the array's length by one.
-     *
-     * @param value A long value.
-     * @return this.
-     */
-    public JSONArray put(long value) {
-        put(new Long(value));
-        return this;
-    }
-
-    /**
-     * Put a value in the JSONArray, where the value will be a
-     * JSONObject which is produced from a Map.
-     * 
-     * @param value A Map value.
-     * @return this.
-     */
-    public JSONArray put(Map<?, ?> value) {
-        put(new JSONObject(value));
-        return this;
-    }
-
-    /**
-     * Append an object value. This increases the array's length by one.
-     * 
-     * @param value An object value. The value should be a
-     *              Boolean, Double, Integer, JSONArray, JSONObject, Long, or
-     *              String, or the
-     *              JSONObject.NULL object.
-     * @return this.
+     * @throws JSONException if the value is not valid for JSON.
      */
     public JSONArray put(Object value) {
-        this.myArrayList.add(value);
+        if (value instanceof Boolean || value instanceof Double || value instanceof Integer || value instanceof Long
+                || value instanceof String || value == JSONObject.NULL) {
+            this.myArrayList.add(value);
+        } else if (value instanceof Collection) {
+            put(new JSONArray((Collection<?>) value));
+        } else if (value instanceof Map) {
+            put(new JSONObject((Map<?, ?>) value));
+        }
         return this;
     }
 
@@ -707,7 +642,7 @@ public class JSONArray {
      *                       not finite.
      */
     public JSONArray put(int index, double value) throws JSONException {
-        put(index, new Double(value));
+        put(index, Double.valueOf(value));
         return this;
     }
 
@@ -722,7 +657,7 @@ public class JSONArray {
      * @throws JSONException If the index is negative.
      */
     public JSONArray put(int index, int value) throws JSONException {
-        put(index, new Integer(value));
+        put(index, Integer.valueOf(value));
         return this;
     }
 
@@ -737,7 +672,7 @@ public class JSONArray {
      * @throws JSONException If the index is negative.
      */
     public JSONArray put(int index, long value) throws JSONException {
-        put(index, new Long(value));
+        put(index, Long.valueOf(value));
         return this;
     }
 
