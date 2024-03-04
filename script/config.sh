@@ -14,13 +14,12 @@ new_dburl="jdbc:mysql://$new_ip:$new_port/$new_dbname?useSSL=false\&amp;characte
 new_username=root
 new_password=
 new_nodeid="main"
-new_scalefactor=6000
+new_scalefactor=3
 # Test time in minutes
-new_time=60
-# terminals and rate for runthread1: R1, W1* and W4
+new_time=5
+# terminals and rate for runthread1: R1, W1*, W4 and W6
 new_terminals_thread1=30
-# Total number of requests in one hour for R1 = 1000 * 6000 = 6000000
-# then total rate per minute of thread1 = 1000 * 6000 / 80% / 60 = 1000 * 6000 / 48 = 125000
+# Total rate per minute of runthread1
 new_rate_thread1=125000
 # terminals and rate for R2*
 new_terminals_R21=2
@@ -29,11 +28,9 @@ new_terminals_R23=2
 new_terminals_R24=2
 new_terminals_R25=2
 # Total number of requests per minute
-# R21, R22, R23 = 10 * 6000 / 60 = 1000
 new_rate_R21=1000
 new_rate_R22=1000
 new_rate_R23=1000
-# R24, R25 = 6000 / 6 / 60 = 16
 new_rate_R24=16
 new_rate_R25=16
 ###########################################################

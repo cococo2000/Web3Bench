@@ -11,5 +11,5 @@
     <uploadUrl></uploadUrl>
 
     <nodeid>main</nodeid>
-    <scalefactor>6000</scalefactor>
+    <scalefactor>3</scalefactor>
 </parameters>
