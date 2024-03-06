@@ -264,7 +264,7 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
         @Override
         public void run() {
             Map<String, Object> m = new ListOrderedMap<String, Object>();
-            LOG.info("Starting WatchDogThread");
+            LOG.trace("Starting WatchDogThread");
             while (this.stop == false) {
                 try {
                     Thread.sleep(20000);
@@ -277,7 +277,7 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
                 for (Thread t : workerThreads) {
                     m.put(t.getName(), t.isAlive());
                 }
-                LOG.info("Worker Thread Status:\n" + StringUtil.formatMaps(m));
+                LOG.trace("Worker Thread Status:\n" + StringUtil.formatMaps(m));
             } // WHILE
         }
     } // CLASS

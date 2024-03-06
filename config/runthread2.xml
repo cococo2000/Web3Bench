@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <parameters>
     <!-- Connection details -->
-    <dbtype>tidb</dbtype>
+    <dbtype>sdb</dbtype>
     <driver>com.mysql.cj.jdbc.Driver</driver>
-    <DBUrl>jdbc:mysql://127.0.0.1:4000/web3bench?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
+    <DBUrl>jdbc:mysql://127.0.0.1:3307/web3bench?useSSL=false&amp;characterEncoding=utf-8</DBUrl>
     <username>root</username>
-    <password></password>
+    <password>123456</password>
     <isolation>TRANSACTION_SERIALIZABLE</isolation>
     <distribution>rand</distribution>
     <uploadUrl></uploadUrl>
 
     <nodeid>main</nodeid>
-    <scalefactor>3</scalefactor>
+    <scalefactor>6000</scalefactor>
 
     <!-- The workload -->
     <terminals>1</terminals>
@@ -19,7 +19,7 @@
         <work>
             <serial>true</serial>
             <rate>unlimited</rate>
-            <weights>all</weights>
+            <weights>1,1,1,1,1,1,1,1,1</weights>
         </work>
     </works>
 
