@@ -1,4 +1,4 @@
 mysql-connector-python==8.2.0
 pandas==2.0.3
-tqdm==4.65.0
+tqdm==4.66.3
 defusedxml==0.7.1
