@@ -1,6 +1,11 @@
 # Web3Bench
 
-[![Java with Maven](https://github.com/cococo2000/Web3Bench/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/cococo2000/Web3Bench/actions/workflows/maven.yml)
+[![LICENSE](https://img.shields.io/github/license/cococo2000/Web3Bench.svg)](https://github.com/cococo2000/Web3Bench/blob/master/LICENSE)
+[![Build Status](https://github.com/cococo2000/Web3Bench/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/cococo2000/Web3Bench/actions/workflows/maven.yml)
+[![Issues](https://img.shields.io/github/issues/cococo2000/Web3Bench.svg)](https://github.com/cococo2000/Web3Bench/issues)
+[![Issues](https://img.shields.io/github/issues-closed/cococo2000/Web3Bench.svg)](https://github.com/cococo2000/Web3Bench/issues)
+[![PR](https://img.shields.io/github/issues-pr/cococo2000/Web3Bench.svg)]([https://github.com/cococo2000/Web3Bench/issues](https://github.com/cococo2000/Web3Bench/pulls))
+[![PR](https://img.shields.io/github/issues-pr-closed/cococo2000/Web3Bench.svg)]([https://github.com/cococo2000/Web3Bench/issues](https://github.com/cococo2000/Web3Bench/pulls))
 
 Welcome to Web3Bench, a cutting-edge benchmark designed specifically for real-world Web3 applications and addressing the challenges of decentralized databases. This benchmark offers a unified approach by providing a cohesive data model and workload that cover both transactional (T) and analytical (A) tasks. Notable features include a novel business scenario sourced from the Web3 domain, a categorization of workloads based on latency requirements (real-time, online serving, and batch processing), and the incorporation of latency limits for real-time and online queries, along with measuring batch query throughput.
 
