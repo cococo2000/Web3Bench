@@ -1,5 +1,7 @@
 # Web3Bench
 
+[![Java with Maven](https://github.com/cococo2000/Web3Bench/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/cococo2000/Web3Bench/actions/workflows/maven.yml)
+
 Welcome to Web3Bench, a cutting-edge benchmark designed specifically for real-world Web3 applications and addressing the challenges of decentralized databases. This benchmark offers a unified approach by providing a cohesive data model and workload that cover both transactional (T) and analytical (A) tasks. Notable features include a novel business scenario sourced from the Web3 domain, a categorization of workloads based on latency requirements (real-time, online serving, and batch processing), and the incorporation of latency limits for real-time and online queries, along with measuring batch query throughput.
 
 Our data model is a simplified version of Ethereum's decentralized blockchain, encompassing blocks, transactions, contracts, and token transfers. Derived from a 20GB real Ethereum dataset, Web3Bench employs a proprietary data generator to create datasets of varying scales.
